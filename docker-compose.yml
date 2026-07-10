@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  db_inventario:
+    image: mysql:8.0
+    container_name: servidor_bd_inventario
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: inventario_db
+      MYSQL_USER: admin_inventario
+      MYSQL_PASSWORD: secretpassword
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
