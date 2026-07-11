@@ -1,52 +1,88 @@
 package logico;
 
 import java.time.LocalDate;
-import java.util.Date;
 
-public class Equipo extends Laptop{
-    private String IdEquipo;
-    private String NumeroSerie;
+public class Equipo {
+
+    private String idEquipo;
+    private String numeroSerie;
     private String color;
-    private Estante estante;
-    private int NivelEstante;
-    private String estado;
-    LocalDate FechaIngreso;
-    private String IdAdquisicionOrigen;
 
-    public Equipo(String idLaptop, String numeroModelo, String nombreComercial, Marca marca,float peso,String procesador, String gpu, String tipoRam, float cantidadRam, String tipoAlmacenamiento, float cantidadAlmacenamiento, float tamanyoPantalla, String resolucionPantalla, float costoPromedioCompra, float precioDetalle, float precioMayorista, int cantMinMayorista, int cantidadAlerta, int stockActual, int MesesGarantia, String idEquipo, String numeroSerie,String color,Estante estante, int nivelEstante, String estado, LocalDate fechaIngreso, String idAdquisicionOrigen) {
-        super(idLaptop, numeroModelo, nombreComercial,marca,peso, procesador, gpu, tipoRam, cantidadRam, tipoAlmacenamiento, cantidadAlmacenamiento, tamanyoPantalla, resolucionPantalla, costoPromedioCompra, precioDetalle, precioMayorista, cantMinMayorista, cantidadAlerta, stockActual, MesesGarantia);
-        IdEquipo = idEquipo;
-        NumeroSerie = numeroSerie;
+    private Laptop laptop;
+    private Estante estante;
+
+    private int nivelEstante;
+    private String estado;
+    private LocalDate fechaIngreso;
+    private String idAdquisicionOrigen;
+
+    public Equipo(String idEquipo,
+                  Laptop laptop,
+                  String numeroSerie,
+                  String color,
+                  Estante estante,
+                  int nivelEstante,
+                  String estado,
+                  LocalDate fechaIngreso,
+                  String idAdquisicionOrigen) {
+
+        this.idEquipo = idEquipo;
+        this.laptop = laptop;
+        this.numeroSerie = numeroSerie;
         this.color = color;
-        this.estante=estante;
-        NivelEstante = nivelEstante;
+        this.estante = estante;
+        this.nivelEstante = nivelEstante;
         this.estado = estado;
-        FechaIngreso = fechaIngreso;
-        IdAdquisicionOrigen = idAdquisicionOrigen;
+        this.fechaIngreso = fechaIngreso;
+        this.idAdquisicionOrigen = idAdquisicionOrigen;
     }
 
     public String getIdEquipo() {
-        return IdEquipo;
+        return idEquipo;
     }
 
     public void setIdEquipo(String idEquipo) {
-        IdEquipo = idEquipo;
+        this.idEquipo = idEquipo;
+    }
+
+    public Laptop getLaptop() {
+        return laptop;
+    }
+
+    public void setLaptop(Laptop laptop) {
+        this.laptop = laptop;
     }
 
     public String getNumeroSerie() {
-        return NumeroSerie;
+        return numeroSerie;
     }
 
     public void setNumeroSerie(String numeroSerie) {
-        NumeroSerie = numeroSerie;
+        this.numeroSerie = numeroSerie;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public Estante getEstante() {
+        return estante;
+    }
+
+    public void setEstante(Estante estante) {
+        this.estante = estante;
     }
 
     public int getNivelEstante() {
-        return NivelEstante;
+        return nivelEstante;
     }
 
     public void setNivelEstante(int nivelEstante) {
-        NivelEstante = nivelEstante;
+        this.nivelEstante = nivelEstante;
     }
 
     public String getEstado() {
@@ -58,34 +94,18 @@ public class Equipo extends Laptop{
     }
 
     public LocalDate getFechaIngreso() {
-        return FechaIngreso;
+        return fechaIngreso;
     }
 
     public void setFechaIngreso(LocalDate fechaIngreso) {
-        FechaIngreso = fechaIngreso;
+        this.fechaIngreso = fechaIngreso;
     }
 
     public String getIdAdquisicionOrigen() {
-        return IdAdquisicionOrigen;
+        return idAdquisicionOrigen;
     }
 
     public void setIdAdquisicionOrigen(String idAdquisicionOrigen) {
-        IdAdquisicionOrigen = idAdquisicionOrigen;
-    }
-
-    public Estante getEstante() {
-        return estante;
-    }
-
-    public void setEstante(Estante estante) {
-        this.estante = estante;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
+        this.idAdquisicionOrigen = idAdquisicionOrigen;
     }
 }

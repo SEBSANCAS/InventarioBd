@@ -1,11 +1,14 @@
 package logico;
 
+import java.util.ArrayList;
+
 public class DetalleAdquisicion {
     private String IdDetalleAdquisicion;
     private Laptop ModeloLaptopAdquirida;
     private int cantidad;
     private float CostoUnitario;
     private float SubtotalLinea;
+    private ArrayList<Equipo> equipos;
 
     public DetalleAdquisicion(String idDetalleAdquisicion, Laptop modeloLaptopAdquirida, int cantidad, float costoUnitario, float subtotalLinea) {
         IdDetalleAdquisicion = idDetalleAdquisicion;
@@ -13,8 +16,15 @@ public class DetalleAdquisicion {
         this.cantidad = cantidad;
         CostoUnitario = costoUnitario;
         SubtotalLinea = subtotalLinea;
+        equipos = new ArrayList<>();
+    }
+    public ArrayList<Equipo> getEquipos() {
+        return equipos;
     }
 
+    public void agregarEquipo(Equipo equipo) {
+        equipos.add(equipo);
+    }
     public String getIdDetalleAdquisicion() {
         return IdDetalleAdquisicion;
     }

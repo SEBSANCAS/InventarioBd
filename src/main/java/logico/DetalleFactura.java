@@ -6,7 +6,8 @@ public class DetalleFactura {
     private float descuento;
     private float SubtotalLinea;
     private int MesesGarantiaAplicados;
-    private Equipo EquipoVendido;
+    private Equipo equipo;
+
 
     public DetalleFactura(String idDetalleFactura, float preciounitario, float descuento, float subtotalLinea, int mesesGarantiaAplicados,Equipo equipovendido) {
         IdDetalleFactura = idDetalleFactura;
@@ -14,7 +15,7 @@ public class DetalleFactura {
         this.descuento = descuento;
         SubtotalLinea = subtotalLinea;
         MesesGarantiaAplicados = mesesGarantiaAplicados;
-        this.EquipoVendido=equipovendido;
+        this.equipo=equipovendido;
     }
 
     public String getIdDetalleFactura() {
@@ -58,10 +59,10 @@ public class DetalleFactura {
     }
 
     public Equipo getEquipoVendido() {
-        return EquipoVendido;
+        return equipo;
     }
 
     public void setEquipoVendido(Equipo equipoVendido) {
-        EquipoVendido = equipoVendido;
+        equipo = equipoVendido;
     }
 }

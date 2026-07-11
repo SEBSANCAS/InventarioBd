@@ -10,7 +10,7 @@ public class Adquisicion {
     private LocalDate FechaEntrega;
     private String estado;
     private float MontoTotal;
-    private ArrayList<DetalleAdquisicion> DetallesAdquision;
+    private ArrayList<DetalleAdquisicion> detalles;
 
     public Adquisicion(String idCompra, Suplidor suplidor, LocalDate fechaEmision, LocalDate fechaEntrega, String estado, float montoTotal) {
         IdCompra = idCompra;
@@ -19,7 +19,7 @@ public class Adquisicion {
         FechaEntrega = fechaEntrega;
         this.estado = estado;
         MontoTotal = montoTotal;
-        DetallesAdquision = new ArrayList<>();
+        detalles = new ArrayList<>();
     }
 
     public String getIdCompra() {
@@ -71,10 +71,10 @@ public class Adquisicion {
     }
 
     public ArrayList<DetalleAdquisicion> getDetallesAdquision() {
-        return DetallesAdquision;
+        return detalles;
     }
 
     public void setDetallesAdquision(ArrayList<DetalleAdquisicion> detallesAdquision) {
-        DetallesAdquision = detallesAdquision;
+        detalles = detallesAdquision;
     }
 }

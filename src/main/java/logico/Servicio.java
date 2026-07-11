@@ -1,6 +1,10 @@
 package logico;
 
+import DataBase.*;
+
 import java.util.HashMap;
+import java.util.*;
+
 
 public class Servicio {
     private HashMap<String, Cliente> misClientes;
@@ -124,5 +128,91 @@ public class Servicio {
 
     public int getSiguienteIdDetalleFactura() {
         return genIdDetalleFactura++;
+    }
+    public int getGenIdCliente() { return genIdCliente; }
+    public int getGenIdMarca() { return genIdMarca; }
+    public int getGenIdSuplidor() { return genIdSuplidor; }
+    public int getGenIdEstante() { return genIdEstante; }
+    public int getGenIdLaptop() { return genIdLaptop; }
+    public int getGenIdEquipo() { return genIdEquipo; }
+    public int getGenIdAdquisicion() { return genIdAdquisicion; }
+    public int getGenIdFactura() { return genIdFactura; }
+    public int getGenIdDetalleAdquisicion() { return genIdDetalleAdquisicion; }
+    public int getGenIdDetalleFactura() { return genIdDetalleFactura; }
+    public void setGenIdCliente(int genIdCliente) {
+        this.genIdCliente = genIdCliente;
+    }
+
+    public void setGenIdMarca(int genIdMarca) {
+        this.genIdMarca = genIdMarca;
+    }
+
+    public void setGenIdSuplidor(int genIdSuplidor) {
+        this.genIdSuplidor = genIdSuplidor;
+    }
+
+    public void setGenIdEstante(int genIdEstante) {
+        this.genIdEstante = genIdEstante;
+    }
+
+    public void setGenIdLaptop(int genIdLaptop) {
+        this.genIdLaptop = genIdLaptop;
+    }
+
+    public void setGenIdEquipo(int genIdEquipo) {
+        this.genIdEquipo = genIdEquipo;
+    }
+
+    public void setGenIdAdquisicion(int genIdAdquisicion) {
+        this.genIdAdquisicion = genIdAdquisicion;
+    }
+
+    public void setGenIdFactura(int genIdFactura) {
+        this.genIdFactura = genIdFactura;
+    }
+
+    public void setGenIdDetalleAdquisicion(int genIdDetalleAdquisicion) {
+        this.genIdDetalleAdquisicion = genIdDetalleAdquisicion;
+    }
+
+    public void setGenIdDetalleFactura(int genIdDetalleFactura) {
+        this.genIdDetalleFactura = genIdDetalleFactura;
+    }
+
+    public void registrarNuevaAdquisicion(Adquisicion adquisicion, ArrayList<DetalleAdquisicion> detalles) {
+        adquisicion.setDetallesAdquision(detalles);
+        AdquisicionDAO.getInstance().guardar(adquisicion);
+        misAdquisiciones.put(adquisicion.getIdCompra(), adquisicion);
+        for (DetalleAdquisicion detalle : detalles) {
+            DetalleAdquisicionDAO.getInstance().guardar(detalle, adquisicion.getIdCompra());
+            Laptop laptop = detalle.getModeloLaptopAdquirida();
+            if (laptop != null) {
+                laptop.setStockActual(laptop.getStockActual() + detalle.getCantidad());
+                LaptopDAO.getInstance().actualizar(laptop);
+            }
+        }
+        ServicioDAO.getInstance().guardarContadores(this);
+    }
+    public void registrarNuevaFactura(Factura factura, ArrayList<DetalleFactura> detalles) {
+
+        factura.setDetallesFactura(detalles);
+        FacturaDAO.getInstance().guardar(factura);
+        miInventarioFacturas.put(factura.getIdFactura(), factura);
+        for (DetalleFactura detalle : detalles) {
+            DetalleFacturaDAO.getInstance().guardar(detalle, factura.getIdFactura());
+            Equipo equipo = detalle.getEquipoVendido();
+            if (equipo != null) {
+                equipo.setEstado("Vendido");
+                EquipoDAO.getInstance().actualizar(equipo);
+
+                Laptop laptop = equipo.getLaptop();
+
+                if (laptop != null) {
+                    laptop.setStockActual(laptop.getStockActual() - 1);
+                    LaptopDAO.getInstance().actualizar(laptop);
+                }
+            }
+        }
+        ServicioDAO.getInstance().guardarContadores(this);
     }
 }

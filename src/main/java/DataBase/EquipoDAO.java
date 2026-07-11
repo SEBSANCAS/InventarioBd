@@ -2,6 +2,8 @@ package DataBase;
 
 import logico.Equipo;
 import logico.Estante;
+import logico.Laptop;
+
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -32,12 +34,12 @@ public class EquipoDAO {
 
             preparedStatement.setString(1, equipo.getIdEquipo());
             preparedStatement.setString(2, equipo.getNumeroSerie());
-            preparedStatement.setString(3, equipo.getIdLaptop()); // Heredado de la clase Laptop
-            preparedStatement.setString(4, idUbicacion);          // Llave foránea hacia Ubicacion_Almacen
+            preparedStatement.setString(3, equipo.getLaptop().getIdLaptop());
+            preparedStatement.setString(4, idUbicacion);
             preparedStatement.setString(5, equipo.getIdAdquisicionOrigen());
             preparedStatement.setString(6, equipo.getEstado());
             preparedStatement.setString(7, equipo.getColor());
-            preparedStatement.setObject(8, equipo.getFechaIngreso()); // LocalDate directo
+            preparedStatement.setObject(8, equipo.getFechaIngreso());
 
             preparedStatement.executeUpdate();
 
@@ -61,7 +63,7 @@ public class EquipoDAO {
             }
 
             preparedStatement.setString(1, equipo.getNumeroSerie());
-            preparedStatement.setString(2, equipo.getIdLaptop());
+            preparedStatement.setString(2, equipo.getLaptop().getIdLaptop());
             preparedStatement.setString(3, idUbicacion);
             preparedStatement.setString(4, equipo.getIdAdquisicionOrigen());
             preparedStatement.setString(5, equipo.getEstado());
@@ -102,10 +104,15 @@ public class EquipoDAO {
              ResultSet resultSet = statement.executeQuery(sql)) {
 
             while (resultSet.next()) {
+                String idLaptop = resultSet.getString("id_laptop");
+
+                Laptop laptop = LaptopDAO
+                        .getInstance()
+                        .encontrarPorId(idLaptop);
+
                 Equipo eq = new Equipo(
-                        resultSet.getString("id_laptop"), // idLaptop
-                        "", "", null, 0f, "", "", "", 0f, "", 0f, 0f, "", 0f, 0f, 0f, 0, 0, 0, 0, // Campos de Laptop en blanco por ahora
                         resultSet.getString("IdEquipo"),
+                        laptop,
                         resultSet.getString("numero_serie"),
                         resultSet.getString("color"),
                         null,
@@ -153,13 +160,19 @@ public class EquipoDAO {
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
+                    String idLaptop = resultSet.getString("id_laptop");
+
+                    Laptop laptop = LaptopDAO
+                            .getInstance()
+                            .encontrarPorId(idLaptop);
+
                     eq = new Equipo(
-                            resultSet.getString("id_laptop"),
-                            "", "", null, 0f, "", "", "", 0f, "", 0f, 0f, "", 0f, 0f, 0f, 0, 0, 0, 0,
                             resultSet.getString("IdEquipo"),
+                            laptop,
                             resultSet.getString("numero_serie"),
                             resultSet.getString("color"),
-                            null, 0,
+                            null,
+                            0,
                             resultSet.getString("estado"),
                             resultSet.getObject("fecha_ingreso", LocalDate.class),
                             resultSet.getString("id_detalle_orden")
