@@ -1,10 +1,13 @@
 package logico;
 
+import java.util.Objects;
+
 public class Laptop {
     private String IdLaptop;
     private String NumeroModelo;
     private String NombreComercial;
     private Marca marca;
+    private float peso;
     private String procesador;
     private String gpu;
     private String TipoRam;
@@ -21,11 +24,12 @@ public class Laptop {
     private int StockActual;
     private int MesesGarantia;
 
-    public Laptop(String idLaptop, String numeroModelo, String nombreComercial,Marca marca, String procesador, String gpu, String tipoRam, float cantidadRam, String tipoAlmacenamiento, float cantidadAlmacenamiento, float tamanyoPantalla, String resolucionPantalla, float costoPromedioCompra, float precioDetalle, float precioMayorista, int cantMinMayorista, int cantidadAlerta, int stockActual,int MesesGarantia) {
+    public Laptop(String idLaptop, String numeroModelo, String nombreComercial,Marca marca,float peso, String procesador, String gpu, String tipoRam, float cantidadRam, String tipoAlmacenamiento, float cantidadAlmacenamiento, float tamanyoPantalla, String resolucionPantalla, float costoPromedioCompra, float precioDetalle, float precioMayorista, int cantMinMayorista, int cantidadAlerta, int stockActual,int MesesGarantia) {
         IdLaptop = idLaptop;
         NumeroModelo = numeroModelo;
         NombreComercial = nombreComercial;
         this.marca = marca;
+        this.peso = peso;
         this.procesador = procesador;
         this.gpu = gpu;
         TipoRam = tipoRam;
@@ -196,5 +200,25 @@ public class Laptop {
 
     public void setMarca(Marca marca) {
         this.marca = marca;
+    }
+
+    public float getPeso() {
+        return peso;
+    }
+
+    public void setPeso(float peso) {
+        this.peso = peso;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Laptop laptop = (Laptop) o;
+        return Objects.equals(IdLaptop, laptop.IdLaptop);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(IdLaptop);
     }
 }

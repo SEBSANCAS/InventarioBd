@@ -6,16 +6,18 @@ import java.util.Date;
 public class Equipo extends Laptop{
     private String IdEquipo;
     private String NumeroSerie;
+    private String color;
     private Estante estante;
     private int NivelEstante;
     private String estado;
     LocalDate FechaIngreso;
     private String IdAdquisicionOrigen;
 
-    public Equipo(String idLaptop, String numeroModelo, String nombreComercial, Marca marca,String procesador, String gpu, String tipoRam, float cantidadRam, String tipoAlmacenamiento, float cantidadAlmacenamiento, float tamanyoPantalla, String resolucionPantalla, float costoPromedioCompra, float precioDetalle, float precioMayorista, int cantMinMayorista, int cantidadAlerta, int stockActual, int MesesGarantia, String idEquipo, String numeroSerie,Estante estante, int nivelEstante, String estado, LocalDate fechaIngreso, String idAdquisicionOrigen) {
-        super(idLaptop, numeroModelo, nombreComercial,marca, procesador, gpu, tipoRam, cantidadRam, tipoAlmacenamiento, cantidadAlmacenamiento, tamanyoPantalla, resolucionPantalla, costoPromedioCompra, precioDetalle, precioMayorista, cantMinMayorista, cantidadAlerta, stockActual, MesesGarantia);
+    public Equipo(String idLaptop, String numeroModelo, String nombreComercial, Marca marca,float peso,String procesador, String gpu, String tipoRam, float cantidadRam, String tipoAlmacenamiento, float cantidadAlmacenamiento, float tamanyoPantalla, String resolucionPantalla, float costoPromedioCompra, float precioDetalle, float precioMayorista, int cantMinMayorista, int cantidadAlerta, int stockActual, int MesesGarantia, String idEquipo, String numeroSerie,String color,Estante estante, int nivelEstante, String estado, LocalDate fechaIngreso, String idAdquisicionOrigen) {
+        super(idLaptop, numeroModelo, nombreComercial,marca,peso, procesador, gpu, tipoRam, cantidadRam, tipoAlmacenamiento, cantidadAlmacenamiento, tamanyoPantalla, resolucionPantalla, costoPromedioCompra, precioDetalle, precioMayorista, cantMinMayorista, cantidadAlerta, stockActual, MesesGarantia);
         IdEquipo = idEquipo;
         NumeroSerie = numeroSerie;
+        this.color = color;
         this.estante=estante;
         NivelEstante = nivelEstante;
         this.estado = estado;
@@ -77,5 +79,13 @@ public class Equipo extends Laptop{
 
     public void setEstante(Estante estante) {
         this.estante = estante;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 }

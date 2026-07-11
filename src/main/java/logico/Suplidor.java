@@ -12,7 +12,7 @@ public class Suplidor extends Persona{
     private String  ciudad;
     private String  calle;
     private LocalDate FechaRegistro;
-    private HashMap<Laptop,Float> LaptopsSuplidor;
+    private HashMap<Laptop,DetalleLaptopSuplidor> LaptopsSuplidor;
 
     public Suplidor(String numeroIdentificacion, String correo, String telefono, String nombreComercial, String idSuplidor, String razonComercial, String pais, String ciudad, String calle,LocalDate FechaRegistro) {
         super(numeroIdentificacion, correo, telefono);
@@ -74,11 +74,11 @@ public class Suplidor extends Persona{
         this.calle = calle;
     }
 
-    public HashMap<Laptop, Float> getLaptopsSuplidor() {
+    public HashMap<Laptop, DetalleLaptopSuplidor> getLaptopsSuplidor() {
         return LaptopsSuplidor;
     }
 
-    public void setLaptopsSuplidor(HashMap<Laptop, Float> laptopsSuplidor) {
+    public void setLaptopsSuplidor(HashMap<Laptop, DetalleLaptopSuplidor> laptopsSuplidor) {
         LaptopsSuplidor = laptopsSuplidor;
     }
 

@@ -14,6 +14,10 @@ public class Cliente extends Persona {
         TipoCLiente = tipoCLiente;
     }
 
+    public Cliente() {
+
+    }
+
     public String getIdCliente() {
         return IdCliente;
     }

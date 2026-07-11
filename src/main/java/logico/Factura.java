@@ -24,6 +24,10 @@ public class Factura {
         DetallesFactura = new ArrayList<>();
     }
 
+    public Factura() {
+
+    }
+
     public String getIdFactura() {
         return IdFactura;
     }
