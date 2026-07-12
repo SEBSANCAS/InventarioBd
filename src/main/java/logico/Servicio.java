@@ -215,4 +215,34 @@ public class Servicio {
         }
         ServicioDAO.getInstance().guardarContadores(this);
     }
+    void registrarMarca(Marca marca)
+    {
+        misMarcas.put(marca.getIdMarca(),marca);
+        MarcaDAO.getInstance().guardar(marca);
+    }
+    void registrarSuplidor(Suplidor suplidor)
+    {
+        misSuplidores.put(suplidor.getIdSuplidor(),suplidor);
+        SuplidorDAO.getInstance().guardar(suplidor);
+    }
+    public void registrarCliente(Cliente cliente)
+    {
+        misClientes.put(cliente.getIdCliente(), cliente);
+        ClienteDAO.getInstance().guardar(cliente);
+    }
+    public void registrarEstante(Estante estante)
+    {
+        misEstantes.put(estante.getIdEstante(), estante);
+        EstanteDAO.getInstance().guardar(estante);
+    }
+    public void registrarLaptop(Laptop laptop)
+    {
+        misLaptops.put(laptop.getIdLaptop(), laptop);
+        LaptopDAO.getInstance().guardar(laptop);
+    }
+    public void registrarEquipo(Equipo equipo)
+    {
+        misEquipos.put(equipo.getIdEquipo(), equipo);
+        EquipoDAO.getInstance().guardar(equipo);
+    }
 }
