@@ -111,35 +111,12 @@ public class ServicioDAO {
                 servicio.getMisClientes().put(c.getIdCliente(), c)
         );
 
-        LaptopDAO.getInstance().EncontrarTodos().forEach(l ->
-                servicio.getMisLaptops().put(l.getIdLaptop(), l)
-        );
-
-        EquipoDAO.getInstance().EncontrarTodos().forEach(e ->
-                servicio.getMisEquipos().put(e.getIdEquipo(), e)
-        );
-
-        AdquisicionDAO.getInstance().EncontrarTodos().forEach(a ->
-                servicio.getMisAdquisiciones().put(a.getIdCompra(), a)
-        );
-
         SuplidorDAO.getInstance().EncontrarTodos().forEach(s ->
                 servicio.getMisSuplidores().put(s.getIdSuplidor(), s)
         );
-        EstanteDAO.getInstance().EncontrarTodos().forEach(e ->
-                servicio.getMisEstantes().put(e.getIdEstante(), e)
-        );
 
-        MarcaDAO.getInstance().EncontrarTodos().forEach(m ->
-                servicio.getMisMarcas().put(m.getIdMarca(), m)
-        );
-
-        ClienteDAO.getInstance().EncontrarTodos().forEach(c ->
-                servicio.getMisClientes().put(c.getIdCliente(), c)
-        );
-
-        SuplidorDAO.getInstance().EncontrarTodos().forEach(s ->
-                servicio.getMisSuplidores().put(s.getIdSuplidor(), s)
+        EstanteDAO.getInstance().EncontrarTodos().forEach(est ->
+                servicio.getMisEstantes().put(est.getIdEstante(), est)
         );
 
         LaptopDAO.getInstance().EncontrarTodos().forEach(l ->

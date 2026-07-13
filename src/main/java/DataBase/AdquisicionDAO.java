@@ -17,7 +17,7 @@ public class AdquisicionDAO {
     }
 
     public void guardar(Adquisicion adquisicion) {
-        final String sql = "INSERT INTO Adquisicion (IdCompra, id_suplidor, fecha_emision, fecha_entrega, estado, monto_total) VALUES (?, ?, ?, ?, ?, ?)";
+        final String sql = "INSERT INTO Orden_Compra (id_orden_compra, id_suplidor, fecha_emision, fecha_entrega, estado_orden, monto_total_estimado) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -42,7 +42,7 @@ public class AdquisicionDAO {
     }
 
     public void actualizar(Adquisicion adquisicion) {
-        final String sql = "UPDATE Adquisicion SET id_suplidor=?, fecha_emision=?, fecha_entrega=?, estado=?, monto_total=? WHERE IdCompra=?";
+        final String sql = "UPDATE Orden_Compra SET id_suplidor=?, fecha_emision=?, fecha_entrega=?, estado_orden=?, monto_total_estimado=? WHERE id_orden_compra=?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -67,7 +67,7 @@ public class AdquisicionDAO {
     }
 
     public void borrar(String idCompra) {
-        final String sql = "DELETE FROM Adquisicion WHERE IdCompra = ?";
+        final String sql = "DELETE FROM Orden_Compra WHERE id_orden_compra = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -82,7 +82,7 @@ public class AdquisicionDAO {
 
     public ArrayList<Adquisicion> EncontrarTodos() {
         ArrayList<Adquisicion> adquisiciones = new ArrayList<>();
-        final String sql = "SELECT * FROM Adquisicion";
+        final String sql = "SELECT * FROM Orden_Compra";
 
         try (Connection connection = DatabaseConnection.getConnection();
              Statement statement = connection.createStatement();
@@ -96,12 +96,12 @@ public class AdquisicionDAO {
                 }
 
                 Adquisicion adq = new Adquisicion(
-                        resultSet.getString("IdCompra"),
+                        resultSet.getString("id_orden_compra"),
                         suplidorCascaron,
                         resultSet.getObject("fecha_emision", LocalDate.class),
                         resultSet.getObject("fecha_entrega", LocalDate.class),
-                        resultSet.getString("estado"),
-                        resultSet.getFloat("monto_total")
+                        resultSet.getString("estado_orden"),
+                        resultSet.getFloat("monto_total_estimado")
                 );
 
                 adquisiciones.add(adq);
@@ -114,7 +114,7 @@ public class AdquisicionDAO {
 
     public Adquisicion encontrarPorId(String idCompra) {
         Adquisicion adq = null;
-        final String sql = "SELECT * FROM Adquisicion WHERE IdCompra = ?";
+        final String sql = "SELECT * FROM Orden_Compra WHERE id_orden_compra = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -130,12 +130,12 @@ public class AdquisicionDAO {
                     }
 
                     adq = new Adquisicion(
-                            resultSet.getString("IdCompra"),
+                            resultSet.getString("id_orden_compra"),
                             suplidorCascaron,
                             resultSet.getObject("fecha_emision", LocalDate.class),
                             resultSet.getObject("fecha_entrega", LocalDate.class),
-                            resultSet.getString("estado"),
-                            resultSet.getFloat("monto_total")
+                            resultSet.getString("estado_orden"),
+                            resultSet.getFloat("monto_total_estimado")
                     );
                 }
             }

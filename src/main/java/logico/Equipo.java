@@ -37,6 +37,10 @@ public class Equipo {
         this.idAdquisicionOrigen = idAdquisicionOrigen;
     }
 
+    public Equipo(String idEquipo) {
+        this.idEquipo = idEquipo;
+    }
+
     public String getIdEquipo() {
         return idEquipo;
     }
