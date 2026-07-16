@@ -16,14 +16,14 @@ public class DetalleAdquisicionDAO {
     }
 
     public void guardar(DetalleAdquisicion detalle, String idCompra) {
-        final String sql = "INSERT INTO DetalleAdquisicion (IdDetalleAdquisicion, id_compra, id_laptop, cantidad, costo_unitario, subtotal_linea) VALUES (?, ?, ?, ?, ?, ?)";
+        final String sql = "INSERT INTO Detalle_Orden_Compra (id_detalle_orden, id_orden_compra, id_laptop, cantidad_solicitada, costo_unitario_acordado, subtotal_linea) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             String idLaptop = null;
             if (detalle.getModeloLaptopAdquirida() != null) {
-                idLaptop = detalle.getModeloLaptopAdquirida().getIdLaptop(); // Asumiendo getIdLaptop() existente en Laptop
+                idLaptop = detalle.getModeloLaptopAdquirida().getIdLaptop();
             }
 
             preparedStatement.setString(1, detalle.getIdDetalleAdquisicion());
@@ -41,7 +41,7 @@ public class DetalleAdquisicionDAO {
     }
 
     public void actualizar(DetalleAdquisicion detalle, String idCompra) {
-        final String sql = "UPDATE DetalleAdquisicion SET id_compra=?, id_laptop=?, cantidad=?, costo_unitario=?, subtotal_linea=? WHERE IdDetalleAdquisicion=?";
+        final String sql = "UPDATE Detalle_Orden_Compra SET id_orden_compra=?, id_laptop=?, cantidad_solicitada=?, costo_unitario_acordado=?, subtotal_linea=? WHERE id_detalle_orden=?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -66,7 +66,7 @@ public class DetalleAdquisicionDAO {
     }
 
     public void borrar(String idDetalleAdquisicion) {
-        final String sql = "DELETE FROM DetalleAdquisicion WHERE IdDetalleAdquisicion = ?";
+        final String sql = "DELETE FROM Detalle_Orden_Compra WHERE id_detalle_orden = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -81,7 +81,7 @@ public class DetalleAdquisicionDAO {
 
     public ArrayList<DetalleAdquisicion> EncontrarTodos() {
         ArrayList<DetalleAdquisicion> detalles = new ArrayList<>();
-        final String sql = "SELECT * FROM DetalleAdquisicion";
+        final String sql = "SELECT * FROM Detalle_Orden_Compra";
 
         try (Connection connection = DatabaseConnection.getConnection();
              Statement statement = connection.createStatement();
@@ -95,10 +95,10 @@ public class DetalleAdquisicionDAO {
                 }
 
                 DetalleAdquisicion det = new DetalleAdquisicion(
-                        resultSet.getString("IdDetalleAdquisicion"),
+                        resultSet.getString("id_detalle_orden"),
                         laptopCascaron,
-                        resultSet.getInt("cantidad"),
-                        resultSet.getFloat("costo_unitario"),
+                        resultSet.getInt("cantidad_solicitada"),
+                        resultSet.getFloat("costo_unitario_acordado"),
                         resultSet.getFloat("subtotal_linea")
                 );
                 detalles.add(det);
@@ -111,7 +111,7 @@ public class DetalleAdquisicionDAO {
 
     public DetalleAdquisicion encontrarPorId(String idDetalleAdquisicion) {
         DetalleAdquisicion det = null;
-        final String sql = "SELECT * FROM DetalleAdquisicion WHERE IdDetalleAdquisicion = ?";
+        final String sql = "SELECT * FROM Detalle_Orden_Compra WHERE id_detalle_orden = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -127,10 +127,10 @@ public class DetalleAdquisicionDAO {
                     }
 
                     det = new DetalleAdquisicion(
-                            resultSet.getString("IdDetalleAdquisicion"),
+                            resultSet.getString("id_detalle_orden"),
                             laptopCascaron,
-                            resultSet.getInt("cantidad"),
-                            resultSet.getFloat("costo_unitario"),
+                            resultSet.getInt("cantidad_solicitada"),
+                            resultSet.getFloat("costo_unitario_acordado"),
                             resultSet.getFloat("subtotal_linea")
                     );
                 }

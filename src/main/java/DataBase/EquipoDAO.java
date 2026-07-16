@@ -19,7 +19,7 @@ public class EquipoDAO {
     }
 
     public void guardar(Equipo equipo) {
-        final String sql = "INSERT INTO Equipo (IdEquipo, numero_serie, id_laptop, id_ubicacion, id_detalle_orden, estado, color, fecha_ingreso) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        final String sql = "INSERT INTO Equipo (id_equipo, numero_serie, id_laptop, id_ubicacion, id_detalle_orden, estado, color, fecha_ingreso) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -49,7 +49,7 @@ public class EquipoDAO {
     }
 
     public void actualizar(Equipo equipo) {
-        final String sql = "UPDATE Equipo SET numero_serie=?, id_laptop=?, id_ubicacion=?, id_detalle_orden=?, estado=?, color=?, fecha_ingreso=? WHERE IdEquipo=?";
+        final String sql = "UPDATE Equipo SET numero_serie=?, id_laptop=?, id_ubicacion=?, id_detalle_orden=?, estado=?, color=?, fecha_ingreso=? WHERE id_equipo=?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -79,7 +79,7 @@ public class EquipoDAO {
     }
 
     public void borrar(String idEquipo) {
-        final String sql = "DELETE FROM Equipo WHERE IdEquipo = ?";
+        final String sql = "DELETE FROM Equipo WHERE id_equipo = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -111,7 +111,7 @@ public class EquipoDAO {
                         .encontrarPorId(idLaptop);
 
                 Equipo eq = new Equipo(
-                        resultSet.getString("IdEquipo"),
+                        resultSet.getString("id_equipo"),
                         laptop,
                         resultSet.getString("numero_serie"),
                         resultSet.getString("color"),
@@ -151,7 +151,7 @@ public class EquipoDAO {
         final String sql = "SELECT e.*, u.codigo_estante, u.nivel_estante " +
                 "FROM Equipo e " +
                 "LEFT JOIN Ubicacion_Almacen u ON e.id_ubicacion = u.id_ubicacion " +
-                "WHERE e.IdEquipo = ?";
+                "WHERE e.id_equipo = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -167,7 +167,7 @@ public class EquipoDAO {
                             .encontrarPorId(idLaptop);
 
                     eq = new Equipo(
-                            resultSet.getString("IdEquipo"),
+                            resultSet.getString("id_equipo"),
                             laptop,
                             resultSet.getString("numero_serie"),
                             resultSet.getString("color"),

@@ -15,7 +15,7 @@ public class MarcaDAO {
     }
 
     public void guardar(Marca marca) {
-        final String sql = "INSERT INTO Marca (IdMarca, nombre_marca) VALUES (?, ?)";
+        final String sql = "INSERT INTO Marca (id_marca, nombre_marca) VALUES (?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -31,7 +31,7 @@ public class MarcaDAO {
     }
 
     public void actualizar(Marca marca) {
-        final String sql = "UPDATE Marca SET nombre_marca=? WHERE IdMarca=?";
+        final String sql = "UPDATE Marca SET nombre_marca=? WHERE id_marca=?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -47,7 +47,7 @@ public class MarcaDAO {
     }
 
     public void borrar(String idMarca) {
-        final String sql = "DELETE FROM Marca WHERE IdMarca = ?";
+        final String sql = "DELETE FROM Marca WHERE id_marca = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -70,7 +70,7 @@ public class MarcaDAO {
 
             while (resultSet.next()) {
                 Marca marca = new Marca(
-                        resultSet.getString("IdMarca"),
+                        resultSet.getString("id_marca"),
                         resultSet.getString("nombre_marca")
                 );
                 marcas.add(marca);
@@ -83,7 +83,7 @@ public class MarcaDAO {
 
     public Marca encontrarPorId(String idMarca) {
         Marca marca = null;
-        final String sql = "SELECT * FROM Marca WHERE IdMarca = ?";
+        final String sql = "SELECT * FROM Marca WHERE id_marca = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -93,7 +93,7 @@ public class MarcaDAO {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
                     marca = new Marca(
-                            resultSet.getString("IdMarca"),
+                            resultSet.getString("id_marca"),
                             resultSet.getString("nombre_marca")
                     );
                 }

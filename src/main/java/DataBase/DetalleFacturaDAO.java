@@ -3,7 +3,6 @@ package DataBase;
 import logico.DetalleFactura;
 import logico.Equipo;
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class DetalleFacturaDAO {
@@ -17,7 +16,7 @@ public class DetalleFacturaDAO {
     }
 
     public void guardar(DetalleFactura detalle, String idFactura) {
-        final String sql = "INSERT INTO DetalleFactura (IdDetalleFactura, id_factura, precio_unitario, descuento, subtotal_linea, meses_garantia, id_equipo) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        final String sql = "INSERT INTO Detalle_Factura (id_detalle, id_factura, IdEquipo, precio_unitario_venta, monto_descuento, subtotal_linea) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -29,11 +28,10 @@ public class DetalleFacturaDAO {
 
             preparedStatement.setString(1, detalle.getIdDetalleFactura());
             preparedStatement.setString(2, idFactura);
-            preparedStatement.setFloat(3, detalle.getPreciounitario());
-            preparedStatement.setFloat(4, detalle.getDescuento());
-            preparedStatement.setFloat(5, detalle.getSubtotalLinea());
-            preparedStatement.setInt(6, detalle.getMesesGarantiaAplicados());
-            preparedStatement.setString(7, idEquipo);
+            preparedStatement.setString(3, idEquipo);
+            preparedStatement.setFloat(4, detalle.getPreciounitario());
+            preparedStatement.setFloat(5, detalle.getDescuento());
+            preparedStatement.setFloat(6, detalle.getSubtotalLinea());
 
             preparedStatement.executeUpdate();
 
@@ -43,7 +41,7 @@ public class DetalleFacturaDAO {
     }
 
     public void actualizar(DetalleFactura detalle, String idFactura) {
-        final String sql = "UPDATE DetalleFactura SET id_factura=?, precio_unitario=?, descuento=?, subtotal_linea=?, meses_garantia=?, id_equipo=? WHERE IdDetalleFactura=?";
+        final String sql = "UPDATE Detalle_Factura SET id_factura=?, IdEquipo=?, precio_unitario_venta=?, monto_descuento=?, subtotal_linea=? WHERE id_detalle=?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -54,12 +52,11 @@ public class DetalleFacturaDAO {
             }
 
             preparedStatement.setString(1, idFactura);
-            preparedStatement.setFloat(2, detalle.getPreciounitario());
-            preparedStatement.setFloat(3, detalle.getDescuento());
-            preparedStatement.setFloat(4, detalle.getSubtotalLinea());
-            preparedStatement.setInt(5, detalle.getMesesGarantiaAplicados());
-            preparedStatement.setString(6, idEquipo);
-            preparedStatement.setString(7, detalle.getIdDetalleFactura());
+            preparedStatement.setString(2, idEquipo);
+            preparedStatement.setFloat(3, detalle.getPreciounitario());
+            preparedStatement.setFloat(4, detalle.getDescuento());
+            preparedStatement.setFloat(5, detalle.getSubtotalLinea());
+            preparedStatement.setString(6, detalle.getIdDetalleFactura());
 
             preparedStatement.executeUpdate();
 
@@ -69,7 +66,7 @@ public class DetalleFacturaDAO {
     }
 
     public void borrar(String idDetalleFactura) {
-        final String sql = "DELETE FROM DetalleFactura WHERE IdDetalleFactura = ?";
+        final String sql = "DELETE FROM Detalle_Factura WHERE id_detalle = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -84,7 +81,7 @@ public class DetalleFacturaDAO {
 
     public ArrayList<DetalleFactura> EncontrarTodos() {
         ArrayList<DetalleFactura> detalles = new ArrayList<>();
-        final String sql = "SELECT * FROM DetalleFactura";
+        final String sql = "SELECT * FROM Detalle_Factura";
 
         try (Connection connection = DatabaseConnection.getConnection();
              Statement statement = connection.createStatement();
@@ -92,20 +89,17 @@ public class DetalleFacturaDAO {
 
             while (resultSet.next()) {
                 Equipo equipoCascaron = null;
-                String idEquipo = resultSet.getString("id_equipo");
+                String idEquipo = resultSet.getString("IdEquipo");
                 if (idEquipo != null) {
-                    equipoCascaron = new Equipo(
-                            "", "", "", null, 0f, "", "", "", 0f, "", 0f, 0f, "", 0f, 0f, 0f, 0, 0, 0, 0,
-                            idEquipo, "", "", null, 0, "", null, ""
-                    );
+                    equipoCascaron = new Equipo(idEquipo);
                 }
 
                 DetalleFactura det = new DetalleFactura(
-                        resultSet.getString("IdDetalleFactura"),
-                        resultSet.getFloat("precio_unitario"),
-                        resultSet.getFloat("descuento"),
+                        resultSet.getString("id_detalle"),
+                        resultSet.getFloat("precio_unitario_venta"),
+                        resultSet.getFloat("monto_descuento"),
                         resultSet.getFloat("subtotal_linea"),
-                        resultSet.getInt("meses_garantia"),
+                        0,
                         equipoCascaron
                 );
                 detalles.add(det);
@@ -118,7 +112,7 @@ public class DetalleFacturaDAO {
 
     public DetalleFactura encontrarPorId(String idDetalleFactura) {
         DetalleFactura det = null;
-        final String sql = "SELECT * FROM DetalleFactura WHERE IdDetalleFactura = ?";
+        final String sql = "SELECT * FROM Detalle_Factura WHERE id_detalle = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -128,20 +122,17 @@ public class DetalleFacturaDAO {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
                     Equipo equipoCascaron = null;
-                    String idEquipo = resultSet.getString("id_equipo");
+                    String idEquipo = resultSet.getString("IdEquipo");
                     if (idEquipo != null) {
-                        equipoCascaron = new Equipo(
-                                "", "", "", null, 0f, "", "", "", 0f, "", 0f, 0f, "", 0f, 0f, 0f, 0, 0, 0, 0,
-                                idEquipo, "", "", null, 0, "", null, ""
-                        );
+                        equipoCascaron = new Equipo(idEquipo);
                     }
 
                     det = new DetalleFactura(
-                            resultSet.getString("IdDetalleFactura"),
-                            resultSet.getFloat("precio_unitario"),
-                            resultSet.getFloat("descuento"),
+                            resultSet.getString("id_detalle"),
+                            resultSet.getFloat("precio_unitario_venta"),
+                            resultSet.getFloat("monto_descuento"),
                             resultSet.getFloat("subtotal_linea"),
-                            resultSet.getInt("meses_garantia"),
+                            0,
                             equipoCascaron
                     );
                 }

@@ -2,6 +2,7 @@ package DataBase;
 
 import logico.Cliente;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class ClienteDAO {
@@ -15,18 +16,19 @@ public class ClienteDAO {
     }
 
     public void guardar(Cliente cliente) {
-        final String sql = "INSERT INTO Cliente (IdCliente, nombres, apellidos, tipo_cliente, numero_identificacion, correo, telefono) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        final String sql = "INSERT INTO Cliente (id_cliente, numero_identificacion, nombres, apellidos, tipo_cliente, telefono, correo_electronico, fecha_registro) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setString(1, cliente.getIdCliente());
-            preparedStatement.setString(2, cliente.getNombres());
-            preparedStatement.setString(3, cliente.getApellidos());
-            preparedStatement.setString(4, cliente.getTipoCLiente());
-            preparedStatement.setString(5, cliente.getNumeroIdentificacion()); // Heredado de Persona
-            preparedStatement.setString(6, cliente.getCorreo());              // Heredado de Persona
-            preparedStatement.setString(7, cliente.getTelefono());            // Heredado de Persona
+            preparedStatement.setString(2, cliente.getNumeroIdentificacion());
+            preparedStatement.setString(3, cliente.getNombres());
+            preparedStatement.setString(4, cliente.getApellidos());
+            preparedStatement.setString(5, cliente.getTipoCLiente());
+            preparedStatement.setString(6, cliente.getTelefono());
+            preparedStatement.setString(7, cliente.getCorreo());
+            preparedStatement.setObject(8, LocalDate.now());
 
             preparedStatement.executeUpdate();
 
@@ -36,17 +38,17 @@ public class ClienteDAO {
     }
 
     public void actualizar(Cliente cliente) {
-        final String sql = "UPDATE Cliente SET nombres=?, apellidos=?, tipo_cliente=?, numero_identificacion=?, correo=?, telefono=? WHERE IdCliente=?";
+        final String sql = "UPDATE Cliente SET numero_identificacion=?, nombres=?, apellidos=?, tipo_cliente=?, telefono=?, correo_electronico=? WHERE id_cliente=?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
-            preparedStatement.setString(1, cliente.getNombres());
-            preparedStatement.setString(2, cliente.getApellidos());
-            preparedStatement.setString(3, cliente.getTipoCLiente());
-            preparedStatement.setString(4, cliente.getNumeroIdentificacion());
-            preparedStatement.setString(5, cliente.getCorreo());
-            preparedStatement.setString(6, cliente.getTelefono());
+            preparedStatement.setString(1, cliente.getNumeroIdentificacion());
+            preparedStatement.setString(2, cliente.getNombres());
+            preparedStatement.setString(3, cliente.getApellidos());
+            preparedStatement.setString(4, cliente.getTipoCLiente());
+            preparedStatement.setString(5, cliente.getTelefono());
+            preparedStatement.setString(6, cliente.getCorreo());
             preparedStatement.setString(7, cliente.getIdCliente());
 
             preparedStatement.executeUpdate();
@@ -57,7 +59,7 @@ public class ClienteDAO {
     }
 
     public void borrar(String idCliente) {
-        final String sql = "DELETE FROM Cliente WHERE IdCliente = ?";
+        final String sql = "DELETE FROM Cliente WHERE id_cliente = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -81,9 +83,9 @@ public class ClienteDAO {
             while (resultSet.next()) {
                 Cliente cliente = new Cliente(
                         resultSet.getString("numero_identificacion"),
-                        resultSet.getString("correo"),
+                        resultSet.getString("correo_electronico"),
                         resultSet.getString("telefono"),
-                        resultSet.getString("IdCliente"),
+                        resultSet.getString("id_cliente"),
                         resultSet.getString("nombres"),
                         resultSet.getString("apellidos"),
                         resultSet.getString("tipo_cliente")
@@ -98,7 +100,7 @@ public class ClienteDAO {
 
     public Cliente encontrarPorId(String idCliente) {
         Cliente cliente = null;
-        final String sql = "SELECT * FROM Cliente WHERE IdCliente = ?";
+        final String sql = "SELECT * FROM Cliente WHERE id_cliente = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -109,9 +111,9 @@ public class ClienteDAO {
                 if (resultSet.next()) {
                     cliente = new Cliente(
                             resultSet.getString("numero_identificacion"),
-                            resultSet.getString("correo"),
+                            resultSet.getString("correo_electronico"),
                             resultSet.getString("telefono"),
-                            resultSet.getString("IdCliente"),
+                            resultSet.getString("id_cliente"),
                             resultSet.getString("nombres"),
                             resultSet.getString("apellidos"),
                             resultSet.getString("tipo_cliente")
