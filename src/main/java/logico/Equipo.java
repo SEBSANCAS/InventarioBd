@@ -13,6 +13,8 @@ public class Equipo {
 
     private int nivelEstante;
     private String estado;
+    private String disponibilidad;
+    private float descuentoPorCondicion;
     private LocalDate fechaIngreso;
     private String idAdquisicionOrigen;
 
@@ -23,6 +25,8 @@ public class Equipo {
                   Estante estante,
                   int nivelEstante,
                   String estado,
+                  String disponibilidad,
+                  float descuentoPorCondicion,
                   LocalDate fechaIngreso,
                   String idAdquisicionOrigen) {
 
@@ -33,6 +37,8 @@ public class Equipo {
         this.estante = estante;
         this.nivelEstante = nivelEstante;
         this.estado = estado;
+        this.disponibilidad = disponibilidad;
+        this.descuentoPorCondicion = descuentoPorCondicion;
         this.fechaIngreso = fechaIngreso;
         this.idAdquisicionOrigen = idAdquisicionOrigen;
     }
@@ -95,6 +101,22 @@ public class Equipo {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public String getDisponibilidad() {
+        return disponibilidad;
+    }
+
+    public void setDisponibilidad(String disponibilidad) {
+        this.disponibilidad = disponibilidad;
+    }
+
+    public float getDescuentoPorCondicion() {
+        return descuentoPorCondicion;
+    }
+
+    public void setDescuentoPorCondicion(float descuentoPorCondicion) {
+        this.descuentoPorCondicion = descuentoPorCondicion;
     }
 
     public LocalDate getFechaIngreso() {

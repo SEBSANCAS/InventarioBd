@@ -1,21 +1,24 @@
 package logico;
 
+import java.util.ArrayList;
+
 public class Cliente extends Persona {
     private String IdCliente;
     private String nombres;
     private String apellidos;
     private String TipoCLiente;
+    private ArrayList<Telefono> telefonos;
 
-    public Cliente(String numeroIdentificacion, String correo, String telefono, String idCliente, String nombres, String apellidos, String tipoCLiente) {
-        super(numeroIdentificacion, correo, telefono);
+    public Cliente(String numeroIdentificacion, String correo, String idCliente, String nombres, String apellidos) {
+        super(numeroIdentificacion, correo);
         IdCliente = idCliente;
         this.nombres = nombres;
         this.apellidos = apellidos;
-        TipoCLiente = tipoCLiente;
+        telefonos = new ArrayList<>();
     }
 
     public Cliente() {
-
+        telefonos = new ArrayList<>();
     }
 
     public String getIdCliente() {
@@ -48,5 +51,17 @@ public class Cliente extends Persona {
 
     public void setTipoCLiente(String tipoCLiente) {
         TipoCLiente = tipoCLiente;
+    }
+
+    public ArrayList<Telefono> getTelefonos() {
+        return telefonos;
+    }
+
+    public void setTelefonos(ArrayList<Telefono> telefonos) {
+        this.telefonos = telefonos;
+    }
+
+    public void agregarTelefono(Telefono telefono) {
+        telefonos.add(telefono);
     }
 }

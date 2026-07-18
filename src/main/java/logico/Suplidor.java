@@ -1,29 +1,36 @@
 package logico;
 
-
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Suplidor extends Persona{
+public class Suplidor extends Persona {
     private String IdSuplidor;
     private String RazonComercial;
     private String NombreComercial;
-    private String  pais;
-    private String  ciudad;
-    private String  calle;
+    private String pais;
+    private String ciudad;
+    private String calle;
     private LocalDate FechaRegistro;
-    private HashMap<Laptop,DetalleLaptopSuplidor> LaptopsSuplidor;
+    private HashMap<Laptop, DetalleLaptopSuplidor> LaptopsSuplidor;
+    private ArrayList<Telefono> telefonos;
 
-    public Suplidor(String numeroIdentificacion, String correo, String telefono, String nombreComercial, String idSuplidor, String razonComercial, String pais, String ciudad, String calle,LocalDate FechaRegistro) {
-        super(numeroIdentificacion, correo, telefono);
+    public Suplidor(String numeroIdentificacion, String correo, String nombreComercial, String idSuplidor, String razonComercial, String pais, String ciudad, String calle, LocalDate FechaRegistro) {
+        super(numeroIdentificacion, correo);
         NombreComercial = nombreComercial;
         IdSuplidor = idSuplidor;
         RazonComercial = razonComercial;
         this.pais = pais;
         this.ciudad = ciudad;
         this.calle = calle;
-        this.FechaRegistro=FechaRegistro;
+        this.FechaRegistro = FechaRegistro;
         LaptopsSuplidor = new HashMap<>();
+        telefonos = new ArrayList<>();
+    }
+
+    public Suplidor() {
+        LaptopsSuplidor = new HashMap<>();
+        telefonos = new ArrayList<>();
     }
 
     public String getIdSuplidor() {
@@ -88,5 +95,17 @@ public class Suplidor extends Persona{
 
     public void setFechaRegistro(LocalDate fechaRegistro) {
         FechaRegistro = fechaRegistro;
+    }
+
+    public ArrayList<Telefono> getTelefonos() {
+        return telefonos;
+    }
+
+    public void setTelefonos(ArrayList<Telefono> telefonos) {
+        this.telefonos = telefonos;
+    }
+
+    public void agregarTelefono(Telefono telefono) {
+        telefonos.add(telefono);
     }
 }

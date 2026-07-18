@@ -19,7 +19,7 @@ public class EquipoDAO {
     }
 
     public void guardar(Equipo equipo) {
-        final String sql = "INSERT INTO Equipo (id_equipo, numero_serie, id_laptop, id_ubicacion, id_detalle_orden, estado, color, fecha_ingreso) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        final String sql = "INSERT INTO Equipo (id_equipo, numero_serie, id_laptop, id_ubicacion, id_detalle_orden, estado, disponibilidad, color, fecha_ingreso, descuento_por_condicion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -38,8 +38,10 @@ public class EquipoDAO {
             preparedStatement.setString(4, idUbicacion);
             preparedStatement.setString(5, equipo.getIdAdquisicionOrigen());
             preparedStatement.setString(6, equipo.getEstado());
-            preparedStatement.setString(7, equipo.getColor());
-            preparedStatement.setObject(8, equipo.getFechaIngreso());
+            preparedStatement.setString(7, equipo.getDisponibilidad());
+            preparedStatement.setString(8, equipo.getColor());
+            preparedStatement.setObject(9, equipo.getFechaIngreso());
+            preparedStatement.setFloat(10, equipo.getDescuentoPorCondicion());
 
             preparedStatement.executeUpdate();
 
@@ -49,7 +51,7 @@ public class EquipoDAO {
     }
 
     public void actualizar(Equipo equipo) {
-        final String sql = "UPDATE Equipo SET numero_serie=?, id_laptop=?, id_ubicacion=?, id_detalle_orden=?, estado=?, color=?, fecha_ingreso=? WHERE id_equipo=?";
+        final String sql = "UPDATE Equipo SET numero_serie=?, id_laptop=?, id_ubicacion=?, id_detalle_orden=?, estado=?, disponibilidad=?, color=?, fecha_ingreso=?, descuento_por_condicion=? WHERE id_equipo=?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -67,9 +69,11 @@ public class EquipoDAO {
             preparedStatement.setString(3, idUbicacion);
             preparedStatement.setString(4, equipo.getIdAdquisicionOrigen());
             preparedStatement.setString(5, equipo.getEstado());
-            preparedStatement.setString(6, equipo.getColor());
-            preparedStatement.setObject(7, equipo.getFechaIngreso());
-            preparedStatement.setString(8, equipo.getIdEquipo());
+            preparedStatement.setString(6, equipo.getDisponibilidad());
+            preparedStatement.setString(7, equipo.getColor());
+            preparedStatement.setObject(8, equipo.getFechaIngreso());
+            preparedStatement.setFloat(9, equipo.getDescuentoPorCondicion());
+            preparedStatement.setString(10, equipo.getIdEquipo());
 
             preparedStatement.executeUpdate();
 
@@ -118,6 +122,8 @@ public class EquipoDAO {
                         null,
                         0,
                         resultSet.getString("estado"),
+                        resultSet.getString("disponibilidad"),
+                        resultSet.getFloat("descuento_por_condicion"),
                         resultSet.getObject("fecha_ingreso", LocalDate.class),
                         resultSet.getString("id_detalle_orden")
                 );
@@ -174,6 +180,8 @@ public class EquipoDAO {
                             null,
                             0,
                             resultSet.getString("estado"),
+                            resultSet.getString("disponibilidad"),
+                            resultSet.getFloat("descuento_por_condicion"),
                             resultSet.getObject("fecha_ingreso", LocalDate.class),
                             resultSet.getString("id_detalle_orden")
                     );

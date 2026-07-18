@@ -16,7 +16,7 @@ public class ClienteDAO {
     }
 
     public void guardar(Cliente cliente) {
-        final String sql = "INSERT INTO Cliente (id_cliente, numero_identificacion, nombres, apellidos, tipo_cliente, telefono, correo_electronico, fecha_registro) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        final String sql = "INSERT INTO Cliente (id_cliente, numero_identificacion, nombres, apellidos, correo_electronico, fecha_registro) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -25,12 +25,14 @@ public class ClienteDAO {
             preparedStatement.setString(2, cliente.getNumeroIdentificacion());
             preparedStatement.setString(3, cliente.getNombres());
             preparedStatement.setString(4, cliente.getApellidos());
-            preparedStatement.setString(5, cliente.getTipoCLiente());
-            preparedStatement.setString(6, cliente.getTelefono());
-            preparedStatement.setString(7, cliente.getCorreo());
-            preparedStatement.setObject(8, LocalDate.now());
+            preparedStatement.setString(5, cliente.getCorreo());
+            preparedStatement.setObject(6, LocalDate.now());
 
             preparedStatement.executeUpdate();
+
+            if (cliente.getTelefonos() != null && !cliente.getTelefonos().isEmpty()) {
+                TelefonoDAO.getInstance().guardarTodosPorCliente(cliente.getTelefonos(), cliente.getIdCliente());
+            }
 
         } catch (SQLException e) {
             System.out.println("No se pudo guardar el cliente: " + e.getMessage());
@@ -38,7 +40,7 @@ public class ClienteDAO {
     }
 
     public void actualizar(Cliente cliente) {
-        final String sql = "UPDATE Cliente SET numero_identificacion=?, nombres=?, apellidos=?, tipo_cliente=?, telefono=?, correo_electronico=? WHERE id_cliente=?";
+        final String sql = "UPDATE Cliente SET numero_identificacion=?, nombres=?, apellidos=?, correo_electronico=? WHERE id_cliente=?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -46,10 +48,8 @@ public class ClienteDAO {
             preparedStatement.setString(1, cliente.getNumeroIdentificacion());
             preparedStatement.setString(2, cliente.getNombres());
             preparedStatement.setString(3, cliente.getApellidos());
-            preparedStatement.setString(4, cliente.getTipoCLiente());
-            preparedStatement.setString(5, cliente.getTelefono());
-            preparedStatement.setString(6, cliente.getCorreo());
-            preparedStatement.setString(7, cliente.getIdCliente());
+            preparedStatement.setString(4, cliente.getCorreo());
+            preparedStatement.setString(5, cliente.getIdCliente());
 
             preparedStatement.executeUpdate();
 
@@ -84,12 +84,11 @@ public class ClienteDAO {
                 Cliente cliente = new Cliente(
                         resultSet.getString("numero_identificacion"),
                         resultSet.getString("correo_electronico"),
-                        resultSet.getString("telefono"),
                         resultSet.getString("id_cliente"),
                         resultSet.getString("nombres"),
-                        resultSet.getString("apellidos"),
-                        resultSet.getString("tipo_cliente")
+                        resultSet.getString("apellidos")
                 );
+                cliente.setTelefonos(TelefonoDAO.getInstance().encontrarPorCliente(cliente.getIdCliente()));
                 clientes.add(cliente);
             }
         } catch (SQLException e) {
@@ -112,12 +111,11 @@ public class ClienteDAO {
                     cliente = new Cliente(
                             resultSet.getString("numero_identificacion"),
                             resultSet.getString("correo_electronico"),
-                            resultSet.getString("telefono"),
                             resultSet.getString("id_cliente"),
                             resultSet.getString("nombres"),
-                            resultSet.getString("apellidos"),
-                            resultSet.getString("tipo_cliente")
+                            resultSet.getString("apellidos")
                     );
+                    cliente.setTelefonos(TelefonoDAO.getInstance().encontrarPorCliente(idCliente));
                 }
             }
         } catch (SQLException e) {

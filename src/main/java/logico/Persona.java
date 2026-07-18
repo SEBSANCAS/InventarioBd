@@ -3,12 +3,10 @@ package logico;
 public abstract class Persona {
     private String NumeroIdentificacion;
     private String correo;
-    private String telefono;
 
-    public Persona(String numeroIdentificacion, String correo, String telefono) {
+    public Persona(String numeroIdentificacion, String correo) {
         NumeroIdentificacion = numeroIdentificacion;
         this.correo = correo;
-        this.telefono = telefono;
     }
 
     protected Persona() {
@@ -28,13 +26,5 @@ public abstract class Persona {
 
     public void setCorreo(String correo) {
         this.correo = correo;
-    }
-
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
     }
 }
