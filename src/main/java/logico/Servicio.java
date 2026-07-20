@@ -215,6 +215,45 @@ public class Servicio {
         }
         ServicioDAO.getInstance().guardarContadores(this);
     }
+    public String generarIdCliente() {
+        return String.format("CLI%03d", getSiguienteIdCliente());
+    }
+
+    public String generarIdMarca() {
+        return String.format("MAR%03d", getSiguienteIdMarca());
+    }
+
+    public String generarIdSuplidor() {
+        return String.format("SUP%03d", getSiguienteIdSuplidor());
+    }
+
+    public String generarIdEstante() {
+        return String.format("EST%03d", getSiguienteIdEstante());
+    }
+
+    public String generarIdLaptop() {
+        return String.format("LAP%03d", getSiguienteIdLaptop());
+    }
+
+    public String generarIdEquipo() {
+        return String.format("EQP%03d", getSiguienteIdEquipo());
+    }
+
+    public String generarIdAdquisicion() {
+        return String.format("ADQ%03d", getSiguienteIdAdquisicion());
+    }
+
+    public String generarIdFactura() {
+        return String.format("FAC%03d", getSiguienteIdFactura());
+    }
+
+    public String generarIdDetalleAdquisicion() {
+        return String.format("DAD%03d", getSiguienteIdDetalleAdquisicion());
+    }
+
+    public String generarIdDetalleFactura() {
+        return String.format("DFA%03d", getSiguienteIdDetalleFactura());
+    }
     void registrarMarca(Marca marca)
     {
         misMarcas.put(marca.getIdMarca(),marca);
@@ -239,10 +278,14 @@ public class Servicio {
     {
         misLaptops.put(laptop.getIdLaptop(), laptop);
         LaptopDAO.getInstance().guardar(laptop);
+        ServicioDAO.getInstance().guardarContadores(this);
     }
     public void registrarEquipo(Equipo equipo)
     {
         misEquipos.put(equipo.getIdEquipo(), equipo);
         EquipoDAO.getInstance().guardar(equipo);
+    }
+    public String generarIdDependiente(String idPadre, int cantidadActual) {
+        return String.format("%s-%02d", idPadre, cantidadActual + 1);
     }
 }
