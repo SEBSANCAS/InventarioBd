@@ -147,7 +147,63 @@ public class LaptopDAO {
         }
         return laptops;
     }
+    public ArrayList<Laptop> listarPorSuplidor(String idSuplidor) {
+        ArrayList<Laptop> laptops = new ArrayList<>();
 
+        final String sql = "SELECT DISTINCT l.* FROM Laptop l " +
+                "INNER JOIN Detalle_Orden_Compra doc ON l.id_laptop = doc.id_laptop " +
+                "INNER JOIN Orden_Compra oc ON doc.id_orden_compra = oc.id_orden_compra " +
+                "WHERE oc.id_suplidor = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, idSuplidor);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+
+                while (resultSet.next()) {
+
+                    Marca marcaCascaron = null;
+                    String idMarca = resultSet.getString("id_marca");
+
+                    if (idMarca != null) {
+                        marcaCascaron = new Marca(idMarca, "");
+                    }
+
+                    Laptop laptop = new Laptop(
+                            resultSet.getString("id_laptop"),
+                            resultSet.getString("numero_modelo"),
+                            resultSet.getString("nombre_comercial"),
+                            marcaCascaron,
+                            resultSet.getFloat("peso"),
+                            resultSet.getString("procesador"),
+                            resultSet.getString("gpu"),
+                            resultSet.getString("tipo_ram"),
+                            resultSet.getFloat("cantidad_ram"),
+                            resultSet.getString("tipo_almacenamiento"),
+                            resultSet.getFloat("capacidad_almacenamiento"),
+                            resultSet.getFloat("tamano_pantalla"),
+                            resultSet.getString("resolucion_pantalla"),
+                            0f,
+                            resultSet.getFloat("precio_venta_detalle"),
+                            resultSet.getFloat("precio_venta_mayorista"),
+                            resultSet.getInt("cantidad_minima_mayorista"),
+                            resultSet.getInt("cantidad_alerta_stock"),
+                            0,
+                            resultSet.getInt("meses_garantia")
+                    );
+
+                    laptops.add(laptop);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("No se pudieron obtener las laptops del suplidor: " + e.getMessage());
+        }
+
+        return laptops;
+    }
     public Laptop encontrarPorId(String idLaptop) {
         Laptop laptop = null;
         final String sql = "SELECT * FROM Laptop WHERE id_laptop = ?";

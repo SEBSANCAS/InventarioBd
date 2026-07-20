@@ -1,7 +1,6 @@
 package DataBase;
 
 import logico.Equipo;
-import logico.Estante;
 import logico.Laptop;
 
 import java.sql.*;
@@ -24,12 +23,9 @@ public class EquipoDAO {
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
-            String idUbicacion = null;
-            if (equipo.getEstante() != null) {
-                idUbicacion = EstanteDAO.getInstance().obtenerIdUbicacion(
-                        equipo.getEstante().getIdEstante(),
-                        equipo.getNivelEstante()
-                );
+            String idUbicacion = EstanteDAO.getInstance().obtenerPrimeraUbicacionDisponible();
+            if (idUbicacion == null) {
+                throw new RuntimeException("No hay espacio disponible en el almacén.");
             }
 
             preparedStatement.setString(1, equipo.getIdEquipo());
@@ -51,29 +47,31 @@ public class EquipoDAO {
     }
 
     public void actualizar(Equipo equipo) {
-        final String sql = "UPDATE Equipo SET numero_serie=?, id_laptop=?, id_ubicacion=?, id_detalle_orden=?, estado=?, disponibilidad=?, color=?, fecha_ingreso=?, descuento_por_condicion=? WHERE id_equipo=?";
+
+        final String sql =
+                "UPDATE Equipo SET " +
+                        "numero_serie=?, " +
+                        "id_laptop=?, " +
+                        "id_detalle_orden=?, " +
+                        "estado=?, " +
+                        "disponibilidad=?, " +
+                        "color=?, " +
+                        "fecha_ingreso=?, " +
+                        "descuento_por_condicion=? " +
+                        "WHERE id_equipo=?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
-            String idUbicacion = null;
-            if (equipo.getEstante() != null) {
-                idUbicacion = EstanteDAO.getInstance().obtenerIdUbicacion(
-                        equipo.getEstante().getIdEstante(),
-                        equipo.getNivelEstante()
-                );
-            }
-
             preparedStatement.setString(1, equipo.getNumeroSerie());
             preparedStatement.setString(2, equipo.getLaptop().getIdLaptop());
-            preparedStatement.setString(3, idUbicacion);
-            preparedStatement.setString(4, equipo.getIdAdquisicionOrigen());
-            preparedStatement.setString(5, equipo.getEstado());
-            preparedStatement.setString(6, equipo.getDisponibilidad());
-            preparedStatement.setString(7, equipo.getColor());
-            preparedStatement.setObject(8, equipo.getFechaIngreso());
-            preparedStatement.setFloat(9, equipo.getDescuentoPorCondicion());
-            preparedStatement.setString(10, equipo.getIdEquipo());
+            preparedStatement.setString(3, equipo.getIdAdquisicionOrigen());
+            preparedStatement.setString(4, equipo.getEstado());
+            preparedStatement.setString(5, equipo.getDisponibilidad());
+            preparedStatement.setString(6, equipo.getColor());
+            preparedStatement.setObject(7, equipo.getFechaIngreso());
+            preparedStatement.setFloat(8, equipo.getDescuentoPorCondicion());
+            preparedStatement.setString(9, equipo.getIdEquipo());
 
             preparedStatement.executeUpdate();
 
@@ -96,12 +94,90 @@ public class EquipoDAO {
         }
     }
 
+    public ArrayList<Equipo> encontrarPorEstado(String estado) {
+
+        ArrayList<Equipo> equipos = new ArrayList<>();
+
+        final String sql = "SELECT * FROM Equipo WHERE estado = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, estado);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+
+                while (resultSet.next()) {
+
+                    Laptop laptop = LaptopDAO.getInstance()
+                            .encontrarPorId(resultSet.getString("id_laptop"));
+
+                    Equipo equipo = new Equipo(
+                            resultSet.getString("id_equipo"),
+                            laptop,
+                            resultSet.getString("numero_serie"),
+                            resultSet.getString("color"),
+                            resultSet.getString("estado"),
+                            resultSet.getString("disponibilidad"),
+                            resultSet.getFloat("descuento_por_condicion"),
+                            resultSet.getObject("fecha_ingreso", LocalDate.class),
+                            resultSet.getString("id_detalle_orden")
+                    );
+
+                    equipos.add(equipo);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("No se pudieron obtener los equipos: " + e.getMessage());
+        }
+
+        return equipos;
+    }
+    public ArrayList<Equipo> encontrarPorDisponibilidad(String disponibilidad) {
+
+        ArrayList<Equipo> equipos = new ArrayList<>();
+
+        final String sql = "SELECT * FROM Equipo WHERE disponibilidad = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, disponibilidad);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+
+                while (resultSet.next()) {
+
+                    Laptop laptop = LaptopDAO.getInstance()
+                            .encontrarPorId(resultSet.getString("id_laptop"));
+
+                    Equipo equipo = new Equipo(
+                            resultSet.getString("id_equipo"),
+                            laptop,
+                            resultSet.getString("numero_serie"),
+                            resultSet.getString("color"),
+                            resultSet.getString("estado"),
+                            resultSet.getString("disponibilidad"),
+                            resultSet.getFloat("descuento_por_condicion"),
+                            resultSet.getObject("fecha_ingreso", LocalDate.class),
+                            resultSet.getString("id_detalle_orden")
+                    );
+
+                    equipos.add(equipo);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("No se pudieron obtener los equipos: " + e.getMessage());
+        }
+
+        return equipos;
+    }
     public ArrayList<Equipo> EncontrarTodos() {
         ArrayList<Equipo> equipos = new ArrayList<>();
 
-        final String sql = "SELECT e.*, u.codigo_estante, u.nivel_estante " +
-                "FROM Equipo e " +
-                "LEFT JOIN Ubicacion_Almacen u ON e.id_ubicacion = u.id_ubicacion";
+        final String sql = "SELECT * FROM Equipo";
 
         try (Connection connection = DatabaseConnection.getConnection();
              Statement statement = connection.createStatement();
@@ -119,31 +195,12 @@ public class EquipoDAO {
                         laptop,
                         resultSet.getString("numero_serie"),
                         resultSet.getString("color"),
-                        null,
-                        0,
                         resultSet.getString("estado"),
                         resultSet.getString("disponibilidad"),
                         resultSet.getFloat("descuento_por_condicion"),
                         resultSet.getObject("fecha_ingreso", LocalDate.class),
                         resultSet.getString("id_detalle_orden")
                 );
-
-                String codigoEstante = resultSet.getString("codigo_estante");
-                String nivelStr = resultSet.getString("nivel_estante");
-
-                if (codigoEstante != null) {
-                    Estante estanteCascaron = new Estante(codigoEstante, 0, 0, "");
-                    eq.setEstante(estanteCascaron);
-
-                    if (nivelStr != null && !nivelStr.isEmpty()) {
-                        try {
-                            eq.setNivelEstante(Integer.parseInt(nivelStr));
-                        } catch (NumberFormatException ex) {
-                            eq.setNivelEstante(1);
-                        }
-                    }
-                }
-
                 equipos.add(eq);
             }
         } catch (SQLException e) {
@@ -154,10 +211,7 @@ public class EquipoDAO {
 
     public Equipo encontrarPorId(String idEquipo) {
         Equipo eq = null;
-        final String sql = "SELECT e.*, u.codigo_estante, u.nivel_estante " +
-                "FROM Equipo e " +
-                "LEFT JOIN Ubicacion_Almacen u ON e.id_ubicacion = u.id_ubicacion " +
-                "WHERE e.id_equipo = ?";
+        final String sql ="SELECT * FROM Equipo WHERE id_equipo = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -177,29 +231,12 @@ public class EquipoDAO {
                             laptop,
                             resultSet.getString("numero_serie"),
                             resultSet.getString("color"),
-                            null,
-                            0,
                             resultSet.getString("estado"),
                             resultSet.getString("disponibilidad"),
                             resultSet.getFloat("descuento_por_condicion"),
                             resultSet.getObject("fecha_ingreso", LocalDate.class),
                             resultSet.getString("id_detalle_orden")
                     );
-
-                    String codigoEstante = resultSet.getString("codigo_estante");
-                    String nivelStr = resultSet.getString("nivel_estante");
-
-                    if (codigoEstante != null) {
-                        Estante estanteCascaron = new Estante(codigoEstante, 0, 0, "");
-                        eq.setEstante(estanteCascaron);
-                        if (nivelStr != null && !nivelStr.isEmpty()) {
-                            try {
-                                eq.setNivelEstante(Integer.parseInt(nivelStr));
-                            } catch (NumberFormatException ex) {
-                                eq.setNivelEstante(1);
-                            }
-                        }
-                    }
                 }
             }
         } catch (SQLException e) {

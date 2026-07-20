@@ -7,11 +7,7 @@ public class Equipo {
     private String idEquipo;
     private String numeroSerie;
     private String color;
-
     private Laptop laptop;
-    private Estante estante;
-
-    private int nivelEstante;
     private String estado;
     private String disponibilidad;
     private float descuentoPorCondicion;
@@ -22,8 +18,6 @@ public class Equipo {
                   Laptop laptop,
                   String numeroSerie,
                   String color,
-                  Estante estante,
-                  int nivelEstante,
                   String estado,
                   String disponibilidad,
                   float descuentoPorCondicion,
@@ -34,8 +28,6 @@ public class Equipo {
         this.laptop = laptop;
         this.numeroSerie = numeroSerie;
         this.color = color;
-        this.estante = estante;
-        this.nivelEstante = nivelEstante;
         this.estado = estado;
         this.disponibilidad = disponibilidad;
         this.descuentoPorCondicion = descuentoPorCondicion;
@@ -77,22 +69,6 @@ public class Equipo {
 
     public void setColor(String color) {
         this.color = color;
-    }
-
-    public Estante getEstante() {
-        return estante;
-    }
-
-    public void setEstante(Estante estante) {
-        this.estante = estante;
-    }
-
-    public int getNivelEstante() {
-        return nivelEstante;
-    }
-
-    public void setNivelEstante(int nivelEstante) {
-        this.nivelEstante = nivelEstante;
     }
 
     public String getEstado() {

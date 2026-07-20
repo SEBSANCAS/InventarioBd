@@ -64,7 +64,42 @@ public class DetalleAdquisicionDAO {
             System.out.println("No se pudo actualizar el detalle de adquisicion: " + e.getMessage());
         }
     }
+    public ArrayList<DetalleAdquisicion> encontrarPorIdAdquisicion(String idCompra) {
 
+        ArrayList<DetalleAdquisicion> detalles = new ArrayList<>();
+
+        final String sql = "SELECT * FROM Detalle_Adquisicion WHERE id_compra = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, idCompra);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+
+                while (resultSet.next()) {
+
+                    Laptop laptop = LaptopDAO.getInstance()
+                            .encontrarPorId(resultSet.getString("id_laptop"));
+
+                    DetalleAdquisicion detalle = new DetalleAdquisicion(
+                            resultSet.getString("id_detalle"),
+                            laptop,
+                            resultSet.getInt("cantidad"),
+                            resultSet.getFloat("precio_unitario_compra"),
+                            resultSet.getFloat("subtotal_linea")
+                    );
+
+                    detalles.add(detalle);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("No se pudieron obtener los detalles de la adquisición: " + e.getMessage());
+        }
+
+        return detalles;
+    }
     public void borrar(String idDetalleAdquisicion) {
         final String sql = "DELETE FROM Detalle_Orden_Compra WHERE id_detalle_orden = ?";
 

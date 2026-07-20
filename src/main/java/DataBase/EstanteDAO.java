@@ -94,4 +94,19 @@ public class EstanteDAO {
             System.out.println("No se pudo eliminar el estante: " + e.getMessage());
         }
     }
+    public String obtenerPrimeraUbicacionDisponible() {
+        String idUbicacion = null;
+        final String sql =
+                "SELECT u.id_ubicacion " + "FROM Ubicacion_Almacen u " + "LEFT JOIN Equipo e ON u.id_ubicacion = e.id_ubicacion " +  "GROUP BY u.id_ubicacion, u.capacidad_maxima " +  "HAVING COUNT(e.IdEquipo) < u.capacidad_maxima " + "ORDER BY u.codigo_estante, CAST(u.nivel_estante AS UNSIGNED) " + "LIMIT 1";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            if (resultSet.next()) {
+                idUbicacion = resultSet.getString("id_ubicacion");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error obteniendo ubicación disponible: " + e.getMessage());
+        }
+        return idUbicacion;
+    }
 }

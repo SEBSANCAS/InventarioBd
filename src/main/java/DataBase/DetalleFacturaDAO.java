@@ -142,4 +142,41 @@ public class DetalleFacturaDAO {
         }
         return det;
     }
+    public ArrayList<DetalleFactura> encontrarPorFactura(String idFactura) {
+
+        ArrayList<DetalleFactura> detalles = new ArrayList<>();
+
+        final String sql = "SELECT * FROM Detalle_Factura WHERE id_factura = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, idFactura);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+
+                while (resultSet.next()) {
+
+                    Equipo equipo = EquipoDAO.getInstance()
+                            .encontrarPorId(resultSet.getString("IdEquipo"));
+
+                    DetalleFactura detalle = new DetalleFactura(
+                            resultSet.getString("id_detalle"),
+                            resultSet.getFloat("precio_unitario_venta"),
+                            resultSet.getFloat("monto_descuento"),
+                            resultSet.getFloat("subtotal_linea"),
+                            0,
+                            equipo
+                    );
+
+                    detalles.add(detalle);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("No se pudieron obtener los detalles de la factura: " + e.getMessage());
+        }
+
+        return detalles;
+    }
 }

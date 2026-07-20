@@ -40,7 +40,43 @@ public class AdquisicionDAO {
             System.out.println("No se pudo guardar la adquisicion: " + e.getMessage());
         }
     }
+    public ArrayList<Adquisicion> encontrarPorEstado(String estado) {
 
+        ArrayList<Adquisicion> adquisiciones = new ArrayList<>();
+
+        final String sql = "SELECT * FROM Adquisicion WHERE estado = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, estado);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+
+                while (resultSet.next()) {
+
+                    Suplidor suplidor = SuplidorDAO.getInstance()
+                            .encontrarPorId(resultSet.getString("id_suplidor"));
+
+                    Adquisicion adquisicion = new Adquisicion(
+                            resultSet.getString("id_compra"),
+                            suplidor,
+                            resultSet.getObject("fecha_emision", LocalDate.class),
+                            resultSet.getObject("fecha_entrega", LocalDate.class),
+                            resultSet.getString("estado"),
+                            resultSet.getFloat("monto_total")
+                    );
+
+                    adquisiciones.add(adquisicion);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("No se pudieron obtener las órdenes de compra: " + e.getMessage());
+        }
+
+        return adquisiciones;
+    }
     public void actualizar(Adquisicion adquisicion) {
         final String sql = "UPDATE Orden_Compra SET id_suplidor=?, fecha_emision=?, fecha_entrega=?, estado_orden=?, monto_total_estimado=? WHERE id_orden_compra=?";
 
