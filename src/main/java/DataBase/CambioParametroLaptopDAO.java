@@ -1,5 +1,8 @@
 package DataBase;
 
+import logico.Laptop;
+import logico.Marca;
+
 import java.sql.*;
 import java.time.LocalDate;
 
@@ -52,7 +55,59 @@ public class CambioParametroLaptopDAO {
             System.out.println("No se pudo actualizar el cambio de parametro: " + e.getMessage());
         }
     }
+    public Laptop buscarLaptop(String idLaptop) {
+        Laptop laptop = null;
 
+        final String sql = "SELECT * FROM Laptop WHERE id_laptop = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, idLaptop);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+
+                if (resultSet.next()) {
+
+                    Marca marcaCascaron = null;
+                    String idMarca = resultSet.getString("id_marca");
+
+                    if (idMarca != null) {
+                        marcaCascaron = new Marca(idMarca, "");
+                    }
+
+                    laptop = new Laptop(
+                            resultSet.getString("id_laptop"),
+                            resultSet.getString("numero_modelo"),
+                            resultSet.getString("nombre_comercial"),
+                            marcaCascaron,
+                            resultSet.getFloat("peso"),
+                            resultSet.getString("procesador"),
+                            resultSet.getString("gpu"),
+                            resultSet.getString("tipo_ram"),
+                            resultSet.getFloat("cantidad_ram"),
+                            resultSet.getString("tipo_almacenamiento"),
+                            resultSet.getFloat("capacidad_almacenamiento"),
+                            resultSet.getFloat("tamano_pantalla"),
+                            resultSet.getString("resolucion_pantalla"),
+                            0f,
+                            resultSet.getFloat("precio_venta_detalle"),
+                            resultSet.getFloat("precio_venta_mayorista"),
+                            resultSet.getInt("cantidad_minima_mayorista"),
+                            resultSet.getInt("cantidad_alerta_stock"),
+                            resultSet.getInt("stock_actual"),
+                            resultSet.getInt("meses_garantia")
+                    );
+                }
+
+            }
+
+        } catch (SQLException e) {
+            System.out.println("No se pudo obtener la laptop: " + e.getMessage());
+        }
+
+        return laptop;
+    }
     public void borrar(String idCambio) {
         final String sql = "DELETE FROM Cambio_Parametro_Laptop WHERE id_cambio = ?";
 

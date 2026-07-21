@@ -1,6 +1,9 @@
 package DataBase;
 
+import logico.Auditoria;
+
 import java.sql.*;
+import java.util.ArrayList;
 
 public class AuditoriaRentabilidadDAO {
 
@@ -62,5 +65,38 @@ public class AuditoriaRentabilidadDAO {
         } catch (SQLException e) {
             System.out.println("No se pudo eliminar la auditoria: " + e.getMessage());
         }
+    }
+    public ArrayList<Auditoria> busca(String idLaptop) {
+
+        ArrayList<Auditoria> lista = new ArrayList<>();
+
+        final String sql =
+                "SELECT ar.* " + "FROM Auditoria_Rentabilidad ar " + "INNER JOIN Equipo e ON ar.IdEquipo = e.IdEquipo " + "WHERE e.id_laptop = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, idLaptop);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+
+                while (resultSet.next()) {
+
+                    Auditoria auditoria = new Auditoria();
+
+                    auditoria.setIdAuditoria(resultSet.getString("id_auditoria"));
+                    auditoria.setPrecioVentaFinal(resultSet.getFloat("precio_venta_final"));
+                    auditoria.setCostoCompra(resultSet.getFloat("costo_compra"));
+
+                    lista.add(auditoria);
+                }
+
+            }
+
+        } catch (SQLException e) {
+            System.out.println("No se pudieron obtener las auditorías: " + e.getMessage());
+        }
+
+        return lista;
     }
 }

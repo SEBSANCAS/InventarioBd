@@ -288,4 +288,23 @@ public class Servicio {
     public String generarIdDependiente(String idPadre, int cantidadActual) {
         return String.format("%s-%02d", idPadre, cantidadActual + 1);
     }
+    public float calcularRentabilidadHistoricaLaptop(String idLaptop) {
+
+        ArrayList<Auditoria> auditorias =
+                AuditoriaRentabilidadDAO.getInstance().busca(idLaptop);
+
+        float totalVentas = 0;
+        float totalCostos = 0;
+
+        for (Auditoria a : auditorias) {
+            totalVentas += a.getPrecioVentaFinal();
+            totalCostos += a.getCostoCompra();
+        }
+
+        if (totalCostos == 0) {
+            return 0;
+        }
+
+        return ((totalVentas - totalCostos) / totalCostos) * 100;
+    }
 }
