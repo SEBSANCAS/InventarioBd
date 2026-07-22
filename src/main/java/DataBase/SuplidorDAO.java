@@ -16,7 +16,7 @@ public class SuplidorDAO {
     }
 
     public void guardar(Suplidor suplidor) {
-        final String sql = "INSERT INTO Suplidor (id_suplidor, rnc_identificador, razon_social, nombre_comercial, correo_electronico, pais, ciudad, calle, fecha_registro) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        final String sql = "INSERT INTO Suplidor (id_suplidor, numero_identificacion, razon_social, nombre_comercial, correo_electronico, id_calle, fecha_registro, tipo_identificacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -26,15 +26,18 @@ public class SuplidorDAO {
             preparedStatement.setString(3, suplidor.getRazonComercial());
             preparedStatement.setString(4, suplidor.getNombreComercial());
             preparedStatement.setString(5, suplidor.getCorreo());
-            preparedStatement.setString(6, suplidor.getPais());
-            preparedStatement.setString(7, suplidor.getCiudad());
-            preparedStatement.setString(8, suplidor.getCalle());
-            preparedStatement.setObject(9, LocalDate.now());
+            preparedStatement.setString(6, suplidor.getIdCalle());
+            preparedStatement.setObject(7, LocalDate.now());
+            preparedStatement.setString(8, suplidor.getTipoIdentificacion());
 
             preparedStatement.executeUpdate();
 
             if (suplidor.getTelefonos() != null && !suplidor.getTelefonos().isEmpty()) {
                 TelefonoDAO.getInstance().guardarTodosPorSuplidor(suplidor.getTelefonos(), suplidor.getIdSuplidor());
+            }
+
+            if (suplidor.getLaptopsSuplidor() != null && !suplidor.getLaptopsSuplidor().isEmpty()) {
+                SuplidorLaptopDAO.getInstance().guardarLaptopsPorSuplidor(suplidor.getIdSuplidor(), suplidor.getLaptopsSuplidor());
             }
 
         } catch (SQLException e) {
@@ -43,7 +46,7 @@ public class SuplidorDAO {
     }
 
     public void actualizar(Suplidor suplidor) {
-        final String sql = "UPDATE Suplidor SET rnc_identificador=?, razon_social=?, nombre_comercial=?, correo_electronico=?, pais=?, ciudad=?, calle=? WHERE id_suplidor=?";
+        final String sql = "UPDATE Suplidor SET numero_identificacion=?, razon_social=?, nombre_comercial=?, correo_electronico=?, id_calle=?, tipo_identificacion=? WHERE id_suplidor=?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -52,12 +55,15 @@ public class SuplidorDAO {
             preparedStatement.setString(2, suplidor.getRazonComercial());
             preparedStatement.setString(3, suplidor.getNombreComercial());
             preparedStatement.setString(4, suplidor.getCorreo());
-            preparedStatement.setString(5, suplidor.getPais());
-            preparedStatement.setString(6, suplidor.getCiudad());
-            preparedStatement.setString(7, suplidor.getCalle());
-            preparedStatement.setString(8, suplidor.getIdSuplidor());
+            preparedStatement.setString(5, suplidor.getIdCalle());
+            preparedStatement.setString(6, suplidor.getTipoIdentificacion());
+            preparedStatement.setString(7, suplidor.getIdSuplidor());
 
             preparedStatement.executeUpdate();
+
+            if (suplidor.getLaptopsSuplidor() != null) {
+                SuplidorLaptopDAO.getInstance().actualizarLaptopsPorSuplidor(suplidor.getIdSuplidor(), suplidor.getLaptopsSuplidor());
+            }
 
         } catch (SQLException e) {
             System.out.println("No se pudo actualizar el suplidor: " + e.getMessage());
@@ -88,17 +94,17 @@ public class SuplidorDAO {
 
             while (resultSet.next()) {
                 Suplidor suplidor = new Suplidor(
-                        resultSet.getString("rnc_identificador"),
+                        resultSet.getString("numero_identificacion"),
                         resultSet.getString("correo_electronico"),
                         resultSet.getString("nombre_comercial"),
                         resultSet.getString("id_suplidor"),
                         resultSet.getString("razon_social"),
-                        resultSet.getString("pais"),
-                        resultSet.getString("ciudad"),
-                        resultSet.getString("calle"),
-                        resultSet.getObject("fecha_registro", LocalDate.class)
+                        resultSet.getString("id_calle"),
+                        resultSet.getObject("fecha_registro", LocalDate.class),
+                        resultSet.getString("tipo_identificacion")
                 );
                 suplidor.setTelefonos(TelefonoDAO.getInstance().encontrarPorSuplidor(suplidor.getIdSuplidor()));
+                suplidor.setLaptopsSuplidor(SuplidorLaptopDAO.getInstance().encontrarPorSuplidor(suplidor.getIdSuplidor()));
                 suplidores.add(suplidor);
             }
         } catch (SQLException e) {
@@ -119,17 +125,17 @@ public class SuplidorDAO {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
                     suplidor = new Suplidor(
-                            resultSet.getString("rnc_identificador"),
+                            resultSet.getString("numero_identificacion"),
                             resultSet.getString("correo_electronico"),
                             resultSet.getString("nombre_comercial"),
                             resultSet.getString("id_suplidor"),
                             resultSet.getString("razon_social"),
-                            resultSet.getString("pais"),
-                            resultSet.getString("ciudad"),
-                            resultSet.getString("calle"),
-                            resultSet.getObject("fecha_registro", LocalDate.class)
+                            resultSet.getString("id_calle"),
+                            resultSet.getObject("fecha_registro", LocalDate.class),
+                            resultSet.getString("tipo_identificacion")
                     );
                     suplidor.setTelefonos(TelefonoDAO.getInstance().encontrarPorSuplidor(idSuplidor));
+                    suplidor.setLaptopsSuplidor(SuplidorLaptopDAO.getInstance().encontrarPorSuplidor(idSuplidor));
                 }
             }
         } catch (SQLException e) {

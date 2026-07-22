@@ -50,6 +50,8 @@ public class Laptop {
     public Laptop() {
     }
 
+    public Laptop(String idLaptop){this.IdLaptop=idLaptop;}
+
     public String getIdLaptop() {
         return IdLaptop;
     }

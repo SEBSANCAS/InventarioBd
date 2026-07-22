@@ -7,18 +7,31 @@ public class Cliente extends Persona {
     private String nombres;
     private String apellidos;
     private String TipoCLiente;
+    private String tipoIdentificacion;
     private ArrayList<Telefono> telefonos;
+
+    public Cliente(String numeroIdentificacion, String correo, String idCliente, String nombres, String apellidos, String tipoCliente, String tipoIdentificacion) {
+        super(numeroIdentificacion, correo);
+        this.IdCliente = idCliente;
+        this.nombres = nombres;
+        this.apellidos = apellidos;
+        this.TipoCLiente = tipoCliente;
+        this.tipoIdentificacion = tipoIdentificacion;
+        this.telefonos = new ArrayList<>();
+    }
 
     public Cliente(String numeroIdentificacion, String correo, String idCliente, String nombres, String apellidos) {
         super(numeroIdentificacion, correo);
-        IdCliente = idCliente;
+        this.IdCliente = idCliente;
         this.nombres = nombres;
         this.apellidos = apellidos;
-        telefonos = new ArrayList<>();
+        this.TipoCLiente = (apellidos == null || apellidos.trim().isEmpty()) ? "Empresa" : "Persona";
+        this.tipoIdentificacion = (this.TipoCLiente.equals("Empresa")) ? "Rnc" : "Cedula";
+        this.telefonos = new ArrayList<>();
     }
 
     public Cliente() {
-        telefonos = new ArrayList<>();
+        this.telefonos = new ArrayList<>();
     }
 
     public String getIdCliente() {
@@ -51,6 +64,14 @@ public class Cliente extends Persona {
 
     public void setTipoCLiente(String tipoCLiente) {
         TipoCLiente = tipoCLiente;
+    }
+
+    public String getTipoIdentificacion() {
+        return tipoIdentificacion;
+    }
+
+    public void setTipoIdentificacion(String tipoIdentificacion) {
+        this.tipoIdentificacion = tipoIdentificacion;
     }
 
     public ArrayList<Telefono> getTelefonos() {

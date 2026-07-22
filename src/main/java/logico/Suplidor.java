@@ -8,29 +8,31 @@ public class Suplidor extends Persona {
     private String IdSuplidor;
     private String RazonComercial;
     private String NombreComercial;
-    private String pais;
-    private String ciudad;
-    private String calle;
+    private String idCalle;
+    private String tipoIdentificacion;
     private LocalDate FechaRegistro;
     private HashMap<Laptop, DetalleLaptopSuplidor> LaptopsSuplidor;
     private ArrayList<Telefono> telefonos;
 
-    public Suplidor(String numeroIdentificacion, String correo, String nombreComercial, String idSuplidor, String razonComercial, String pais, String ciudad, String calle, LocalDate FechaRegistro) {
+    public Suplidor(String numeroIdentificacion, String correo, String nombreComercial, String idSuplidor, String razonComercial, String idCalle, LocalDate FechaRegistro, String tipoIdentificacion) {
         super(numeroIdentificacion, correo);
-        NombreComercial = nombreComercial;
-        IdSuplidor = idSuplidor;
-        RazonComercial = razonComercial;
-        this.pais = pais;
-        this.ciudad = ciudad;
-        this.calle = calle;
+        this.NombreComercial = nombreComercial;
+        this.IdSuplidor = idSuplidor;
+        this.RazonComercial = razonComercial;
+        this.idCalle = idCalle;
         this.FechaRegistro = FechaRegistro;
-        LaptopsSuplidor = new HashMap<>();
-        telefonos = new ArrayList<>();
+        this.tipoIdentificacion = tipoIdentificacion;
+        this.LaptopsSuplidor = new HashMap<>();
+        this.telefonos = new ArrayList<>();
+    }
+
+    public Suplidor(String numeroIdentificacion, String correo, String nombreComercial, String idSuplidor, String razonComercial, String idCalle, LocalDate FechaRegistro) {
+        this(numeroIdentificacion, correo, nombreComercial, idSuplidor, razonComercial, idCalle, FechaRegistro, "Rnc");
     }
 
     public Suplidor() {
-        LaptopsSuplidor = new HashMap<>();
-        telefonos = new ArrayList<>();
+        this.LaptopsSuplidor = new HashMap<>();
+        this.telefonos = new ArrayList<>();
     }
 
     public String getIdSuplidor() {
@@ -57,28 +59,20 @@ public class Suplidor extends Persona {
         NombreComercial = nombreComercial;
     }
 
-    public String getPais() {
-        return pais;
+    public String getIdCalle() {
+        return idCalle;
     }
 
-    public void setPais(String pais) {
-        this.pais = pais;
+    public void setIdCalle(String idCalle) {
+        this.idCalle = idCalle;
     }
 
-    public String getCiudad() {
-        return ciudad;
+    public String getTipoIdentificacion() {
+        return tipoIdentificacion;
     }
 
-    public void setCiudad(String ciudad) {
-        this.ciudad = ciudad;
-    }
-
-    public String getCalle() {
-        return calle;
-    }
-
-    public void setCalle(String calle) {
-        this.calle = calle;
+    public void setTipoIdentificacion(String tipoIdentificacion) {
+        this.tipoIdentificacion = tipoIdentificacion;
     }
 
     public HashMap<Laptop, DetalleLaptopSuplidor> getLaptopsSuplidor() {
