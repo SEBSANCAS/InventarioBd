@@ -17,14 +17,13 @@ public class ServicioDAO {
 
         final String updateSql =
                 "UPDATE ControlContadores SET " +
-                        "gen_cliente=?, gen_marca=?, gen_suplidor=?, gen_estante=?, " +
-                        "gen_laptop=?, gen_equipo=?, gen_adquisicion=?, gen_factura=?, " +
-                        "gen_detalle_adquisicion=?, gen_detalle_factura=? " +
+                        "id_cliente=?, id_marca=?, id_suplidor=?, id_estante=?, " +
+                        "id_laptop=?, id_equipo=?, id_adquisicion=?, id_factura=?, " +
+                        "id_detalle_adquisicion=?, id_detalle_factura=? " +
                         "WHERE id=1";
 
-        try(Connection connection = DatabaseConnection.getConnection()){
-
-            PreparedStatement ps = connection.prepareStatement(updateSql);
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement ps = connection.prepareStatement(updateSql)) {
 
             ps.setInt(1, servicio.getGenIdCliente());
             ps.setInt(2, servicio.getGenIdMarca());
@@ -39,34 +38,29 @@ public class ServicioDAO {
 
             int filas = ps.executeUpdate();
 
-            if(filas == 0){
+            if (filas == 0) {
 
                 final String insertSql =
-                        "INSERT INTO ControlContadores VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+                        "INSERT INTO ControlContadores (" + "id_cliente, id_marca, id_suplidor, id_estante, " + "id_laptop, id_equipo, id_adquisicion, id_factura, " + "id_detalle_adquisicion, id_detalle_factura" + ") VALUES (?,?,?,?,?,?,?,?,?,?)";
 
-                PreparedStatement insert = connection.prepareStatement(insertSql);
+                try (PreparedStatement insert = connection.prepareStatement(insertSql)) {
+                    insert.setInt(1, servicio.getGenIdCliente());
+                    insert.setInt(2, servicio.getGenIdMarca());
+                    insert.setInt(3, servicio.getGenIdSuplidor());
+                    insert.setInt(4, servicio.getGenIdEstante());
+                    insert.setInt(5, servicio.getGenIdLaptop());
+                    insert.setInt(6, servicio.getGenIdEquipo());
+                    insert.setInt(7, servicio.getGenIdAdquisicion());
+                    insert.setInt(8, servicio.getGenIdFactura());
+                    insert.setInt(9, servicio.getGenIdDetalleAdquisicion());
+                    insert.setInt(10, servicio.getGenIdDetalleFactura());
 
-                insert.setInt(1,1);
-                insert.setInt(2, servicio.getGenIdCliente());
-                insert.setInt(3, servicio.getGenIdMarca());
-                insert.setInt(4, servicio.getGenIdSuplidor());
-                insert.setInt(5, servicio.getGenIdEstante());
-                insert.setInt(6, servicio.getGenIdLaptop());
-                insert.setInt(7, servicio.getGenIdEquipo());
-                insert.setInt(8, servicio.getGenIdAdquisicion());
-                insert.setInt(9, servicio.getGenIdFactura());
-                insert.setInt(10, servicio.getGenIdDetalleAdquisicion());
-                insert.setInt(11, servicio.getGenIdDetalleFactura());
-
-                insert.executeUpdate();
+                    insert.executeUpdate();
+                }
             }
-
-        }catch(SQLException e){
-
+        } catch (SQLException e) {
             System.out.println("No se pudieron guardar los contadores: " + e.getMessage());
-
         }
-
     }
 
     public void cargarContadores(Servicio servicio) {
@@ -79,17 +73,16 @@ public class ServicioDAO {
 
             if(rs.next()){
 
-                servicio.setGenIdCliente(rs.getInt("gen_cliente"));
-                servicio.setGenIdMarca(rs.getInt("gen_marca"));
-                servicio.setGenIdSuplidor(rs.getInt("gen_suplidor"));
-                servicio.setGenIdEstante(rs.getInt("gen_estante"));
-                servicio.setGenIdLaptop(rs.getInt("gen_laptop"));
-                servicio.setGenIdEquipo(rs.getInt("gen_equipo"));
-                servicio.setGenIdAdquisicion(rs.getInt("gen_adquisicion"));
-                servicio.setGenIdFactura(rs.getInt("gen_factura"));
-                servicio.setGenIdDetalleAdquisicion(rs.getInt("gen_detalle_adquisicion"));
-                servicio.setGenIdDetalleFactura(rs.getInt("gen_detalle_factura"));
-
+                servicio.setGenIdCliente(rs.getInt("id_cliente"));
+                servicio.setGenIdMarca(rs.getInt("id_marca"));
+                servicio.setGenIdSuplidor(rs.getInt("id_suplidor"));
+                servicio.setGenIdEstante(rs.getInt("id_estante"));
+                servicio.setGenIdLaptop(rs.getInt("id_laptop"));
+                servicio.setGenIdEquipo(rs.getInt("id_equipo"));
+                servicio.setGenIdAdquisicion(rs.getInt("id_adquisicion"));
+                servicio.setGenIdFactura(rs.getInt("id_factura"));
+                servicio.setGenIdDetalleAdquisicion(rs.getInt("id_detalle_adquisicion"));
+                servicio.setGenIdDetalleFactura(rs.getInt("id_detalle_factura"));
             }
 
         }catch(SQLException e){

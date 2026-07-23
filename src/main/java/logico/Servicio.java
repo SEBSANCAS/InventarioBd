@@ -258,21 +258,25 @@ public class Servicio {
     {
         misMarcas.put(marca.getIdMarca(),marca);
         MarcaDAO.getInstance().guardar(marca);
+        ServicioDAO.getInstance().guardarContadores(this);
     }
     void registrarSuplidor(Suplidor suplidor)
     {
         misSuplidores.put(suplidor.getIdSuplidor(),suplidor);
         SuplidorDAO.getInstance().guardar(suplidor);
+        ServicioDAO.getInstance().guardarContadores(this);
     }
     public void registrarCliente(Cliente cliente)
     {
         misClientes.put(cliente.getIdCliente(), cliente);
         ClienteDAO.getInstance().guardar(cliente);
+        ServicioDAO.getInstance().guardarContadores(this);
     }
     public void registrarEstante(Estante estante)
     {
         misEstantes.put(estante.getIdEstante(), estante);
         EstanteDAO.getInstance().guardar(estante);
+        ServicioDAO.getInstance().guardarContadores(this);
     }
     public void registrarLaptop(Laptop laptop)
     {
@@ -284,6 +288,7 @@ public class Servicio {
     {
         misEquipos.put(equipo.getIdEquipo(), equipo);
         EquipoDAO.getInstance().guardar(equipo);
+        ServicioDAO.getInstance().guardarContadores(this);
     }
     public String generarIdDependiente(String idPadre, int cantidadActual) {
         return String.format("%s-%02d", idPadre, cantidadActual + 1);
