@@ -16,7 +16,7 @@ public class LaptopDAO {
     }
 
     public void guardar(Laptop laptop) {
-        final String sql = "INSERT INTO Laptop (id_laptop, numero_modelo, nombre_comercial, id_marca, peso, procesador, gpu, tipo_ram, cantidad_ram, tipo_almacenamiento, capacidad_almacenamiento, meses_garantia, tamano_pantalla, resolucion_pantalla, precio_venta_detalle, precio_venta_mayorista, cantidad_minima_mayorista, cantidad_alerta_stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        final String sql = "INSERT INTO Laptop (id_laptop, numero_modelo, nombre_comercial, id_marca, peso, procesador, gpu, tipo_ram, cantidad_ram, tipo_almacenamiento, capacidad_almacenamiento, meses_garantia, tamano_pantalla, resolucion_pantalla, precio_venta_detalle, precio_venta_mayorista, precio_compra_promedio, cantidad_minima_mayorista, cantidad_alerta_stock, stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -42,8 +42,10 @@ public class LaptopDAO {
             preparedStatement.setString(14, laptop.getResolucionPantalla());
             preparedStatement.setFloat(15, laptop.getPrecioDetalle());
             preparedStatement.setFloat(16, laptop.getPrecioMayorista());
-            preparedStatement.setInt(17, laptop.getCantMinMayorista());
-            preparedStatement.setInt(18, laptop.getCantidadAlerta());
+            preparedStatement.setFloat(17, laptop.getCostoPromedioCompra());
+            preparedStatement.setInt(18, laptop.getCantMinMayorista());
+            preparedStatement.setInt(19, laptop.getCantidadAlerta());
+            preparedStatement.setInt(20, laptop.getStockActual());
 
             preparedStatement.executeUpdate();
 
@@ -53,7 +55,7 @@ public class LaptopDAO {
     }
 
     public void actualizar(Laptop laptop) {
-        final String sql = "UPDATE Laptop SET numero_modelo=?, nombre_comercial=?, id_marca=?, peso=?, procesador=?, gpu=?, tipo_ram=?, cantidad_ram=?, tipo_almacenamiento=?, capacidad_almacenamiento=?, meses_garantia=?, tamano_pantalla=?, resolucion_pantalla=?, precio_venta_detalle=?, precio_venta_mayorista=?, cantidad_minima_mayorista=?, cantidad_alerta_stock=? WHERE id_laptop=?";
+        final String sql = "UPDATE Laptop SET numero_modelo=?, nombre_comercial=?, id_marca=?, peso=?, procesador=?, gpu=?, tipo_ram=?, cantidad_ram=?, tipo_almacenamiento=?, capacidad_almacenamiento=?, meses_garantia=?, tamano_pantalla=?, resolucion_pantalla=?, precio_venta_detalle=?, precio_venta_mayorista=?, precio_compra_promedio=?, cantidad_minima_mayorista=?, cantidad_alerta_stock=?, stock=? WHERE id_laptop=?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -78,9 +80,11 @@ public class LaptopDAO {
             preparedStatement.setString(13, laptop.getResolucionPantalla());
             preparedStatement.setFloat(14, laptop.getPrecioDetalle());
             preparedStatement.setFloat(15, laptop.getPrecioMayorista());
-            preparedStatement.setInt(16, laptop.getCantMinMayorista());
-            preparedStatement.setInt(17, laptop.getCantidadAlerta());
-            preparedStatement.setString(18, laptop.getIdLaptop());
+            preparedStatement.setFloat(16, laptop.getCostoPromedioCompra());
+            preparedStatement.setInt(17, laptop.getCantMinMayorista());
+            preparedStatement.setInt(18, laptop.getCantidadAlerta());
+            preparedStatement.setInt(19, laptop.getStockActual());
+            preparedStatement.setString(20, laptop.getIdLaptop());
 
             preparedStatement.executeUpdate();
 
@@ -132,12 +136,12 @@ public class LaptopDAO {
                         resultSet.getFloat("capacidad_almacenamiento"),
                         resultSet.getFloat("tamano_pantalla"),
                         resultSet.getString("resolucion_pantalla"),
-                        0f,
+                        resultSet.getFloat("precio_compra_promedio"),
                         resultSet.getFloat("precio_venta_detalle"),
                         resultSet.getFloat("precio_venta_mayorista"),
                         resultSet.getInt("cantidad_minima_mayorista"),
                         resultSet.getInt("cantidad_alerta_stock"),
-                        0,
+                        resultSet.getInt("stock"),
                         resultSet.getInt("meses_garantia")
                 );
                 laptops.add(laptop);
@@ -147,6 +151,7 @@ public class LaptopDAO {
         }
         return laptops;
     }
+
     public ArrayList<Laptop> listarPorSuplidor(String idSuplidor) {
         ArrayList<Laptop> laptops = new ArrayList<>();
 
@@ -185,12 +190,12 @@ public class LaptopDAO {
                             resultSet.getFloat("capacidad_almacenamiento"),
                             resultSet.getFloat("tamano_pantalla"),
                             resultSet.getString("resolucion_pantalla"),
-                            0f,
+                            resultSet.getFloat("precio_compra_promedio"),
                             resultSet.getFloat("precio_venta_detalle"),
                             resultSet.getFloat("precio_venta_mayorista"),
                             resultSet.getInt("cantidad_minima_mayorista"),
                             resultSet.getInt("cantidad_alerta_stock"),
-                            0,
+                            resultSet.getInt("stock"),
                             resultSet.getInt("meses_garantia")
                     );
 
@@ -204,6 +209,7 @@ public class LaptopDAO {
 
         return laptops;
     }
+
     public Laptop encontrarPorId(String idLaptop) {
         Laptop laptop = null;
         final String sql = "SELECT * FROM Laptop WHERE id_laptop = ?";
@@ -235,12 +241,12 @@ public class LaptopDAO {
                             resultSet.getFloat("capacidad_almacenamiento"),
                             resultSet.getFloat("tamano_pantalla"),
                             resultSet.getString("resolucion_pantalla"),
-                            0f,
+                            resultSet.getFloat("precio_compra_promedio"),
                             resultSet.getFloat("precio_venta_detalle"),
                             resultSet.getFloat("precio_venta_mayorista"),
                             resultSet.getInt("cantidad_minima_mayorista"),
                             resultSet.getInt("cantidad_alerta_stock"),
-                            0,
+                            resultSet.getInt("stock"),
                             resultSet.getInt("meses_garantia")
                     );
                 }

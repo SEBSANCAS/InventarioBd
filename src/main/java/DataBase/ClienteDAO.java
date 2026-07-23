@@ -16,7 +16,7 @@ public class ClienteDAO {
     }
 
     public void guardar(Cliente cliente) {
-        final String sql = "INSERT INTO Cliente (id_cliente, numero_identificacion, nombres, apellidos, correo_electronico, fecha_registro) VALUES (?, ?, ?, ?, ?, ?)";
+        final String sql = "INSERT INTO Cliente (id_cliente, numero_identificacion, nombres, apellidos, correo_electronico, fecha_registro, tipo_cliente, tipo_identificacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -24,9 +24,17 @@ public class ClienteDAO {
             preparedStatement.setString(1, cliente.getIdCliente());
             preparedStatement.setString(2, cliente.getNumeroIdentificacion());
             preparedStatement.setString(3, cliente.getNombres());
-            preparedStatement.setString(4, cliente.getApellidos());
+
+            if (cliente.getApellidos() != null && !cliente.getApellidos().trim().isEmpty()) {
+                preparedStatement.setString(4, cliente.getApellidos());
+            } else {
+                preparedStatement.setNull(4, Types.VARCHAR);
+            }
+
             preparedStatement.setString(5, cliente.getCorreo());
             preparedStatement.setObject(6, LocalDate.now());
+            preparedStatement.setString(7, cliente.getTipoCLiente());
+            preparedStatement.setString(8, cliente.getTipoIdentificacion());
 
             preparedStatement.executeUpdate();
 
@@ -40,16 +48,24 @@ public class ClienteDAO {
     }
 
     public void actualizar(Cliente cliente) {
-        final String sql = "UPDATE Cliente SET numero_identificacion=?, nombres=?, apellidos=?, correo_electronico=? WHERE id_cliente=?";
+        final String sql = "UPDATE Cliente SET numero_identificacion=?, nombres=?, apellidos=?, correo_electronico=?, tipo_cliente=?, tipo_identificacion=? WHERE id_cliente=?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setString(1, cliente.getNumeroIdentificacion());
             preparedStatement.setString(2, cliente.getNombres());
-            preparedStatement.setString(3, cliente.getApellidos());
+
+            if (cliente.getApellidos() != null && !cliente.getApellidos().trim().isEmpty()) {
+                preparedStatement.setString(3, cliente.getApellidos());
+            } else {
+                preparedStatement.setNull(3, Types.VARCHAR);
+            }
+
             preparedStatement.setString(4, cliente.getCorreo());
-            preparedStatement.setString(5, cliente.getIdCliente());
+            preparedStatement.setString(5, cliente.getTipoCLiente());
+            preparedStatement.setString(6, cliente.getTipoIdentificacion());
+            preparedStatement.setString(7, cliente.getIdCliente());
 
             preparedStatement.executeUpdate();
 
@@ -81,12 +97,15 @@ public class ClienteDAO {
              ResultSet resultSet = statement.executeQuery(sql)) {
 
             while (resultSet.next()) {
+                // Instanciamos el cliente usando el constructor completo que extrae todo del ResultSet
                 Cliente cliente = new Cliente(
                         resultSet.getString("numero_identificacion"),
                         resultSet.getString("correo_electronico"),
                         resultSet.getString("id_cliente"),
                         resultSet.getString("nombres"),
-                        resultSet.getString("apellidos")
+                        resultSet.getString("apellidos"),
+                        resultSet.getString("tipo_cliente"),
+                        resultSet.getString("tipo_identificacion")
                 );
                 cliente.setTelefonos(TelefonoDAO.getInstance().encontrarPorCliente(cliente.getIdCliente()));
                 clientes.add(cliente);
@@ -113,7 +132,9 @@ public class ClienteDAO {
                             resultSet.getString("correo_electronico"),
                             resultSet.getString("id_cliente"),
                             resultSet.getString("nombres"),
-                            resultSet.getString("apellidos")
+                            resultSet.getString("apellidos"),
+                            resultSet.getString("tipo_cliente"),
+                            resultSet.getString("tipo_identificacion")
                     );
                     cliente.setTelefonos(TelefonoDAO.getInstance().encontrarPorCliente(idCliente));
                 }
