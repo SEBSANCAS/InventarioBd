@@ -7,4 +7,7 @@ module com.example.inventarioproyectobd {
 
     opens com.example.inventarioproyectobd to javafx.fxml;
     exports com.example.inventarioproyectobd;
+
+    opens visual to javafx.fxml;
+    exports visual;
 }

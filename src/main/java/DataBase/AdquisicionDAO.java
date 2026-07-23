@@ -128,7 +128,7 @@ public class AdquisicionDAO {
                 Suplidor suplidorCascaron = null;
                 String idSuplidor = resultSet.getString("id_suplidor");
                 if (idSuplidor != null) {
-                    suplidorCascaron = new Suplidor("", "", "", idSuplidor, "", "", "", "", null);
+                    suplidorCascaron = new Suplidor("", "", "", idSuplidor, "", "", null, "");
                 }
 
                 Adquisicion adq = new Adquisicion(
@@ -162,7 +162,7 @@ public class AdquisicionDAO {
                     Suplidor suplidorCascaron = null;
                     String idSuplidor = resultSet.getString("id_suplidor");
                     if (idSuplidor != null) {
-                        suplidorCascaron = new Suplidor("", "", "", idSuplidor, "", "", "", "", null);
+                        suplidorCascaron = new Suplidor("", "", "", idSuplidor, "", "", null, "");
                     }
 
                     adq = new Adquisicion(

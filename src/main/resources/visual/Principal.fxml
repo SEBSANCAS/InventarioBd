@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="650" prefWidth="1100" style="-fx-background-color: #ecf0f1;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="visual.MenuPrincipalController">
+
+    <top>
+        <MenuBar style="-fx-background-color: #ecf0f1; -fx-border-color: #bdc3c7; -fx-border-width: 0 0 1 0;">
+            <menus>
+                <Menu style="-fx-text-fill: white;" text="Ver Rentabilidad">
+                    <items>
+                        <Menu text="Registros">
+                            <items>
+                                <MenuItem onAction="#ControlarRegistrarMarca" text="Registrar Marca" />
+                                <MenuItem onAction="#ControlarRegistrarModelo" text="Registrar Modelo de Laptop" />
+                                <MenuItem onAction="#ControlarRegistrarCliente" text="Registrar Cliente" />
+                                <MenuItem onAction="#ControlarRegistrarSuplidor" text="Registrar Suplidor" />
+                                <MenuItem onAction="#ControlarRegistrarEstante" text="Registrar Estante" />
+                            </items>
+                        </Menu>
+                        <MenuItem onAction="#ControlarContratoSuplidor" text="Contrato Suplidor" />
+                    </items>
+                </Menu>
+                <Menu style="-fx-text-fill: white;" text="Informes">
+                    <items>
+                        <MenuItem onAction="#ControlarListados" text="Listados" />
+                        <MenuItem onAction="#ControlarOrdenar" text="Ordenar" />
+                        <MenuItem onAction="#ControlarReclamo" text="Reclamo" />
+                    </items>
+                </Menu>
+                <Menu style="-fx-text-fill: white;" text="Información General">
+                    <items>
+                        <MenuItem onAction="#ControlarMovimientoInventario" text="Movimiento de Inventario" />
+                        <MenuItem onAction="#ControlarRealizarVenta" text="Realizar Venta" />
+                        <MenuItem onAction="#ControlarResolverReclamo" text="Resolver Reclamo" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
+
+    <center>
+        <GridPane hgap="20" style="-fx-padding: 30;" vgap="20">
+            <columnConstraints>
+                <ColumnConstraints hgrow="ALWAYS" percentWidth="33.33" />
+                <ColumnConstraints hgrow="ALWAYS" percentWidth="33.33" />
+                <ColumnConstraints hgrow="ALWAYS" percentWidth="33.34" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints percentHeight="33.33" vgrow="ALWAYS" />
+                <RowConstraints percentHeight="33.33" vgrow="ALWAYS" />
+                <RowConstraints percentHeight="33.34" vgrow="ALWAYS" />
+            </rowConstraints>
+
+            <MenuButton fx:id="btnRegistros" alignment="CENTER" maxHeight="Infinity" maxWidth="Infinity" style="-fx-background-color: white; -fx-border-color: #7f8c8d; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-cursor: hand;" text="Registros" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                <items>
+                    <MenuItem onAction="#ControlarRegistrarMarca" text="Registrar Marca" />
+                    <MenuItem onAction="#ControlarRegistrarModelo" text="Registrar Modelo de Laptop" />
+                    <MenuItem onAction="#ControlarRegistrarCliente" text="Registrar Cliente" />
+                    <MenuItem onAction="#ControlarRegistrarSuplidor" text="Registrar Suplidor" />
+                    <MenuItem onAction="#ControlarRegistrarEstante" text="Registrar Estante" />
+                </items>
+            </MenuButton>
+
+            <Button fx:id="btnListados" maxHeight="Infinity" maxWidth="Infinity" onAction="#ControlarListados" style="-fx-background-color: white; -fx-border-color: #7f8c8d; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-cursor: hand;" text="Listados" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+            <Button fx:id="btnMovimientoInventario" maxHeight="Infinity" maxWidth="Infinity" onAction="#ControlarMovimientoInventario" style="-fx-background-color: white; -fx-border-color: #7f8c8d; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-cursor: hand;" text="Movimiento de Inventario" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+
+            <Button fx:id="btnContratoSuplidor" maxHeight="Infinity" maxWidth="Infinity" onAction="#ControlarContratoSuplidor" style="-fx-background-color: white; -fx-border-color: #7f8c8d; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-cursor: hand;" text="Contrato Suplidor" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+
+            <Button fx:id="btnOrdenar" maxHeight="Infinity" maxWidth="Infinity" onAction="#ControlarOrdenar" style="-fx-background-color: white; -fx-border-color: #7f8c8d; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-cursor: hand;" text="Ordenar" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+            <Button fx:id="btnRealizarVenta" maxHeight="Infinity" maxWidth="Infinity" onAction="#ControlarRealizarVenta" style="-fx-background-color: white; -fx-border-color: #7f8c8d; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-cursor: hand;" text="Realizar Venta" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+
+            <Button fx:id="btnReclamo" maxHeight="Infinity" maxWidth="Infinity" onAction="#ControlarReclamo" style="-fx-background-color: white; -fx-border-color: #7f8c8d; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-cursor: hand;" text="Reclamo" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+            <Button fx:id="btnResolverReclamo" maxHeight="Infinity" maxWidth="Infinity" onAction="#ControlarResolverReclamo" style="-fx-background-color: white; -fx-border-color: #7f8c8d; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-cursor: hand;" text="Resolver Reclamo" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+        </GridPane>
+    </center>
+
+    <right>
+        <VBox fx:id="panelNotificaciones" prefWidth="280" spacing="10" style="-fx-background-color: #ffffff; -fx-border-color: #bdc3c7; -fx-border-width: 0 0 0 2; -fx-padding: 15;">
+            <Label style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="Notificaciones" />
+            <Separator />
+            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: #ffffff; -fx-border-color: transparent;" vbarPolicy="AS_NEEDED">
+                <content>
+                    <VBox fx:id="listaAlertas" spacing="10" style="-fx-background-color: #ffffff;">
+                    </VBox>
+                </content>
+            </ScrollPane>
+        </VBox>
+    </right>
+
+</BorderPane>
