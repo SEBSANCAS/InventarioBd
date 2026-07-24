@@ -1,5 +1,7 @@
 package DataBase;
 
+import logico.Adquisicion;
+import logico.Factura;
 import logico.Servicio;
 import java.sql.*;
 
@@ -127,6 +129,24 @@ public class ServicioDAO {
         FacturaDAO.getInstance().EncontrarTodos().forEach(f ->
                 servicio.getMiInventarioFacturas().put(f.getIdFactura(), f)
         );
+        AdquisicionDAO.getInstance().EncontrarTodos().forEach(a ->
+                servicio.getMisAdquisiciones().put(a.getIdCompra(), a)
+        );
+        FacturaDAO.getInstance().EncontrarTodos().forEach(f ->
+                servicio.getMiInventarioFacturas().put(f.getIdFactura(), f)
+        );
+        for (Adquisicion a : servicio.getMisAdquisiciones().values()) {
+            a.setDetallesAdquision(
+                    DetalleAdquisicionDAO.getInstance()
+                            .encontrarPorIdAdquisicion(a.getIdCompra())
+            );
+        }
+        for (Factura f : servicio.getMiInventarioFacturas().values()) {
+            f.setDetallesFactura(
+                    DetalleFacturaDAO.getInstance()
+                            .encontrarPorFactura(f.getIdFactura())
+            );
+        }
 
         cargarContadores(servicio);
     }
