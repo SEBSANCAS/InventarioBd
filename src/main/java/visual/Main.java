@@ -12,7 +12,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        ServicioDAO.getInstance().cargarTodoElSistema();
+        DataBase.ServicioDAO.getInstance().cargarTodoElSistema();
         Parent root = FXMLLoader.load(getClass().getResource("/visual/Principal.fxml"));
         primaryStage.setTitle("Sistema de Inventario");
         primaryStage.setScene(new Scene(root, 1100, 650));
