@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.ColumnConstraints?>
+
+<VBox alignment="TOP_CENTER" prefHeight="450.0" prefWidth="500.0" spacing="15.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="visual.RegistroSuplidorLaptopController">
+    <padding>
+        <Insets bottom="20.0" left="25.0" right="25.0" top="20.0" />
+    </padding>
+    <children>
+        <Label text="Asignar Laptop a Suplidor" textFill="#1c3f6e">
+            <font>
+                <Font name="System Bold" size="20.0" />
+            </font>
+        </Label>
+
+        <GridPane hgap="15.0" vgap="15.0" VBox.vgrow="ALWAYS">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="100" />
+            </columnConstraints>
+
+            <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                <Label text="Suplidor:" />
+                <ComboBox fx:id="comboSuplidor" prefWidth="Infinity" style="-fx-border-color: #AEDFF7; -fx-border-radius: 5; -fx-background-radius: 5;" />
+            </VBox>
+
+            <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                <Label text="Laptop:" />
+                <ComboBox fx:id="comboLaptop" prefWidth="Infinity" style="-fx-border-color: #AEDFF7; -fx-border-radius: 5; -fx-background-radius: 5;" />
+            </VBox>
+
+            <HBox spacing="15.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                    <Label text="Precio Acordado (Monto):" />
+                    <TextField fx:id="campoPrecio" promptText="Ej: 45000" style="-fx-border-color: #AEDFF7; -fx-border-radius: 5; -fx-background-radius: 5;" />
+                </VBox>
+                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                    <Label text="Días de Entrega:" />
+                    <TextField fx:id="campoDias" promptText="Ej: 5" style="-fx-border-color: #AEDFF7; -fx-border-radius: 5; -fx-background-radius: 5;" />
+                </VBox>
+            </HBox>
+        </GridPane>
+
+        <Label fx:id="lblMensaje" wrapText="true" />
+
+        <HBox alignment="CENTER" spacing="15.0">
+            <children>
+                <Button mnemonicParsing="false" onAction="#ControlarGuardar" style="-fx-background-color: #1c3f6e; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15;" text="Guardar" />
+                <Button mnemonicParsing="false" onAction="#ControlarLimpiar" style="-fx-background-color: #f0f0f0; -fx-border-color: #cccccc; -fx-border-radius: 3; -fx-padding: 7 14;" text="Limpiar" />
+                <Button mnemonicParsing="false" onAction="#ControlarCancelar" style="-fx-background-color: transparent; -fx-text-fill: #b23b3b; -fx-font-weight: bold; -fx-padding: 8 15;" text="Cancelar" />
+            </children>
+        </HBox>
+    </children>
+</VBox>

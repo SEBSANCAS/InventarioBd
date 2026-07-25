@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<ScrollPane fitToWidth="true" style="-fx-background: white; -fx-background-color: white;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="visual.RegistroFacturacionController">
+    <VBox spacing="18" style="-fx-background-color: white;">
+        <padding>
+            <Insets bottom="25.0" left="35.0" right="35.0" top="25.0" />
+        </padding>
+
+        <Label style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1c3f6e;" text="Facturación de Equipos" />
+        <Label style="-fx-font-size: 12px; -fx-text-fill: #7a7a7a;" text="Seleccione el cliente y asigne los equipos específicos (números de serie) que se van a vender." />
+
+        <Separator />
+
+        <GridPane hgap="15" vgap="14">
+            <columnConstraints>
+                <ColumnConstraints minWidth="160" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="350" />
+            </columnConstraints>
+
+            <Label style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" text="NCF / Comprobante:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <TextField fx:id="campoNCF" promptText="B0100000001" style="-fx-border-color: #AEDFF7; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 8;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+            <Label style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" text="Cliente:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <ComboBox fx:id="comboCliente" maxWidth="Infinity" promptText="Seleccione un cliente" style="-fx-border-color: #AEDFF7; -fx-border-radius: 8; -fx-background-radius: 8;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        </GridPane>
+
+        <Separator />
+
+        <Label style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" text="Detalle de Equipos:" />
+
+        <HBox spacing="10">
+            <Label prefWidth="200" style="-fx-font-weight: bold; -fx-text-fill: #7a7a7a;" text="Modelo de Laptop" />
+            <Label prefWidth="200" style="-fx-font-weight: bold; -fx-text-fill: #7a7a7a;" text="Equipo (Serial)" />
+            <Label prefWidth="100" style="-fx-font-weight: bold; -fx-text-fill: #7a7a7a;" text="Precio Unit." />
+            <Label prefWidth="90" style="-fx-font-weight: bold; -fx-text-fill: #7a7a7a;" text="Descuento" />
+            <Label prefWidth="100" style="-fx-font-weight: bold; -fx-text-fill: #7a7a7a;" text="Subtotal" />
+        </HBox>
+
+        <VBox fx:id="contenedorDetalles" spacing="10" />
+
+        <HBox alignment="CENTER_LEFT">
+            <Button fx:id="btnAgregarLinea" disable="true" onAction="#ControlarAgregarLinea" style="-fx-background-color: #eaf4fc; -fx-text-fill: #1c3f6e; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 6 14 6 14;" text="+ Agregar equipo a la factura" />
+        </HBox>
+
+        <Separator />
+
+        <VBox alignment="CENTER_RIGHT" spacing="5">
+            <HBox alignment="CENTER_RIGHT" spacing="10">
+                <Label style="-fx-font-weight: bold; -fx-text-fill: #7a7a7a; -fx-font-size: 14px;" text="Subtotal:" />
+                <Label fx:id="lblSubtotalG" style="-fx-font-weight: bold; -fx-text-fill: #333333; -fx-font-size: 14px;" text="RD$ 0.00" />
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" spacing="10">
+                <Label style="-fx-font-weight: bold; -fx-text-fill: #7a7a7a; -fx-font-size: 14px;" text="ITBIS (18%):" />
+                <Label fx:id="lblImpuestos" style="-fx-font-weight: bold; -fx-text-fill: #333333; -fx-font-size: 14px;" text="RD$ 0.00" />
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" spacing="10">
+                <Label style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e; -fx-font-size: 18px;" text="Total General:" />
+                <Label fx:id="lblTotalGeneral" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e; -fx-font-size: 18px;" text="RD$ 0.00" />
+            </HBox>
+        </VBox>
+
+        <Label fx:id="lblMensaje" wrapText="true" />
+
+        <HBox alignment="CENTER_RIGHT" spacing="15">
+            <Button onAction="#ControlarCancelar" style="-fx-background-color: white; -fx-text-fill: #b23b3b; -fx-border-color: #b23b3b; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 8 20 8 20;" text="Cancelar" />
+            <Button onAction="#ControlarLimpiar" style="-fx-background-color: #e6e6e6; -fx-text-fill: #333333; -fx-background-radius: 8; -fx-padding: 8 20 8 20;" text="Limpiar Campos" />
+            <Button onAction="#ControlarFacturar" style="-fx-background-color: #1c3f6e; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 8 20 8 20;" text="Procesar Venta / Facturar" />
+        </HBox>
+    </VBox>
+</ScrollPane>

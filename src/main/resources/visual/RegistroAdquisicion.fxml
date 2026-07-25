@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane fitToWidth="true" style="-fx-background: white; -fx-background-color: white;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="visual.RegistroAdquisicionController">
+    <VBox spacing="18" style="-fx-background-color: white;">
+        <padding>
+            <Insets top="25" right="35" bottom="25" left="35"/>
+        </padding>
+
+        <Label text="Registro de Adquisición (Orden de Compra)" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1c3f6e;"/>
+        <Label text="Seleccione un suplidor y agregue los modelos de laptop que le comprará." style="-fx-font-size: 12px; -fx-text-fill: #7a7a7a;"/>
+
+        <Separator/>
+
+        <GridPane hgap="15" vgap="14">
+            <columnConstraints>
+                <ColumnConstraints minWidth="160"/>
+                <ColumnConstraints minWidth="350" hgrow="ALWAYS"/>
+            </columnConstraints>
+
+            <Label text="ID Adquisición:" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <TextField fx:id="campoIdAdquisicion" editable="false" promptText="Auto-generado por el sistema" style="-fx-background-color: #f2f2f2; -fx-border-color: #d6d6d6; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 8;" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+            <Label text="Suplidor:" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="comboSuplidor" maxWidth="Infinity" promptText="Seleccione un suplidor" style="-fx-border-color: #AEDFF7; -fx-border-radius: 8; -fx-background-radius: 8;" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+            <Label text="Estado de la orden:" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <Label fx:id="lblEstado" text="Emitida" style="-fx-text-fill: #2e7d32; -fx-font-weight: bold; -fx-background-color: #eaf7ec; -fx-padding: 6 12 6 12; -fx-background-radius: 6;" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+            <Label text="Fecha de entrega estimada:" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+            <DatePicker fx:id="campoFechaEntrega" promptText="Opcional" maxWidth="Infinity" style="-fx-border-color: #AEDFF7; -fx-border-radius: 8; -fx-background-radius: 8;" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+        </GridPane>
+
+        <Separator/>
+
+        <Label text="Detalle de la orden:" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;"/>
+
+        <HBox spacing="10">
+            <Label text="Modelo" style="-fx-font-weight: bold; -fx-text-fill: #7a7a7a;" prefWidth="260"/>
+            <Label text="Cantidad" style="-fx-font-weight: bold; -fx-text-fill: #7a7a7a;" prefWidth="90"/>
+            <Label text="Precio Unit." style="-fx-font-weight: bold; -fx-text-fill: #7a7a7a;" prefWidth="100"/>
+            <Label text="Subtotal" style="-fx-font-weight: bold; -fx-text-fill: #7a7a7a;" prefWidth="100"/>
+        </HBox>
+
+        <VBox fx:id="contenedorDetalles" spacing="10"/>
+
+        <HBox alignment="CENTER_LEFT">
+            <Button fx:id="btnAgregarLinea" text="+ Agregar modelo" onAction="#ControlarAgregarLinea" disable="true" style="-fx-background-color: #eaf4fc; -fx-text-fill: #1c3f6e; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 6 14 6 14;"/>
+        </HBox>
+
+        <Separator/>
+
+        <HBox alignment="CENTER_RIGHT" spacing="10">
+            <Label text="Monto Total:" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e; -fx-font-size: 15px;"/>
+            <Label fx:id="lblMontoTotal" text="RD$ 0.00" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e; -fx-font-size: 15px;"/>
+        </HBox>
+
+        <Label fx:id="lblMensaje" wrapText="true"/>
+
+        <HBox alignment="CENTER_RIGHT" spacing="15">
+            <Button text="Cancelar" onAction="#ControlarCancelar" style="-fx-background-color: white; -fx-text-fill: #b23b3b; -fx-border-color: #b23b3b; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 8 20 8 20;"/>
+            <Button text="Limpiar Campos" onAction="#ControlarLimpiar" style="-fx-background-color: #e6e6e6; -fx-text-fill: #333333; -fx-background-radius: 8; -fx-padding: 8 20 8 20;"/>
+            <Button text="Guardar / Registrar" onAction="#ControlarGuardar" style="-fx-background-color: #1c3f6e; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 8 20 8 20;"/>
+        </HBox>
+    </VBox>
+</ScrollPane>

@@ -82,7 +82,7 @@ public class RegistroSuplidorController {
 
     @FXML
     public void initialize() {
-        comboTipoIdentificacion.getItems().addAll("Rnc", "Cedula", "Pasaporte", "Tax_id_intl", "Otro");
+        comboTipoIdentificacion.getItems().addAll("Rnc", "Tax_id_intl", "Otro");
         comboTipoIdentificacion.getSelectionModel().selectFirst();
         comboTipoIdentificacion.setOnAction(e -> actualizarPlaceholderIdentificacion());
 
@@ -117,19 +117,10 @@ public class RegistroSuplidorController {
         if (tipo == null) {
             return;
         }
-
         switch (tipo) {
-            case "Cedula":
-                lblIdentificacion.setText("Cédula:");
-                campoIdentificacion.setPromptText("000-0000000-0 (11 dígitos, sin guiones)");
-                break;
             case "Rnc":
                 lblIdentificacion.setText("RNC:");
                 campoIdentificacion.setPromptText("000000000 (9 u 11 dígitos, sin guiones)");
-                break;
-            case "Pasaporte":
-                lblIdentificacion.setText("Pasaporte:");
-                campoIdentificacion.setPromptText("Ej: AB1234567");
                 break;
             case "Tax_id_intl":
                 lblIdentificacion.setText("Tax ID Internacional:");

@@ -165,11 +165,6 @@ public class Servicio {
         misAdquisiciones.put(adquisicion.getIdCompra(), adquisicion);
         for (DetalleAdquisicion detalle : detalles) {
             DetalleAdquisicionDAO.getInstance().guardar(detalle, adquisicion.getIdCompra());
-            Laptop laptop = detalle.getModeloLaptopAdquirida();
-            if (laptop != null) {
-                laptop.setStockActual(laptop.getStockActual() + detalle.getCantidad());
-                LaptopDAO.getInstance().actualizar(laptop);
-            }
         }
         ServicioDAO.getInstance().guardarContadores(this);
     }
@@ -182,14 +177,13 @@ public class Servicio {
             DetalleFacturaDAO.getInstance().guardar(detalle, factura.getIdFactura());
             Equipo equipo = detalle.getEquipoVendido();
             if (equipo != null) {
-                equipo.setEstado("Vendido");
+                equipo.setDisponibilidad("Vendido");
                 EquipoDAO.getInstance().actualizar(equipo);
 
                 Laptop laptop = equipo.getLaptop();
 
                 if (laptop != null) {
                     laptop.setStockActual(laptop.getStockActual() - 1);
-                    LaptopDAO.getInstance().actualizar(laptop);
                 }
             }
         }

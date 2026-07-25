@@ -99,16 +99,46 @@ public class MenuPrincipalController {
     @FXML
     private void ControlarContratoSuplidor(ActionEvent event) {
         System.out.println("Abriendo Contrato de Suplidor...");
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/visual/RegistroSuplidorLaptop.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Sistema de Inventario - Registro de Acuerdo con Suplidor");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void ControlarOrdenar(ActionEvent event) {
         System.out.println("Abriendo Ordenar...");
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/visual/RegistroAdquisicion.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Sistema de Inventario - Registro de Adquisición");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void ControlarRealizarVenta(ActionEvent event) {
         System.out.println("Abriendo Realizar Venta...");
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/visual/RegistroFacturacion.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Sistema de Inventario - Registro de Facturacion");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
