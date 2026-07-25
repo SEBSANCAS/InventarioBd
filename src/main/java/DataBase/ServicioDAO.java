@@ -20,8 +20,7 @@ public class ServicioDAO {
         final String updateSql =
                 "UPDATE ControlContadores SET " +
                         "id_cliente=?, id_marca=?, id_suplidor=?, id_estante=?, " +
-                        "id_laptop=?, id_equipo=?, id_adquisicion=?, id_factura=?, " +
-                        "id_detalle_adquisicion=?, id_detalle_factura=? " +
+                        "id_laptop=?, id_equipo=?, id_adquisicion=?, id_factura=? " +
                         "WHERE id=1";
 
         try (Connection connection = DatabaseConnection.getConnection();
@@ -35,27 +34,27 @@ public class ServicioDAO {
             ps.setInt(6, servicio.getGenIdEquipo());
             ps.setInt(7, servicio.getGenIdAdquisicion());
             ps.setInt(8, servicio.getGenIdFactura());
-            ps.setInt(9, servicio.getGenIdDetalleAdquisicion());
-            ps.setInt(10, servicio.getGenIdDetalleFactura());
 
             int filas = ps.executeUpdate();
 
             if (filas == 0) {
 
                 final String insertSql =
-                        "INSERT INTO ControlContadores (" + "id_cliente, id_marca, id_suplidor, id_estante, " + "id_laptop, id_equipo, id_adquisicion, id_factura, " + "id_detalle_adquisicion, id_detalle_factura" + ") VALUES (?,?,?,?,?,?,?,?,?,?)";
+                        "INSERT INTO ControlContadores (" +
+                                "id, id_cliente, id_marca, id_suplidor, id_estante, " +
+                                "id_laptop, id_equipo, id_adquisicion, id_factura" +
+                                ") VALUES (?,?,?,?,?,?,?,?,?)";
 
                 try (PreparedStatement insert = connection.prepareStatement(insertSql)) {
-                    insert.setInt(1, servicio.getGenIdCliente());
-                    insert.setInt(2, servicio.getGenIdMarca());
-                    insert.setInt(3, servicio.getGenIdSuplidor());
-                    insert.setInt(4, servicio.getGenIdEstante());
-                    insert.setInt(5, servicio.getGenIdLaptop());
-                    insert.setInt(6, servicio.getGenIdEquipo());
-                    insert.setInt(7, servicio.getGenIdAdquisicion());
-                    insert.setInt(8, servicio.getGenIdFactura());
-                    insert.setInt(9, servicio.getGenIdDetalleAdquisicion());
-                    insert.setInt(10, servicio.getGenIdDetalleFactura());
+                    insert.setInt(1, 1);
+                    insert.setInt(2, servicio.getGenIdCliente());
+                    insert.setInt(3, servicio.getGenIdMarca());
+                    insert.setInt(4, servicio.getGenIdSuplidor());
+                    insert.setInt(5, servicio.getGenIdEstante());
+                    insert.setInt(6, servicio.getGenIdLaptop());
+                    insert.setInt(7, servicio.getGenIdEquipo());
+                    insert.setInt(8, servicio.getGenIdAdquisicion());
+                    insert.setInt(9, servicio.getGenIdFactura());
 
                     insert.executeUpdate();
                 }
@@ -74,7 +73,6 @@ public class ServicioDAO {
             ResultSet rs = st.executeQuery(sql)){
 
             if(rs.next()){
-
                 servicio.setGenIdCliente(rs.getInt("id_cliente"));
                 servicio.setGenIdMarca(rs.getInt("id_marca"));
                 servicio.setGenIdSuplidor(rs.getInt("id_suplidor"));
@@ -83,16 +81,13 @@ public class ServicioDAO {
                 servicio.setGenIdEquipo(rs.getInt("id_equipo"));
                 servicio.setGenIdAdquisicion(rs.getInt("id_adquisicion"));
                 servicio.setGenIdFactura(rs.getInt("id_factura"));
-                servicio.setGenIdDetalleAdquisicion(rs.getInt("id_detalle_adquisicion"));
-                servicio.setGenIdDetalleFactura(rs.getInt("id_detalle_factura"));
+            } else {
+                guardarContadores(servicio);
             }
 
         }catch(SQLException e){
-
             System.out.println("No se pudieron cargar los contadores: " + e.getMessage());
-
         }
-
     }
 
     public void cargarTodoElSistema() {
@@ -129,12 +124,7 @@ public class ServicioDAO {
         FacturaDAO.getInstance().EncontrarTodos().forEach(f ->
                 servicio.getMiInventarioFacturas().put(f.getIdFactura(), f)
         );
-        AdquisicionDAO.getInstance().EncontrarTodos().forEach(a ->
-                servicio.getMisAdquisiciones().put(a.getIdCompra(), a)
-        );
-        FacturaDAO.getInstance().EncontrarTodos().forEach(f ->
-                servicio.getMiInventarioFacturas().put(f.getIdFactura(), f)
-        );
+
         for (Adquisicion a : servicio.getMisAdquisiciones().values()) {
             a.setDetallesAdquision(
                     DetalleAdquisicionDAO.getInstance()

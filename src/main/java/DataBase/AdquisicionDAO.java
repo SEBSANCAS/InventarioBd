@@ -26,7 +26,6 @@ public class AdquisicionDAO {
             if (adquisicion.getSuplidor() != null) {
                 idSuplidor = adquisicion.getSuplidor().getIdSuplidor();
             }
-
             preparedStatement.setString(1, adquisicion.getIdCompra());
             preparedStatement.setString(2, idSuplidor);
             preparedStatement.setObject(3, adquisicion.getFechaEmision());

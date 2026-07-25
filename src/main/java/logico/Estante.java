@@ -6,14 +6,12 @@ public class Estante {
     private String IdEstante;
     private int capacidad;
     private int CantidadNiveles;
-    private String Ubicacion;
     private ArrayList<Equipo> EquiposAlmacenados;
 
-    public Estante(String idEstante, int capacidad, int cantidadNiveles, String ubicacion) {
+    public Estante(String idEstante, int capacidad, int cantidadNiveles) {
         IdEstante = idEstante;
         this.capacidad = capacidad;
         CantidadNiveles = cantidadNiveles;
-        Ubicacion = ubicacion;
         EquiposAlmacenados = new ArrayList<>();
     }
 
@@ -39,14 +37,6 @@ public class Estante {
 
     public void setCantidadNiveles(int cantidadNiveles) {
         CantidadNiveles = cantidadNiveles;
-    }
-
-    public String getUbicacion() {
-        return Ubicacion;
-    }
-
-    public void setUbicacion(String ubicacion) {
-        Ubicacion = ubicacion;
     }
 
     public ArrayList<Equipo> getEquiposAlmacenados() {

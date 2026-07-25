@@ -20,31 +20,13 @@
         <MenuBar style="-fx-background-color: #ecf0f1; -fx-border-color: #bdc3c7; -fx-border-width: 0 0 1 0;">
             <menus>
                 <Menu style="-fx-text-fill: white;" text="Ver Rentabilidad">
-                    <items>
-                        <Menu text="Registros">
-                            <items>
-                                <MenuItem onAction="#ControlarRegistrarMarca" text="Registrar Marca" />
-                                <MenuItem onAction="#ControlarRegistrarModelo" text="Registrar Modelo de Laptop" />
-                                <MenuItem onAction="#ControlarRegistrarCliente" text="Registrar Cliente" />
-                                <MenuItem onAction="#ControlarRegistrarSuplidor" text="Registrar Suplidor" />
-                                <MenuItem onAction="#ControlarRegistrarEstante" text="Registrar Estante" />
-                            </items>
-                        </Menu>
-                        <MenuItem onAction="#ControlarContratoSuplidor" text="Contrato Suplidor" />
-                    </items>
                 </Menu>
                 <Menu style="-fx-text-fill: white;" text="Informes">
                     <items>
-                        <MenuItem onAction="#ControlarListados" text="Listados" />
-                        <MenuItem onAction="#ControlarOrdenar" text="Ordenar" />
-                        <MenuItem onAction="#ControlarReclamo" text="Reclamo" />
                     </items>
                 </Menu>
                 <Menu style="-fx-text-fill: white;" text="Información General">
                     <items>
-                        <MenuItem onAction="#ControlarMovimientoInventario" text="Movimiento de Inventario" />
-                        <MenuItem onAction="#ControlarRealizarVenta" text="Realizar Venta" />
-                        <MenuItem onAction="#ControlarResolverReclamo" text="Resolver Reclamo" />
                     </items>
                 </Menu>
             </menus>

@@ -2,6 +2,8 @@ package visual;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
@@ -9,46 +11,80 @@ import javafx.stage.Stage;
 
 public class MenuPrincipalController {
 
-    // --- MÉTODOS DE REGISTRO ---
-
     @FXML
     private void ControlarRegistrarCliente(ActionEvent event) {
-        // Abre la ventana individual de Cliente
-        ClienteRegistroView view = new ClienteRegistroView();
-        mostrarVentana(view, "Registrar Nuevo Cliente");
+        System.out.println("Abriendo Registro de Cliente...");
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/visual/RegistroCliente.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Sistema de Inventario - Registro de Cliente");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void ControlarRegistrarMarca(ActionEvent event) {
         System.out.println("Abriendo Registro de Marca...");
-        // Cuando tengas MarcaRegistroView la conectas así:
-        // MarcaRegistroView view = new MarcaRegistroView();
-        // mostrarVentana(view, "Registrar Nueva Marca");
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/visual/RegistroMarca.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Sistema de Inventario - Registro de Marca");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void ControlarRegistrarModelo(ActionEvent event) {
         System.out.println("Abriendo Registro de Modelo / Laptop...");
-        // Cuando tengas LaptopRegistroView la conectas así:
-        // LaptopRegistroView view = new LaptopRegistroView();
-        // mostrarVentana(view, "Registrar Nuevo Modelo de Laptop");
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/visual/RegistroLaptop.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Sistema de Inventario - Registro de Laptop");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void ControlarRegistrarSuplidor(ActionEvent event) {
         System.out.println("Abriendo Registro de Suplidor...");
-        // SuplidorRegistroView view = new SuplidorRegistroView();
-        // mostrarVentana(view, "Registrar Nuevo Suplidor");
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/visual/RegistroSuplidor.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Sistema de Inventario - Registro de Suplidor");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void ControlarRegistrarEstante(ActionEvent event) {
         System.out.println("Abriendo Registro de Estante...");
-        // EstanteRegistroView view = new EstanteRegistroView();
-        // mostrarVentana(view, "Registrar Nuevo Estante");
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/visual/RegistroEstante.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Sistema de Inventario - Registro de Estante");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-
-    // --- MÉTODOS DE MENÚ SECUNDARIOS ---
 
     @FXML
     private void ControlarListados(ActionEvent event) {
@@ -83,18 +119,5 @@ public class MenuPrincipalController {
     @FXML
     private void ControlarResolverReclamo(ActionEvent event) {
         System.out.println("Abriendo Resolver Reclamo...");
-    }
-
-    // --- MÉTODO REUTILIZABLE PARA ABRIR VENTANAS ---
-
-    private void mostrarVentana(Pane vista, String titulo) {
-        Stage stage = new Stage();
-        stage.setTitle("Sistema de Inventario - " + titulo);
-        stage.setScene(new Scene(vista));
-
-        // Impide interactuar con el menú principal hasta cerrar la ventana de registro
-        stage.initModality(Modality.APPLICATION_MODAL);
-
-        stage.show();
     }
 }

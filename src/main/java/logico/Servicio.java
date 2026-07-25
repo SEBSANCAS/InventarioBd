@@ -2,6 +2,9 @@ package logico;
 
 import DataBase.*;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.*;
 
@@ -25,9 +28,6 @@ public class Servicio {
     private int genIdAdquisicion;
     private int genIdFactura;
 
-    private int genIdDetalleAdquisicion;
-    private int genIdDetalleFactura;
-
     private static Servicio miServicio = null;
 
     private Servicio() {
@@ -39,16 +39,14 @@ public class Servicio {
         this.misEquipos = new HashMap<>();
         this.misAdquisiciones = new HashMap<>();
         this.miInventarioFacturas = new HashMap<>();
-        this.genIdCliente = 1;
-        this.genIdMarca = 1;
-        this.genIdSuplidor = 1;
-        this.genIdEstante = 1;
-        this.genIdLaptop = 1;
-        this.genIdEquipo = 1;
-        this.genIdAdquisicion = 1;
-        this.genIdFactura = 1;
-        this.genIdDetalleAdquisicion = 1;
-        this.genIdDetalleFactura = 1;
+        this.genIdCliente=1;
+        this.genIdMarca=1;
+        this.genIdSuplidor=1;
+        this.genIdEstante=1;
+        this.genIdLaptop=1;
+        this.genIdEquipo=1;
+        this.genIdAdquisicion=1;
+        this.genIdFactura=1;
     }
 
     public static Servicio getInstance() {
@@ -121,14 +119,6 @@ public class Servicio {
     public int getSiguienteIdFactura() {
         return genIdFactura++;
     }
-
-    public int getSiguienteIdDetalleAdquisicion() {
-        return genIdDetalleAdquisicion++;
-    }
-
-    public int getSiguienteIdDetalleFactura() {
-        return genIdDetalleFactura++;
-    }
     public int getGenIdCliente() { return genIdCliente; }
     public int getGenIdMarca() { return genIdMarca; }
     public int getGenIdSuplidor() { return genIdSuplidor; }
@@ -137,8 +127,6 @@ public class Servicio {
     public int getGenIdEquipo() { return genIdEquipo; }
     public int getGenIdAdquisicion() { return genIdAdquisicion; }
     public int getGenIdFactura() { return genIdFactura; }
-    public int getGenIdDetalleAdquisicion() { return genIdDetalleAdquisicion; }
-    public int getGenIdDetalleFactura() { return genIdDetalleFactura; }
     public void setGenIdCliente(int genIdCliente) {
         this.genIdCliente = genIdCliente;
     }
@@ -169,14 +157,6 @@ public class Servicio {
 
     public void setGenIdFactura(int genIdFactura) {
         this.genIdFactura = genIdFactura;
-    }
-
-    public void setGenIdDetalleAdquisicion(int genIdDetalleAdquisicion) {
-        this.genIdDetalleAdquisicion = genIdDetalleAdquisicion;
-    }
-
-    public void setGenIdDetalleFactura(int genIdDetalleFactura) {
-        this.genIdDetalleFactura = genIdDetalleFactura;
     }
 
     public void registrarNuevaAdquisicion(Adquisicion adquisicion, ArrayList<DetalleAdquisicion> detalles) {
@@ -247,20 +227,13 @@ public class Servicio {
         return String.format("FAC%03d", getSiguienteIdFactura());
     }
 
-    public String generarIdDetalleAdquisicion() {
-        return String.format("DAD%03d", getSiguienteIdDetalleAdquisicion());
-    }
-
-    public String generarIdDetalleFactura() {
-        return String.format("DFA%03d", getSiguienteIdDetalleFactura());
-    }
-    void registrarMarca(Marca marca)
+    public void registrarMarca(Marca marca)
     {
         misMarcas.put(marca.getIdMarca(),marca);
         MarcaDAO.getInstance().guardar(marca);
         ServicioDAO.getInstance().guardarContadores(this);
     }
-    void registrarSuplidor(Suplidor suplidor)
+    public void registrarSuplidor(Suplidor suplidor)
     {
         misSuplidores.put(suplidor.getIdSuplidor(),suplidor);
         SuplidorDAO.getInstance().guardar(suplidor);

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane fitToWidth="true" style="-fx-background: white; -fx-background-color: white;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="visual.RegistroClienteController">
+    <VBox spacing="18" style="-fx-background-color: white;">
+        <padding>
+            <Insets top="25" right="35" bottom="25" left="35"/>
+        </padding>
+
+        <Label text="Registro de Cliente" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1c3f6e;"/>
+        <Label text="Complete los datos del nuevo cliente." style="-fx-font-size: 12px; -fx-text-fill: #7a7a7a;"/>
+
+        <Separator/>
+
+        <GridPane hgap="15" vgap="14">
+            <columnConstraints>
+                <ColumnConstraints minWidth="140"/>
+                <ColumnConstraints minWidth="350" hgrow="ALWAYS"/>
+            </columnConstraints>
+
+            <Label text="ID Cliente:" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <TextField fx:id="campoIdCliente" editable="false" promptText="Auto-generado por el sistema" style="-fx-background-color: #f2f2f2; -fx-border-color: #d6d6d6; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 8;" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+            <Label text="Tipo de Cliente:" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="comboTipoCliente" maxWidth="Infinity" style="-fx-border-color: #AEDFF7; -fx-border-radius: 8; -fx-background-radius: 8;" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+            <Label text="Nombre:" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <TextField fx:id="campoNombres" promptText="Nombre completo" style="-fx-border-color: #AEDFF7; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 8;" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+            <Label fx:id="lblApellidos" text="Apellidos:" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+            <TextField fx:id="campoApellidos" promptText="Apellidos" style="-fx-border-color: #AEDFF7; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 8;" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+            <Label text="Tipo Identificación:" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="comboTipoIdentificacion" maxWidth="Infinity" style="-fx-border-color: #AEDFF7; -fx-border-radius: 8; -fx-background-radius: 8;" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+            <Label fx:id="lblIdentificacion" text="Cédula:" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+            <TextField fx:id="campoIdentificacion" promptText="000-0000000-0" style="-fx-border-color: #AEDFF7; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 8;" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+            <Label text="Correo:" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+            <TextField fx:id="campoCorreo" promptText="cliente@correo.com" style="-fx-border-color: #AEDFF7; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 8;" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+        </GridPane>
+
+        <Separator/>
+
+        <Label text="Teléfonos:" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;"/>
+        <VBox fx:id="contenedorTelefonos" spacing="10"/>
+
+        <HBox alignment="CENTER_LEFT">
+            <Button fx:id="btnAgregarTelefono" text="+ Agregar telefono" onAction="#ControlarAgregarTelefono" style="-fx-background-color: #eaf4fc; -fx-text-fill: #1c3f6e; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 6 14 6 14;"/>
+        </HBox>
+
+        <Label fx:id="lblMensaje" wrapText="true"/>
+
+        <HBox alignment="CENTER_RIGHT" spacing="15">
+            <Button text="Cancelar" onAction="#ControlarCancelar" style="-fx-background-color: white; -fx-text-fill: #b23b3b; -fx-border-color: #b23b3b; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 8 20 8 20;"/>
+            <Button text="Limpiar Campos" onAction="#ControlarLimpiar" style="-fx-background-color: #e6e6e6; -fx-text-fill: #333333; -fx-background-radius: 8; -fx-padding: 8 20 8 20;"/>
+            <Button text="Guardar / Registrar" onAction="#ControlarGuardar" style="-fx-background-color: #1c3f6e; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 8 20 8 20;"/>
+        </HBox>
+    </VBox>
+</ScrollPane>

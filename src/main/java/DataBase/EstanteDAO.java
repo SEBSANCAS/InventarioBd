@@ -72,7 +72,7 @@ public class EstanteDAO {
                 int niveles = resultSet.getInt("niveles");
                 int capacidadTotal = resultSet.getInt("cap_total");
 
-                Estante e = new Estante(idEstante, capacidadTotal, niveles, "Almacén Principal");
+                Estante e = new Estante(idEstante, capacidadTotal, niveles);
                 estantes.add(e);
             }
         } catch (SQLException e) {
