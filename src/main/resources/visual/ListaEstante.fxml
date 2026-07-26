@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="10" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="visual.ListaEstanteController" prefWidth="650" prefHeight="500">
+    <padding>
+        <Insets top="15" right="15" bottom="15" left="15"/>
+    </padding>
+
+    <Label text="Gestión de Estantes" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+    <TableView fx:id="tablaEstantes" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colId" text="Código Estante" prefWidth="200"/>
+            <TableColumn fx:id="colCapacidad" text="Capacidad Total" prefWidth="200"/>
+            <TableColumn fx:id="colNiveles" text="Niveles" prefWidth="200"/>
+        </columns>
+    </TableView>
+
+    <TitledPane text="Editar / Eliminar Estante" expanded="true">
+        <GridPane hgap="10" vgap="10">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+
+            <Label text="Código:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+            <TextField fx:id="txtIdEstante" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+            <Label text="Capacidad:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+            <TextField fx:id="txtCapacidad" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+            <Label text="Niveles:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+            <TextField fx:id="txtNiveles" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+            <HBox spacing="10" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.columnSpan="2" alignment="CENTER_RIGHT">
+                <Button text="Actualizar" onAction="#handleActualizar" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+                <Button text="Eliminar" onAction="#handleEliminar" style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+                <Button text="Limpiar" onAction="#handleLimpiar"/>
+            </HBox>
+        </GridPane>
+    </TitledPane>
+</VBox>

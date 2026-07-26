@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="10" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="visual.ListaFacturaController" prefWidth="850" prefHeight="520">
+    <padding>
+        <Insets top="15" right="15" bottom="15" left="15"/>
+    </padding>
+
+    <Label text="Historial de Facturación" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+    <TableView fx:id="tablaFacturas" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colId" text="ID Factura" prefWidth="90"/>
+            <TableColumn fx:id="colComprobante" text="No. Comprobante" prefWidth="130"/>
+            <TableColumn fx:id="colCliente" text="Cliente" prefWidth="160"/>
+            <TableColumn fx:id="colFecha" text="Fecha Emisión" prefWidth="110"/>
+            <TableColumn fx:id="colSubtotal" text="Subtotal" prefWidth="110"/>
+            <TableColumn fx:id="colImpuestos" text="Impuestos" prefWidth="110"/>
+            <TableColumn fx:id="colTotal" text="Monto Total" prefWidth="120"/>
+        </columns>
+    </TableView>
+
+    <TitledPane text="Modificar Comprobante / Anular Factura" expanded="true">
+        <HBox spacing="15" alignment="CENTER_LEFT">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+
+            <Label text="No. Comprobante:"/>
+            <TextField fx:id="txtComprobante" HBox.hgrow="ALWAYS"/>
+
+            <Button text="Actualizar" onAction="#handleActualizarComprobante" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+            <Button text="Anular / Eliminar" onAction="#handleEliminar" style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+            <Button text="Limpiar" onAction="#handleLimpiar"/>
+        </HBox>
+    </TitledPane>
+</VBox>

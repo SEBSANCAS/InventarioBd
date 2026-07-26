@@ -109,4 +109,22 @@ public class EstanteDAO {
         }
         return idUbicacion;
     }
+    public void actualizar(Estante estante) {
+        final String sql = "UPDATE Ubicacion_Almacen SET capacidad_maxima = ? WHERE codigo_estante = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            int niveles = estante.getCantidadNiveles() > 0 ? estante.getCantidadNiveles() : 1;
+            int capacidadPorNivel = estante.getCapacidad() / niveles;
+            if (capacidadPorNivel == 0) capacidadPorNivel = 1;
+
+            preparedStatement.setInt(1, capacidadPorNivel);
+            preparedStatement.setString(2, estante.getIdEstante());
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println("No se pudo actualizar el estante: " + e.getMessage());
+        }
+    }
 }
