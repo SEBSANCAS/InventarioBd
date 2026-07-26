@@ -1,6 +1,7 @@
 package visual;
 
-import DataBase.DatabaseConnection;
+import DataBase.CiudadDAO;
+import DataBase.SuplidorDAO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -12,18 +13,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import logico.Ciudad;
 import logico.Servicio;
 import logico.Suplidor;
 import logico.Telefono;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 public class RegistroSuplidorController {
@@ -50,13 +47,7 @@ public class RegistroSuplidorController {
     private TextField campoCorreo;
 
     @FXML
-    private ComboBox<String> comboPais;
-
-    @FXML
-    private ComboBox<String> comboCiudad;
-
-    @FXML
-    private ComboBox<String> comboCalle;
+    private ComboBox<Ciudad> comboCiudad;
 
     @FXML
     private VBox contenedorTelefonos;
@@ -66,11 +57,6 @@ public class RegistroSuplidorController {
 
     private final List<FilaTelefono> filasTelefono = new ArrayList<>();
 
-    private final Map<String, String> mapaPaises = new HashMap<>();
-    private final Map<String, String> mapaCiudades = new HashMap<>();
-    private final Map<String, String> mapaCalles = new HashMap<>();
-
-    private static final Pattern PATRON_CEDULA = Pattern.compile("^[0-9]{11}$");
     private static final Pattern PATRON_RNC = Pattern.compile("^([0-9]{9}|[0-9]{11})$");
     private static final Pattern PATRON_CORREO = Pattern.compile("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
 
@@ -82,32 +68,27 @@ public class RegistroSuplidorController {
 
     @FXML
     public void initialize() {
-        comboTipoIdentificacion.getItems().addAll("Rnc", "Tax_id_intl", "Otro");
+        comboTipoIdentificacion.getItems().setAll("Rnc", "Tax_id_intl", "Otro");
         comboTipoIdentificacion.getSelectionModel().selectFirst();
         comboTipoIdentificacion.setOnAction(e -> actualizarPlaceholderIdentificacion());
 
-        comboPais.setOnAction(e -> {
-            String nombrePais = comboPais.getValue();
-            if (nombrePais != null) {
-                cargarCiudades(mapaPaises.get(nombrePais));
-            }
-        });
-
-        comboCiudad.setOnAction(e -> {
-            String nombreCiudad = comboCiudad.getValue();
-            if (nombreCiudad != null) {
-                cargarCalles(mapaCiudades.get(nombreCiudad));
-            }
-        });
-
-        actualizarPlaceholderIdentificacion();
+        cargarCiudades();
         actualizarIdPreview();
+        actualizarPlaceholderIdentificacion();
         limpiarFilasTelefono();
         agregarFilaTelefono();
-        cargarPaises();
+    }
+
+    private void cargarCiudades() {
+        ArrayList<Ciudad> ciudadesBD = CiudadDAO.getInstance().EncontrarTodas();
+        if (ciudadesBD != null && !ciudadesBD.isEmpty()) {
+            comboCiudad.getItems().setAll(ciudadesBD);
+            comboCiudad.getSelectionModel().selectFirst();
+        }
     }
 
     private void actualizarIdPreview() {
+        // Se obtiene el número correlativo desde Servicio (de forma idéntica a cliente)
         int siguiente = Servicio.getInstance().getGenIdSuplidor();
         campoIdSuplidor.setText(String.format("SUP%03d", siguiente));
     }
@@ -117,6 +98,7 @@ public class RegistroSuplidorController {
         if (tipo == null) {
             return;
         }
+
         switch (tipo) {
             case "Rnc":
                 lblIdentificacion.setText("RNC:");
@@ -133,73 +115,6 @@ public class RegistroSuplidorController {
         campoIdentificacion.clear();
     }
 
-    private void cargarPaises() {
-        mapaPaises.clear();
-        comboPais.getItems().clear();
-        comboCiudad.getItems().clear();
-        comboCalle.getItems().clear();
-
-        String sql = "SELECT id_pais, nombre_pais FROM Pais";
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-
-            while (rs.next()) {
-                String id = rs.getString("id_pais");
-                String nombre = rs.getString("nombre_pais");
-                mapaPaises.put(nombre, id);
-                comboPais.getItems().add(nombre);
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    private void cargarCiudades(String idPais) {
-        mapaCiudades.clear();
-        comboCiudad.getItems().clear();
-        comboCalle.getItems().clear();
-
-        String sql = "SELECT id_ciudad, nombre_ciudad FROM Ciudad WHERE id_pais = ?";
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
-
-            ps.setString(1, idPais);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    String id = rs.getString("id_ciudad");
-                    String nombre = rs.getString("nombre_ciudad");
-                    mapaCiudades.put(nombre, id);
-                    comboCiudad.getItems().add(nombre);
-                }
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    private void cargarCalles(String idCiudad) {
-        mapaCalles.clear();
-        comboCalle.getItems().clear();
-
-        String sql = "SELECT id_calle, nombre_calle FROM Calle WHERE id_ciudad = ?";
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
-
-            ps.setString(1, idCiudad);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    String id = rs.getString("id_calle");
-                    String nombre = rs.getString("nombre_calle");
-                    mapaCalles.put(nombre, id);
-                    comboCalle.getItems().add(nombre);
-                }
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
     @FXML
     private void ControlarAgregarTelefono(ActionEvent event) {
         agregarFilaTelefono();
@@ -213,9 +128,7 @@ public class RegistroSuplidorController {
 
         TextField campo = new TextField();
         campo.setPromptText("(809) 000-0000");
-        campo.setPrefWidth(300);
-        campo.setPrefHeight(34);
-        campo.setMaxWidth(420);
+        campo.setPrefWidth(260);
         campo.setStyle("-fx-border-color: #AEDFF7; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 8;");
 
         Button btnQuitar = new Button("－");
@@ -265,10 +178,6 @@ public class RegistroSuplidorController {
     private boolean validarCampos() {
         StringBuilder errores = new StringBuilder();
 
-        if (campoRazonComercial.getText() == null || campoRazonComercial.getText().trim().isEmpty()) {
-            errores.append("- La razón comercial es obligatoria.\n");
-        }
-
         if (campoNombreComercial.getText() == null || campoNombreComercial.getText().trim().isEmpty()) {
             errores.append("- El nombre comercial es obligatorio.\n");
         }
@@ -281,33 +190,25 @@ public class RegistroSuplidorController {
         String identificacion = campoIdentificacion.getText();
         if (identificacion == null || identificacion.trim().isEmpty()) {
             errores.append("- La identificación es obligatoria.\n");
-        } else if ("Cedula".equals(tipoIdentificacion) && !PATRON_CEDULA.matcher(identificacion.trim()).matches()) {
-            errores.append("- La cédula debe tener exactamente 11 dígitos numéricos, sin guiones.\n");
         } else if ("Rnc".equals(tipoIdentificacion) && !PATRON_RNC.matcher(identificacion.trim()).matches()) {
-            errores.append("- El RNC debe tener 9 u 11 dígitos numéricos, sin guiones.\n");
+            errores.append("- El RNC debe tener 9 u 11 dígitos numéricos, sin guiones ni espacios.\n");
         }
 
-        if (campoCorreo.getText() == null || campoCorreo.getText().trim().isEmpty()) {
-            errores.append("- El correo es obligatorio.\n");
-        } else if (!PATRON_CORREO.matcher(campoCorreo.getText().trim()).matches()) {
-            errores.append("- El correo no tiene un formato valido.\n");
+        if (campoCorreo.getText() != null && !campoCorreo.getText().trim().isEmpty()) {
+            if (!PATRON_CORREO.matcher(campoCorreo.getText().trim()).matches()) {
+                errores.append("- El correo no tiene un formato válido.\n");
+            }
         }
 
-        if (comboPais.getValue() == null) {
-            errores.append("- Debe seleccionar un país.\n");
-        }
         if (comboCiudad.getValue() == null) {
-            errores.append("- Debe seleccionar una ciudad.\n");
-        }
-        if (comboCalle.getValue() == null) {
-            errores.append("- Debe seleccionar una calle.\n");
+            errores.append("- Debe seleccionar una ciudad obligatoriamente.\n");
         }
 
         long telefonosConNumero = filasTelefono.stream()
                 .filter(f -> f.campoNumero.getText() != null && !f.campoNumero.getText().trim().isEmpty())
                 .count();
         if (telefonosConNumero == 0) {
-            errores.append("- Debe ingresar al menos un telefono.\n");
+            errores.append("- Debe ingresar al menos un teléfono.\n");
         }
 
         long principalesMarcados = filasTelefono.stream()
@@ -316,7 +217,7 @@ public class RegistroSuplidorController {
                         && !f.campoNumero.getText().trim().isEmpty())
                 .count();
         if (telefonosConNumero > 0 && principalesMarcados != 1) {
-            errores.append("- Debe marcar exactamente un telefono como principal.\n");
+            errores.append("- Debe marcar exactamente un teléfono como principal.\n");
         }
 
         if (errores.length() > 0) {
@@ -333,20 +234,25 @@ public class RegistroSuplidorController {
             return;
         }
 
-        String idSuplidor = Servicio.getInstance().generarIdSuplidor();
-        String idCalle = mapaCalles.get(comboCalle.getValue());
+        String tipoIdentificacion = comboTipoIdentificacion.getValue();
 
+        // 1. Obtención del ID desde la lógica del Servicio
+        String idSuplidor = Servicio.getInstance().generarIdSuplidor();
+        Ciudad ciudadSeleccionada = comboCiudad.getValue();
+
+        // 2. Creación del objeto Suplidor con sus atributos
         Suplidor suplidor = new Suplidor(
                 campoIdentificacion.getText().trim(),
-                campoCorreo.getText().trim(),
+                campoCorreo.getText() != null ? campoCorreo.getText().trim() : "",
                 campoNombreComercial.getText().trim(),
                 idSuplidor,
-                campoRazonComercial.getText().trim(),
-                idCalle,
+                campoRazonComercial.getText() != null ? campoRazonComercial.getText().trim() : "",
+                ciudadSeleccionada.getIdCiudad(),
                 LocalDate.now(),
-                comboTipoIdentificacion.getValue()
+                tipoIdentificacion
         );
 
+        // 3. Creación y adición de los objetos Telefono
         int contador = 0;
         for (FilaTelefono fila : filasTelefono) {
             String numero = fila.campoNumero.getText();
@@ -358,12 +264,21 @@ public class RegistroSuplidorController {
             }
         }
 
-        Servicio.getInstance().registrarSuplidor(suplidor);
+        try {
+            // 4. Guardado en la Base de Datos mediante el DAO
+            SuplidorDAO.getInstance().guardar(suplidor);
 
-        limpiarFormulario();
+            // 5. Limpiar formulario y actualizar IDs (se llama antes del mensaje para que el preview se actualice)
+            limpiarFormulario();
 
-        lblMensaje.setStyle("-fx-text-fill: #2e7d32;");
-        lblMensaje.setText("Suplidor " + idSuplidor + " registrado correctamente.");
+            lblMensaje.setStyle("-fx-text-fill: #2e7d32; -fx-font-weight: bold;");
+            lblMensaje.setText("¡Suplidor " + idSuplidor + " registrado correctamente! Siguiente ID: " + campoIdSuplidor.getText());
+
+        } catch (Exception e) {
+            lblMensaje.setStyle("-fx-text-fill: #b23b3b; -fx-font-weight: bold;");
+            lblMensaje.setText("Error de inserción en BD: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void limpiarFormulario() {
@@ -372,15 +287,14 @@ public class RegistroSuplidorController {
         campoCorreo.clear();
         campoIdentificacion.clear();
 
-        comboTipoIdentificacion.getSelectionModel().select("Rnc");
-        actualizarPlaceholderIdentificacion();
-
-        comboPais.getSelectionModel().clearSelection();
-        comboCiudad.getItems().clear();
-        comboCalle.getItems().clear();
+        comboTipoIdentificacion.getSelectionModel().selectFirst();
+        if (comboCiudad.getItems() != null && !comboCiudad.getItems().isEmpty()) {
+            comboCiudad.getSelectionModel().selectFirst();
+        }
 
         limpiarFilasTelefono();
         agregarFilaTelefono();
+
         actualizarIdPreview();
     }
 
@@ -392,7 +306,7 @@ public class RegistroSuplidorController {
 
     @FXML
     private void ControlarCancelar(ActionEvent event) {
-        Stage stage = (Stage) campoRazonComercial.getScene().getWindow();
+        Stage stage = (Stage) campoNombreComercial.getScene().getWindow();
         stage.close();
     }
 }

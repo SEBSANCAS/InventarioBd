@@ -35,11 +35,12 @@
                 <Insets top="10" right="10" bottom="10" left="10"/>
             </padding>
 
+            <!-- Deshabilitados para impedir la modificación de estos tipos -->
             <Label text="Tipo Cliente:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-            <ComboBox fx:id="cbTipoCliente" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+            <ComboBox fx:id="cbTipoCliente" disable="true" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
             <Label text="Tipo Identificación:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
-            <ComboBox fx:id="cbTipoIdentificacion" prefWidth="200" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+            <ComboBox fx:id="cbTipoIdentificacion" disable="true" prefWidth="200" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
 
             <Label text="No. Identificación:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
             <TextField fx:id="txtIdentificacion" GridPane.columnIndex="1" GridPane.rowIndex="1"/>

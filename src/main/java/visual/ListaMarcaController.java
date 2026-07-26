@@ -2,11 +2,11 @@ package visual;
 
 import DataBase.MarcaDAO;
 import logico.Marca;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -14,23 +14,31 @@ import java.util.Optional;
 public class ListaMarcaController {
 
     @FXML private TableView<Marca> tablaMarcas;
-    @FXML private TableColumn<Marca, Integer> colId;
+    @FXML private TableColumn<Marca, String> colId;
     @FXML private TableColumn<Marca, String> colNombre;
 
-    @FXML private TextField txtNombre;
+    @FXML private TextField txtIdMarca;
+    @FXML private TextField txtNombreMarca;
 
     private final ObservableList<Marca> listaMarcas = FXCollections.observableArrayList();
     private Marca marcaSeleccionada;
 
     @FXML
     public void initialize() {
-        colId.setCellValueFactory(new PropertyValueFactory<>("idMarca"));
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombreMarca"));
+        // Mapeo utilizando getNombreMarca() de tu clase logico.Marca
+        colId.setCellValueFactory(cell -> new SimpleStringProperty(
+                cell.getValue().getIdMarca() != null ? cell.getValue().getIdMarca() : ""
+        ));
+        colNombre.setCellValueFactory(cell -> new SimpleStringProperty(
+                cell.getValue().getNombreMarca() != null ? cell.getValue().getNombreMarca() : ""
+        ));
 
+        // Evento de selección en la tabla
         tablaMarcas.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
             if (newSel != null) {
                 marcaSeleccionada = newSel;
-                txtNombre.setText(marcaSeleccionada.getNombreMarca());
+                txtIdMarca.setText(marcaSeleccionada.getIdMarca() != null ? marcaSeleccionada.getIdMarca() : "");
+                txtNombreMarca.setText(marcaSeleccionada.getNombreMarca() != null ? marcaSeleccionada.getNombreMarca() : "");
             }
         });
 
@@ -53,12 +61,13 @@ public class ListaMarcaController {
             return;
         }
 
-        if (txtNombre.getText().trim().isEmpty()) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error", "El nombre de la marca es obligatorio.");
+        String nuevoNombre = txtNombreMarca.getText().trim();
+        if (nuevoNombre.isEmpty()) {
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", "El nombre de la marca no puede estar vacío.");
             return;
         }
 
-        marcaSeleccionada.setNombreMarca(txtNombre.getText().trim());
+        marcaSeleccionada.setNombreMarca(nuevoNombre);
         MarcaDAO.getInstance().actualizar(marcaSeleccionada);
 
         mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Marca actualizada correctamente.");
@@ -88,7 +97,8 @@ public class ListaMarcaController {
     private void handleLimpiar() {
         tablaMarcas.getSelectionModel().clearSelection();
         marcaSeleccionada = null;
-        txtNombre.clear();
+        txtIdMarca.clear();
+        txtNombreMarca.clear();
     }
 
     private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {

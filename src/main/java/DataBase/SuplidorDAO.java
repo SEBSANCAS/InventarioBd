@@ -16,7 +16,8 @@ public class SuplidorDAO {
     }
 
     public void guardar(Suplidor suplidor) {
-        final String sql = "INSERT INTO Suplidor (id_suplidor, numero_identificacion, razon_social, nombre_comercial, correo_electronico, id_calle, fecha_registro, tipo_identificacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        // Se corrigió id_calle -> id_ciudad
+        final String sql = "INSERT INTO Suplidor (id_suplidor, numero_identificacion, razon_social, nombre_comercial, correo_electronico, id_ciudad, fecha_registro, tipo_identificacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -26,7 +27,7 @@ public class SuplidorDAO {
             preparedStatement.setString(3, suplidor.getRazonComercial());
             preparedStatement.setString(4, suplidor.getNombreComercial());
             preparedStatement.setString(5, suplidor.getCorreo());
-            preparedStatement.setString(6, suplidor.getIdCalle());
+            preparedStatement.setString(6, suplidor.getIdCalle()); // Pasa el id_ciudad guardado en el objeto
             preparedStatement.setObject(7, LocalDate.now());
             preparedStatement.setString(8, suplidor.getTipoIdentificacion());
 
@@ -46,7 +47,8 @@ public class SuplidorDAO {
     }
 
     public void actualizar(Suplidor suplidor) {
-        final String sql = "UPDATE Suplidor SET numero_identificacion=?, razon_social=?, nombre_comercial=?, correo_electronico=?, id_calle=?, tipo_identificacion=? WHERE id_suplidor=?";
+        // Se corrigió id_calle -> id_ciudad
+        final String sql = "UPDATE Suplidor SET numero_identificacion=?, razon_social=?, nombre_comercial=?, correo_electronico=?, id_ciudad=?, tipo_identificacion=? WHERE id_suplidor=?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -55,7 +57,7 @@ public class SuplidorDAO {
             preparedStatement.setString(2, suplidor.getRazonComercial());
             preparedStatement.setString(3, suplidor.getNombreComercial());
             preparedStatement.setString(4, suplidor.getCorreo());
-            preparedStatement.setString(5, suplidor.getIdCalle());
+            preparedStatement.setString(5, suplidor.getIdCalle()); // Pasa el id_ciudad
             preparedStatement.setString(6, suplidor.getTipoIdentificacion());
             preparedStatement.setString(7, suplidor.getIdSuplidor());
 
@@ -99,7 +101,7 @@ public class SuplidorDAO {
                         resultSet.getString("nombre_comercial"),
                         resultSet.getString("id_suplidor"),
                         resultSet.getString("razon_social"),
-                        resultSet.getString("id_calle"),
+                        resultSet.getString("id_ciudad"), // Se lee desde la columna id_ciudad de la BD
                         resultSet.getObject("fecha_registro", LocalDate.class),
                         resultSet.getString("tipo_identificacion")
                 );
@@ -130,7 +132,7 @@ public class SuplidorDAO {
                             resultSet.getString("nombre_comercial"),
                             resultSet.getString("id_suplidor"),
                             resultSet.getString("razon_social"),
-                            resultSet.getString("id_calle"),
+                            resultSet.getString("id_ciudad"), // Se lee desde la columna id_ciudad de la BD
                             resultSet.getObject("fecha_registro", LocalDate.class),
                             resultSet.getString("tipo_identificacion")
                     );

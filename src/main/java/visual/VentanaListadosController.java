@@ -57,7 +57,8 @@ public class VentanaListadosController {
                 titulo = "Gestión y Listado de Suplidores";
                 break;
             case "Listado de Marcas":
-                fxmlPath = "/visual/ListaMarca.fxml";
+                // Asegúrate de que el nombre aquí coincida EXACTAMENTE con el nombre de tu archivo FXML
+                fxmlPath = "/visual/ListaMarca..fxml";
                 titulo = "Gestión y Listado de Marcas";
                 break;
             case "Listado de Adquisiciones":
@@ -83,7 +84,18 @@ public class VentanaListadosController {
 
     private void abrirVentanaListado(String fxmlPath, String titulo) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            java.net.URL fxmlUrl = getClass().getResource(fxmlPath);
+
+            // Validación preventiva para que no explote con "Location is not set"
+            if (fxmlUrl == null) {
+                System.err.println("❌ ERROR: No se encontró el archivo FXML en la ruta: " + fxmlPath);
+                mostrarAlertaError("Archivo no encontrado",
+                        "No se encontró el archivo FXML en " + fxmlPath +
+                                "\n\nAsegúrate de que el archivo 'ListaMarca.fxml' esté en 'src/main/resources/visual/'.");
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent root = loader.load();
 
             Stage stage = new Stage();
@@ -94,13 +106,15 @@ public class VentanaListadosController {
         } catch (IOException e) {
             System.out.println("Error al cargar " + fxmlPath + ": " + e.getMessage());
             e.printStackTrace();
-
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error de Carga");
-            alert.setHeaderText(null);
-            alert.setContentText("No se pudo cargar el FXML: " + fxmlPath);
-            alert.showAndWait();
         }
+    }
+
+    private void mostrarAlertaError(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
     }
 
     @FXML

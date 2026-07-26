@@ -34,6 +34,7 @@ public class ListaClientesController {
 
     @FXML
     public void initialize() {
+        // Mapeo explicito con Lambdas para asegurar visibilidad
         colId.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getIdCliente() != null ? cell.getValue().getIdCliente() : ""));
         colTipoCliente.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getTipoCLiente() != null ? cell.getValue().getTipoCLiente() : ""));
         colTipoIdentificacion.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getTipoIdentificacion() != null ? cell.getValue().getTipoIdentificacion() : ""));
@@ -44,15 +45,6 @@ public class ListaClientesController {
 
         cbTipoCliente.setItems(FXCollections.observableArrayList("Persona", "Empresa"));
         cbTipoIdentificacion.setItems(FXCollections.observableArrayList("Cedula", "Rnc", "Pasaporte", "Tax_id_intl", "Otro"));
-
-        cbTipoCliente.valueProperty().addListener((obs, oldVal, newVal) -> {
-            if ("Empresa".equalsIgnoreCase(newVal)) {
-                txtApellidos.clear();
-                txtApellidos.setDisable(true);
-            } else {
-                txtApellidos.setDisable(false);
-            }
-        });
 
         tablaClientes.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
             if (newSel != null) {
@@ -76,10 +68,19 @@ public class ListaClientesController {
     private void cargarDatosEnFormulario(Cliente cliente) {
         txtIdentificacion.setText(cliente.getNumeroIdentificacion());
         txtNombres.setText(cliente.getNombres());
-        txtApellidos.setText(cliente.getApellidos() != null ? cliente.getApellidos() : "");
         txtCorreo.setText(cliente.getCorreo());
+
         cbTipoCliente.setValue(cliente.getTipoCLiente());
         cbTipoIdentificacion.setValue(cliente.getTipoIdentificacion());
+
+        // Regla: Si es Empresa, apellidos va nulo/vacío y deshabilitado
+        if ("Empresa".equalsIgnoreCase(cliente.getTipoCLiente())) {
+            txtApellidos.clear();
+            txtApellidos.setDisable(true);
+        } else {
+            txtApellidos.setDisable(false);
+            txtApellidos.setText(cliente.getApellidos() != null ? cliente.getApellidos() : "");
+        }
     }
 
     @FXML
@@ -89,20 +90,36 @@ public class ListaClientesController {
             return;
         }
 
-        String tipoCliente = cbTipoCliente.getValue();
-        String tipoId = cbTipoIdentificacion.getValue();
         String numId = txtIdentificacion.getText().trim();
         String nombres = txtNombres.getText().trim();
         String apellidos = txtApellidos.getText().trim();
+        String tipoCliente = clienteSeleccionado.getTipoCLiente();
+        String tipoId = clienteSeleccionado.getTipoIdentificacion();
 
-        if (tipoCliente == null || tipoId == null || numId.isEmpty() || nombres.isEmpty()) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error", "Completa todos los campos obligatorios.");
+        // Validaciones básicas
+        if (numId.isEmpty() || nombres.isEmpty()) {
+            mostrarAlerta(Alert.AlertType.ERROR, "Validación", "Por favor completa el número de identificación y nombres.");
             return;
         }
 
+        // Validación de Apellidos según tipo_cliente
+        if ("Persona".equalsIgnoreCase(tipoCliente) && apellidos.isEmpty()) {
+            mostrarAlerta(Alert.AlertType.ERROR, "Validación SQL", "Para clientes de tipo 'Persona', los apellidos son obligatorios.");
+            return;
+        }
+
+        // Validación de formato de documento segun la restriccion CHECK de MySQL
+        if ("Cedula".equalsIgnoreCase(tipoId) && !numId.matches("^[0-9]{11}$")) {
+            mostrarAlerta(Alert.AlertType.ERROR, "Validación SQL", "La Cédula debe tener exactamente 11 dígitos numéricos.");
+            return;
+        }
+        if ("Rnc".equalsIgnoreCase(tipoId) && !numId.matches("^([0-9]{9}|[0-9]{11})$")) {
+            mostrarAlerta(Alert.AlertType.ERROR, "Validación SQL", "El RNC debe tener 9 u 11 dígitos numéricos.");
+            return;
+        }
+
+        // Se actualizan únicamente los campos permitidos (sin tocar los tipos congelados)
         clienteSeleccionado.setNumeroIdentificacion(numId);
-        clienteSeleccionado.setTipoIdentificacion(tipoId);
-        clienteSeleccionado.setTipoCLiente(tipoCliente);
         clienteSeleccionado.setNombres(nombres);
         clienteSeleccionado.setApellidos("Empresa".equalsIgnoreCase(tipoCliente) ? null : apellidos);
         clienteSeleccionado.setCorreo(txtCorreo.getText().trim());
@@ -117,7 +134,7 @@ public class ListaClientesController {
     @FXML
     private void handleEliminar() {
         if (clienteSeleccionado == null) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Atención", "Selecciona un cliente.");
+            mostrarAlerta(Alert.AlertType.WARNING, "Atención", "Selecciona un cliente de la tabla.");
             return;
         }
 
@@ -142,6 +159,7 @@ public class ListaClientesController {
         txtCorreo.clear();
         cbTipoCliente.setValue(null);
         cbTipoIdentificacion.setValue(null);
+        txtApellidos.setDisable(false);
     }
 
     private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
