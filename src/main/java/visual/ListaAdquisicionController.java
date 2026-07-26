@@ -2,12 +2,12 @@ package visual;
 
 import DataBase.AdquisicionDAO;
 import logico.Adquisicion;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -30,25 +30,30 @@ public class ListaAdquisicionController {
 
     @FXML
     public void initialize() {
-        // Mapeo simple de campos directos
-        colId.setCellValueFactory(new PropertyValueFactory<>("idCompra"));
-        colFechaEmision.setCellValueFactory(new PropertyValueFactory<>("fechaEmision"));
-        colFechaEntrega.setCellValueFactory(new PropertyValueFactory<>("fechaEntrega"));
-        colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
-        colTotal.setCellValueFactory(new PropertyValueFactory<>("montoTotal"));
+        // Mapeo seguro con Lambdas utilizando los getters exactos de Adquisicion
+        colId.setCellValueFactory(cell -> new SimpleStringProperty(
+                cell.getValue().getIdCompra() != null ? cell.getValue().getIdCompra() : ""
+        ));
 
-        // Mapeo personalizado para extraer el Nombre Comercial de la relación con Suplidor
-        colSuplidor.setCellValueFactory(cellData -> {
-            if (cellData.getValue().getSuplidor() != null) {
-                return new SimpleStringProperty(cellData.getValue().getSuplidor().getNombreComercial());
-            }
-            return new SimpleStringProperty("N/A");
-        });
+        colSuplidor.setCellValueFactory(cell -> new SimpleStringProperty(
+                (cell.getValue().getSuplidor() != null && cell.getValue().getSuplidor().getNombreComercial() != null)
+                        ? cell.getValue().getSuplidor().getNombreComercial()
+                        : "N/A"
+        ));
 
-        // Opciones para cambiar estado
-        cbEstado.setItems(FXCollections.observableArrayList("Pendiente", "Recibido", "Cancelado"));
+        colFechaEmision.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getFechaEmision()));
+        colFechaEntrega.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getFechaEntrega()));
 
-        // Listener de selección en la tabla
+        colEstado.setCellValueFactory(cell -> new SimpleStringProperty(
+                cell.getValue().getEstado() != null ? cell.getValue().getEstado() : ""
+        ));
+
+        colTotal.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getMontoTotal()));
+
+        // Opciones de estado
+        cbEstado.setItems(FXCollections.observableArrayList("Pendiente", "Aceptada", "Recibido", "Rechazada", "Cancelada"));
+
+        // Listener para llenar controles al seleccionar una fila
         tablaAdquisiciones.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
             if (newSel != null) {
                 adquisicionSeleccionada = newSel;
@@ -81,6 +86,12 @@ public class ListaAdquisicionController {
         }
 
         adquisicionSeleccionada.setEstado(cbEstado.getValue());
+
+        // Si el estado pasa a "Recibido", actualizamos la fecha de entrega
+        if ("Recibido".equalsIgnoreCase(cbEstado.getValue()) && adquisicionSeleccionada.getFechaEntrega() == null) {
+            adquisicionSeleccionada.setFechaEntrega(LocalDate.now());
+        }
+
         AdquisicionDAO.getInstance().actualizar(adquisicionSeleccionada);
 
         mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Estado de la adquisición actualizado correctamente.");
@@ -95,7 +106,7 @@ public class ListaAdquisicionController {
             return;
         }
 
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "¿Deseas eliminar la adquisición " + adquisicionSeleccionada.getIdCompra() + "?");
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "¿Deseas eliminar la adquisición ID: " + adquisicionSeleccionada.getIdCompra() + "?");
         Optional<ButtonType> res = confirm.showAndWait();
 
         if (res.isPresent() && res.get() == ButtonType.OK) {

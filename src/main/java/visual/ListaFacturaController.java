@@ -2,12 +2,12 @@ package visual;
 
 import DataBase.FacturaDAO;
 import logico.Factura;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -31,23 +31,28 @@ public class ListaFacturaController {
 
     @FXML
     public void initialize() {
-        // Mapeo de columnas con las propiedades directas de Factura
-        colId.setCellValueFactory(new PropertyValueFactory<>("idFactura"));
-        colComprobante.setCellValueFactory(new PropertyValueFactory<>("numeroComprobante"));
-        colFecha.setCellValueFactory(new PropertyValueFactory<>("fechaEmision"));
-        colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
-        colImpuestos.setCellValueFactory(new PropertyValueFactory<>("impuestos"));
-        colTotal.setCellValueFactory(new PropertyValueFactory<>("montoTotal"));
+        // Mapeo directo mediante expresiones lambda usando getters exactos
+        colId.setCellValueFactory(cell -> new SimpleStringProperty(
+                cell.getValue().getIdFactura() != null ? cell.getValue().getIdFactura() : ""
+        ));
 
-        // Extracción del nombre del Cliente desde la relación
-        colCliente.setCellValueFactory(cellData -> {
-            if (cellData.getValue().getCliente() != null) {
-                return new SimpleStringProperty(cellData.getValue().getCliente().getNombres());
-            }
-            return new SimpleStringProperty("Sin Cliente");
-        });
+        colComprobante.setCellValueFactory(cell -> new SimpleStringProperty(
+                cell.getValue().getNumeroComprobante() != null ? cell.getValue().getNumeroComprobante() : ""
+        ));
 
-        // Evento de selección en la tabla
+        // Extracción segura del nombre del cliente desde la relación
+        colCliente.setCellValueFactory(cell -> new SimpleStringProperty(
+                (cell.getValue().getCliente() != null && cell.getValue().getCliente().getNombres() != null)
+                        ? cell.getValue().getCliente().getNombres()
+                        : "Sin Cliente"
+        ));
+
+        colFecha.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getFechaEmision()));
+        colSubtotal.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getSubtotal()));
+        colImpuestos.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getImpuestos()));
+        colTotal.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getMontoTotal()));
+
+        // Listener de selección en la tabla
         tablaFacturas.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
             if (newSel != null) {
                 facturaSeleccionada = newSel;
@@ -94,13 +99,13 @@ public class ListaFacturaController {
             return;
         }
 
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "¿Estás seguro de que deseas anular/eliminar la factura " + facturaSeleccionada.getIdFactura() + "?");
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "¿Estás seguro de que deseas anular la factura ID: " + facturaSeleccionada.getIdFactura() + "?");
         Optional<ButtonType> res = confirm.showAndWait();
 
         if (res.isPresent() && res.get() == ButtonType.OK) {
             FacturaDAO.getInstance().borrar(facturaSeleccionada.getIdFactura());
             listaFacturas.remove(facturaSeleccionada);
-            mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Factura eliminada correctamente.");
+            mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Factura anulada/eliminada correctamente.");
             handleLimpiar();
         }
     }

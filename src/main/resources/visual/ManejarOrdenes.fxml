@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="15" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="visual.ManejarOrdenesController" prefWidth="850" prefHeight="600">
+    <padding>
+        <Insets top="15" right="15" bottom="15" left="15"/>
+    </padding>
+
+    <Label text="Manejar Órdenes y Compras" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+
+    <!-- BOX SUPERIOR: ÓRDENES REALIZADAS (PENDIENTES) -->
+    <TitledPane text="Órdenes Pendientes por Aprobar" expanded="true" VBox.vgrow="ALWAYS">
+        <VBox spacing="10">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+
+            <TableView fx:id="tablaPendientes" prefHeight="180" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colPendId" text="ID Orden" prefWidth="100"/>
+                    <TableColumn fx:id="colPendSuplidor" text="Suplidor" prefWidth="220"/>
+                    <TableColumn fx:id="colPendFecha" text="Fecha Emisión" prefWidth="140"/>
+                    <TableColumn fx:id="colPendTotal" text="Monto Total" prefWidth="150"/>
+                    <TableColumn fx:id="colPendEstado" text="Estado" prefWidth="120"/>
+                </columns>
+            </TableView>
+
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Button text="Aceptar Orden" onAction="#handleAceptarOrden" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                <Button text="Rechazar Orden" onAction="#handleRechazarOrden" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-weight: bold;"/>
+            </HBox>
+        </VBox>
+    </TitledPane>
+
+    <!-- BOX INFERIOR: ÓRDENES ACEPTADAS -->
+    <TitledPane text="Órdenes Aceptadas en Espera de Envío" expanded="true" VBox.vgrow="ALWAYS">
+        <VBox spacing="10">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+
+            <TableView fx:id="tablaAceptadas" prefHeight="180" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colAceptId" text="ID Orden" prefWidth="100"/>
+                    <TableColumn fx:id="colAceptSuplidor" text="Suplidor" prefWidth="220"/>
+                    <TableColumn fx:id="colAceptFecha" text="Fecha Emisión" prefWidth="140"/>
+                    <TableColumn fx:id="colAceptTotal" text="Monto Total" prefWidth="150"/>
+                    <TableColumn fx:id="colAceptEstado" text="Estado" prefWidth="120"/>
+                </columns>
+            </TableView>
+
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Button text="📦 ¡La compra llegó!" onAction="#handleCompraLlego" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px;"/>
+            </HBox>
+        </VBox>
+    </TitledPane>
+</VBox>

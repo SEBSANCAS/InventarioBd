@@ -2,11 +2,12 @@ package visual;
 
 import DataBase.EstanteDAO;
 import logico.Estante;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -27,16 +28,18 @@ public class ListaEstanteController {
 
     @FXML
     public void initialize() {
-        // Coinciden con getIdEstante(), getCapacidad() y getCantidadNiveles()
-        colId.setCellValueFactory(new PropertyValueFactory<>("idEstante"));
-        colCapacidad.setCellValueFactory(new PropertyValueFactory<>("capacidad"));
-        colNiveles.setCellValueFactory(new PropertyValueFactory<>("cantidadNiveles"));
+        // Mapeo directo mediante expresiones lambda para evitar problemas de contraste o texto invisible
+        colId.setCellValueFactory(cell -> new SimpleStringProperty(
+                cell.getValue().getIdEstante() != null ? cell.getValue().getIdEstante() : ""
+        ));
+        colCapacidad.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getCapacidad()));
+        colNiveles.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getCantidadNiveles()));
 
-        // Evento al seleccionar una fila
+        // Evento al seleccionar una fila de la tabla
         tablaEstantes.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
             if (newSel != null) {
                 estanteSeleccionado = newSel;
-                txtIdEstante.setText(estanteSeleccionado.getIdEstante());
+                txtIdEstante.setText(estanteSeleccionado.getIdEstante() != null ? estanteSeleccionado.getIdEstante() : "");
                 txtCapacidad.setText(String.valueOf(estanteSeleccionado.getCapacidad()));
                 txtNiveles.setText(String.valueOf(estanteSeleccionado.getCantidadNiveles()));
             }
@@ -63,10 +66,7 @@ public class ListaEstanteController {
 
         try {
             int capacidad = Integer.parseInt(txtCapacidad.getText().trim());
-            int niveles = Integer.parseInt(txtNiveles.getText().trim());
-
             estanteSeleccionado.setCapacidad(capacidad);
-            estanteSeleccionado.setCantidadNiveles(niveles);
 
             EstanteDAO.getInstance().actualizar(estanteSeleccionado);
 
@@ -74,7 +74,7 @@ public class ListaEstanteController {
             tablaEstantes.refresh();
             handleLimpiar();
         } catch (NumberFormatException e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error", "La capacidad y la cantidad de niveles deben ser números enteros.");
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", "La capacidad debe ser un número entero válido.");
         }
     }
 

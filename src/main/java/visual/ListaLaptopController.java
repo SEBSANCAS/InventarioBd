@@ -2,11 +2,13 @@ package visual;
 
 import DataBase.LaptopDAO;
 import logico.Laptop;
+import javafx.beans.property.SimpleFloatProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -34,22 +36,23 @@ public class ListaLaptopController {
 
     @FXML
     public void initialize() {
-        // Mapeo exacto con los getters de logico.Laptop
-        colId.setCellValueFactory(new PropertyValueFactory<>("idLaptop"));
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombreComercial"));
-        colModelo.setCellValueFactory(new PropertyValueFactory<>("numeroModelo"));
-        colProcesador.setCellValueFactory(new PropertyValueFactory<>("procesador"));
-        colRam.setCellValueFactory(new PropertyValueFactory<>("cantidadRam"));
-        colPrecio.setCellValueFactory(new PropertyValueFactory<>("precioDetalle"));
-        colStock.setCellValueFactory(new PropertyValueFactory<>("stockActual"));
+        // --- MAPEO DIRECTO CON LAMBDAS (Resuelve textos invisibles) ---
+        colId.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getIdLaptop() != null ? cell.getValue().getIdLaptop() : ""));
+        colNombre.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getNombreComercial() != null ? cell.getValue().getNombreComercial() : ""));
+        colModelo.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getNumeroModelo() != null ? cell.getValue().getNumeroModelo() : ""));
+        colProcesador.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getProcesador() != null ? cell.getValue().getProcesador() : ""));
 
-        // Listener para llenar el formulario al seleccionar una fila
+        colRam.setCellValueFactory(cell -> new SimpleFloatProperty(cell.getValue().getCantidadRam()).asObject());
+        colPrecio.setCellValueFactory(cell -> new SimpleFloatProperty(cell.getValue().getPrecioDetalle()).asObject());
+        colStock.setCellValueFactory(cell -> new SimpleIntegerProperty(cell.getValue().getStockActual()).asObject());
+
+        // Evento al seleccionar una fila
         tablaLaptops.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
             if (newSel != null) {
                 laptopSeleccionada = newSel;
-                txtNombre.setText(laptopSeleccionada.getNombreComercial());
-                txtModelo.setText(laptopSeleccionada.getNumeroModelo());
-                txtProcesador.setText(laptopSeleccionada.getProcesador());
+                txtNombre.setText(laptopSeleccionada.getNombreComercial() != null ? laptopSeleccionada.getNombreComercial() : "");
+                txtModelo.setText(laptopSeleccionada.getNumeroModelo() != null ? laptopSeleccionada.getNumeroModelo() : "");
+                txtProcesador.setText(laptopSeleccionada.getProcesador() != null ? laptopSeleccionada.getProcesador() : "");
                 txtRam.setText(String.valueOf(laptopSeleccionada.getCantidadRam()));
                 txtPrecio.setText(String.valueOf(laptopSeleccionada.getPrecioDetalle()));
                 txtStock.setText(String.valueOf(laptopSeleccionada.getStockActual()));
@@ -71,7 +74,7 @@ public class ListaLaptopController {
     @FXML
     private void handleActualizar() {
         if (laptopSeleccionada == null) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Atención", "Selecciona una laptop de la tabla para editar.");
+            mostrarAlerta(Alert.AlertType.WARNING, "Atención", "Selecciona una laptop de la tabla.");
             return;
         }
 
@@ -89,18 +92,18 @@ public class ListaLaptopController {
             tablaLaptops.refresh();
             handleLimpiar();
         } catch (NumberFormatException e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error de Formato", "Comprueba que la RAM, el Precio y el Stock contengan valores numéricos válidos.");
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", "Valores numéricos inválidos.");
         }
     }
 
     @FXML
     private void handleEliminar() {
         if (laptopSeleccionada == null) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Atención", "Selecciona una laptop de la tabla para eliminar.");
+            mostrarAlerta(Alert.AlertType.WARNING, "Atención", "Selecciona una laptop de la tabla.");
             return;
         }
 
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "¿Estás seguro de que deseas eliminar la laptop: " + laptopSeleccionada.getNombreComercial() + "?");
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "¿Deseas eliminar esta laptop?");
         Optional<ButtonType> res = confirm.showAndWait();
 
         if (res.isPresent() && res.get() == ButtonType.OK) {

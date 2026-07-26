@@ -2,11 +2,11 @@ package visual;
 
 import DataBase.ClienteDAO;
 import logico.Cliente;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -26,38 +26,46 @@ public class ListaClientesController {
     @FXML private TextField txtNombres;
     @FXML private TextField txtApellidos;
     @FXML private TextField txtCorreo;
-    @FXML private TextField txtTipoCliente;
-    @FXML private TextField txtTipoIdentificacion;
+    @FXML private ComboBox<String> cbTipoCliente;
+    @FXML private ComboBox<String> cbTipoIdentificacion;
 
     private final ObservableList<Cliente> listaClientes = FXCollections.observableArrayList();
     private Cliente clienteSeleccionado;
 
     @FXML
     public void initialize() {
-        // 1. Mapeo de columnas con los getters de logico.Cliente
-        colId.setCellValueFactory(new PropertyValueFactory<>("idCliente"));
-        colIdentificacion.setCellValueFactory(new PropertyValueFactory<>("numeroIdentificacion"));
-        colTipoIdentificacion.setCellValueFactory(new PropertyValueFactory<>("tipoIdentificacion"));
-        colNombres.setCellValueFactory(new PropertyValueFactory<>("nombres"));
-        colApellidos.setCellValueFactory(new PropertyValueFactory<>("apellidos"));
-        colCorreo.setCellValueFactory(new PropertyValueFactory<>("correo"));
-        colTipoCliente.setCellValueFactory(new PropertyValueFactory<>("tipoCLiente"));
+        colId.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getIdCliente() != null ? cell.getValue().getIdCliente() : ""));
+        colTipoCliente.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getTipoCLiente() != null ? cell.getValue().getTipoCLiente() : ""));
+        colTipoIdentificacion.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getTipoIdentificacion() != null ? cell.getValue().getTipoIdentificacion() : ""));
+        colIdentificacion.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getNumeroIdentificacion() != null ? cell.getValue().getNumeroIdentificacion() : ""));
+        colNombres.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getNombres() != null ? cell.getValue().getNombres() : ""));
+        colApellidos.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getApellidos() != null ? cell.getValue().getApellidos() : ""));
+        colCorreo.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getCorreo() != null ? cell.getValue().getCorreo() : ""));
 
-        // 2. Cargar campos al seleccionar una fila de la tabla
-        tablaClientes.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                clienteSeleccionado = newSelection;
+        cbTipoCliente.setItems(FXCollections.observableArrayList("Persona", "Empresa"));
+        cbTipoIdentificacion.setItems(FXCollections.observableArrayList("Cedula", "Rnc", "Pasaporte", "Tax_id_intl", "Otro"));
+
+        cbTipoCliente.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if ("Empresa".equalsIgnoreCase(newVal)) {
+                txtApellidos.clear();
+                txtApellidos.setDisable(true);
+            } else {
+                txtApellidos.setDisable(false);
+            }
+        });
+
+        tablaClientes.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
+            if (newSel != null) {
+                clienteSeleccionado = newSel;
                 cargarDatosEnFormulario(clienteSeleccionado);
             }
         });
 
-        // 3. Cargar lista de clientes desde la BD
         cargarTabla();
     }
 
     private void cargarTabla() {
         listaClientes.clear();
-        // Llamada a tu método Singleton EncontrarTodos()
         ArrayList<Cliente> clientesBD = ClienteDAO.getInstance().EncontrarTodos();
         if (clientesBD != null) {
             listaClientes.addAll(clientesBD);
@@ -70,32 +78,35 @@ public class ListaClientesController {
         txtNombres.setText(cliente.getNombres());
         txtApellidos.setText(cliente.getApellidos() != null ? cliente.getApellidos() : "");
         txtCorreo.setText(cliente.getCorreo());
-        txtTipoCliente.setText(cliente.getTipoCLiente());
-        txtTipoIdentificacion.setText(cliente.getTipoIdentificacion());
+        cbTipoCliente.setValue(cliente.getTipoCLiente());
+        cbTipoIdentificacion.setValue(cliente.getTipoIdentificacion());
     }
 
-    // --- BOTÓN ACTUALIZAR ---
     @FXML
     private void handleActualizar() {
         if (clienteSeleccionado == null) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Atención", "Selecciona un cliente de la tabla para modificar.");
+            mostrarAlerta(Alert.AlertType.WARNING, "Atención", "Selecciona un cliente de la tabla.");
             return;
         }
 
-        if (txtNombres.getText().trim().isEmpty() || txtIdentificacion.getText().trim().isEmpty()) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error de Validación", "El número de identificación y el nombre son obligatorios.");
+        String tipoCliente = cbTipoCliente.getValue();
+        String tipoId = cbTipoIdentificacion.getValue();
+        String numId = txtIdentificacion.getText().trim();
+        String nombres = txtNombres.getText().trim();
+        String apellidos = txtApellidos.getText().trim();
+
+        if (tipoCliente == null || tipoId == null || numId.isEmpty() || nombres.isEmpty()) {
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", "Completa todos los campos obligatorios.");
             return;
         }
 
-        // Modificamos el objeto con los datos introducidos
-        clienteSeleccionado.setNumeroIdentificacion(txtIdentificacion.getText().trim());
-        clienteSeleccionado.setNombres(txtNombres.getText().trim());
-        clienteSeleccionado.setApellidos(txtApellidos.getText().trim());
+        clienteSeleccionado.setNumeroIdentificacion(numId);
+        clienteSeleccionado.setTipoIdentificacion(tipoId);
+        clienteSeleccionado.setTipoCLiente(tipoCliente);
+        clienteSeleccionado.setNombres(nombres);
+        clienteSeleccionado.setApellidos("Empresa".equalsIgnoreCase(tipoCliente) ? null : apellidos);
         clienteSeleccionado.setCorreo(txtCorreo.getText().trim());
-        clienteSeleccionado.setTipoCLiente(txtTipoCliente.getText().trim());
-        clienteSeleccionado.setTipoIdentificacion(txtTipoIdentificacion.getText().trim());
 
-        // Llamada a tu método actualizar
         ClienteDAO.getInstance().actualizar(clienteSeleccionado);
 
         mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Cliente actualizado correctamente.");
@@ -103,24 +114,18 @@ public class ListaClientesController {
         handleLimpiar();
     }
 
-    // --- BOTÓN ELIMINAR ---
     @FXML
     private void handleEliminar() {
         if (clienteSeleccionado == null) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Atención", "Selecciona un cliente de la tabla para eliminar.");
+            mostrarAlerta(Alert.AlertType.WARNING, "Atención", "Selecciona un cliente.");
             return;
         }
 
-        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmacion.setTitle("Confirmar eliminación");
-        confirmacion.setHeaderText(null);
-        confirmacion.setContentText("¿Estás seguro de que deseas eliminar al cliente: " + clienteSeleccionado.getNombres() + "?");
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "¿Deseas eliminar al cliente " + clienteSeleccionado.getNombres() + "?");
+        Optional<ButtonType> res = confirm.showAndWait();
 
-        Optional<ButtonType> resultado = confirmacion.showAndWait();
-        if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
-            // Llamada a tu método borrar mandando el idCliente (String)
+        if (res.isPresent() && res.get() == ButtonType.OK) {
             ClienteDAO.getInstance().borrar(clienteSeleccionado.getIdCliente());
-
             listaClientes.remove(clienteSeleccionado);
             mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Cliente eliminado correctamente.");
             handleLimpiar();
@@ -135,15 +140,14 @@ public class ListaClientesController {
         txtNombres.clear();
         txtApellidos.clear();
         txtCorreo.clear();
-        txtTipoCliente.clear();
-        txtTipoIdentificacion.clear();
+        cbTipoCliente.setValue(null);
+        cbTipoIdentificacion.setValue(null);
     }
 
     private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
-        Alert alert = new Alert(tipo);
+        Alert alert = new Alert(tipo, mensaje);
         alert.setTitle(titulo);
         alert.setHeaderText(null);
-        alert.setContentText(mensaje);
         alert.showAndWait();
     }
 }

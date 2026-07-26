@@ -2,11 +2,11 @@ package visual;
 
 import DataBase.SuplidorDAO;
 import logico.Suplidor;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -30,21 +30,31 @@ public class ListaSuplidorController {
 
     @FXML
     public void initialize() {
-        // Mapeo según los getters de Persona y Suplidor
-        colId.setCellValueFactory(new PropertyValueFactory<>("idSuplidor"));
-        colNombreComercial.setCellValueFactory(new PropertyValueFactory<>("nombreComercial"));
-        colRazonComercial.setCellValueFactory(new PropertyValueFactory<>("razonComercial"));
-        colIdentificacion.setCellValueFactory(new PropertyValueFactory<>("numeroIdentificacion"));
-        colCorreo.setCellValueFactory(new PropertyValueFactory<>("correo"));
+        // Mapeo mediante expresiones lambda usando los getters exactos
+        colId.setCellValueFactory(cell -> new SimpleStringProperty(
+                cell.getValue().getIdSuplidor() != null ? cell.getValue().getIdSuplidor() : ""
+        ));
+        colNombreComercial.setCellValueFactory(cell -> new SimpleStringProperty(
+                cell.getValue().getNombreComercial() != null ? cell.getValue().getNombreComercial() : ""
+        ));
+        colRazonComercial.setCellValueFactory(cell -> new SimpleStringProperty(
+                cell.getValue().getRazonComercial() != null ? cell.getValue().getRazonComercial() : ""
+        ));
+        colIdentificacion.setCellValueFactory(cell -> new SimpleStringProperty(
+                cell.getValue().getNumeroIdentificacion() != null ? cell.getValue().getNumeroIdentificacion() : ""
+        ));
+        colCorreo.setCellValueFactory(cell -> new SimpleStringProperty(
+                cell.getValue().getCorreo() != null ? cell.getValue().getCorreo() : ""
+        ));
 
         // Listener de selección en la tabla
         tablaSuplidores.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
             if (newSel != null) {
                 suplidorSeleccionado = newSel;
-                txtNombreComercial.setText(suplidorSeleccionado.getNombreComercial());
-                txtRazonComercial.setText(suplidorSeleccionado.getRazonComercial());
-                txtIdentificacion.setText(suplidorSeleccionado.getNumeroIdentificacion());
-                txtCorreo.setText(suplidorSeleccionado.getCorreo());
+                txtNombreComercial.setText(suplidorSeleccionado.getNombreComercial() != null ? suplidorSeleccionado.getNombreComercial() : "");
+                txtRazonComercial.setText(suplidorSeleccionado.getRazonComercial() != null ? suplidorSeleccionado.getRazonComercial() : "");
+                txtIdentificacion.setText(suplidorSeleccionado.getNumeroIdentificacion() != null ? suplidorSeleccionado.getNumeroIdentificacion() : "");
+                txtCorreo.setText(suplidorSeleccionado.getCorreo() != null ? suplidorSeleccionado.getCorreo() : "");
             }
         });
 
@@ -68,17 +78,16 @@ public class ListaSuplidorController {
         }
 
         if (txtNombreComercial.getText().trim().isEmpty() || txtIdentificacion.getText().trim().isEmpty()) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error", "El nombre comercial y el número de identificación son obligatorios.");
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", "El Nombre Comercial y el No. de Identificación son obligatorios.");
             return;
         }
 
-        // Modificamos el objeto seleccionado
+        // Actualización de propiedades del objeto
         suplidorSeleccionado.setNombreComercial(txtNombreComercial.getText().trim());
         suplidorSeleccionado.setRazonComercial(txtRazonComercial.getText().trim());
         suplidorSeleccionado.setNumeroIdentificacion(txtIdentificacion.getText().trim());
         suplidorSeleccionado.setCorreo(txtCorreo.getText().trim());
 
-        // Llamada a tu DAO
         SuplidorDAO.getInstance().actualizar(suplidorSeleccionado);
 
         mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Suplidor actualizado correctamente.");

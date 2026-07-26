@@ -9,6 +9,8 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+
 public class MenuPrincipalController {
 
     @FXML
@@ -87,10 +89,21 @@ public class MenuPrincipalController {
     }
 
     @FXML
-    private void ControlarListados(ActionEvent event) {
-        System.out.println("Abriendo Listados...");
-    }
+    private void ControlarListados() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/visual/VentanaListados.fxml"));
+            Parent root = loader.load();
 
+            Stage stage = new Stage();
+            stage.setTitle("Panel de Listados del Sistema");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            System.out.println("Error al abrir el selector de listados: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
     @FXML
     private void ControlarMovimientoInventario(ActionEvent event) {
         System.out.println("Abriendo Movimiento de Inventario...");
@@ -137,6 +150,22 @@ public class MenuPrincipalController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    private void ControlarManejarOrdenes() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/visual/ManejarOrdenes.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Manejar Órdenes de Compra");
+            stage.initModality(Modality.APPLICATION_MODAL); // Abre la ventana en modo modal
+            stage.setScene(new Scene(root, 850, 600));
+            stage.show();
+        } catch (IOException e) {
+            System.out.println("Error al abrir la vista ManejarOrdenes.fxml: " + e.getMessage());
             e.printStackTrace();
         }
     }
