@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -14,8 +15,82 @@ import java.io.IOException;
 public class MenuPrincipalController {
 
     @FXML
+    private VBox listaAlertas;
+
+    @FXML
+    public void initialize() {
+        cargarNotificaciones();
+    }
+
+    public void cargarNotificaciones() {
+        listaAlertas.getChildren().clear();
+
+        for (logico.Adquisicion adq : logico.Servicio.getInstance().getMisAdquisiciones().values()) {
+            if ("Recibida".equalsIgnoreCase(adq.getEstado())) {
+
+                for (logico.DetalleAdquisicion detalle : adq.getDetallesAdquision()) {
+                    long registrados = logico.Servicio.getInstance().getMisEquipos().values().stream()
+                            .filter(e -> e.getIdAdquisicionOrigen() != null && e.getIdAdquisicionOrigen().equals(detalle.getIdDetalleAdquisicion()))
+                            .count();
+
+                    long faltantes = detalle.getCantidad() - registrados;
+
+                    if (faltantes > 0) {
+                        crearTarjetaNotificacion(adq.getIdCompra(), detalle, faltantes);
+                    }
+                }
+            }
+        }
+
+        if (listaAlertas.getChildren().isEmpty()) {
+            javafx.scene.control.Label lblVacio = new javafx.scene.control.Label("No hay equipos pendientes por registrar.");
+            lblVacio.setStyle("-fx-text-fill: #7f8c8d; -fx-font-style: italic;");
+            listaAlertas.getChildren().add(lblVacio);
+        }
+    }
+
+    private void crearTarjetaNotificacion(String idAdq, logico.DetalleAdquisicion detalle, long faltantes) {
+        javafx.scene.layout.VBox tarjeta = new javafx.scene.layout.VBox(8);
+        tarjeta.setStyle("-fx-background-color: #f8f9fa; -fx-border-color: #e0e0e0; -fx-border-radius: 5; -fx-background-radius: 5; -fx-padding: 10;");
+
+        String nombreLaptop = detalle.getModeloLaptopAdquirida().getNombreComercial();
+        javafx.scene.control.Label lblInfo = new javafx.scene.control.Label("Orden: " + idAdq + "\nModelo: " + nombreLaptop + "\nFaltan: " + faltantes + " equipos.");
+        lblInfo.setStyle("-fx-font-size: 13px; -fx-text-fill: #2c3e50;");
+        lblInfo.setWrapText(true);
+
+        javafx.scene.control.Button btnRegistrar = new javafx.scene.control.Button("Registrar Equipo");
+        btnRegistrar.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
+        btnRegistrar.setMaxWidth(Double.MAX_VALUE);
+
+        btnRegistrar.setOnAction(e -> {
+            abrirRegistroEquipo(detalle);
+            cargarNotificaciones();
+        });
+
+        tarjeta.getChildren().addAll(lblInfo, btnRegistrar);
+        listaAlertas.getChildren().add(tarjeta);
+    }
+
+    private void abrirRegistroEquipo(logico.DetalleAdquisicion detalle) {
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/visual/RegistroEquipoAdquisicion.fxml"));
+            javafx.scene.Parent root = loader.load();
+
+            RegistroEquipoAdquisicionController controller = loader.getController();
+            controller.initData(detalle);
+
+            Stage stage = new Stage();
+            stage.setTitle("Registrar Ingreso de Equipo");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    @FXML
     private void ControlarRegistrarCliente(ActionEvent event) {
-        System.out.println("Abriendo Registro de Cliente...");
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/visual/RegistroCliente.fxml"));
             Stage stage = new Stage();
@@ -30,7 +105,6 @@ public class MenuPrincipalController {
 
     @FXML
     private void ControlarRegistrarMarca(ActionEvent event) {
-        System.out.println("Abriendo Registro de Marca...");
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/visual/RegistroMarca.fxml"));
             Stage stage = new Stage();
@@ -45,7 +119,6 @@ public class MenuPrincipalController {
 
     @FXML
     private void ControlarRegistrarModelo(ActionEvent event) {
-        System.out.println("Abriendo Registro de Modelo / Laptop...");
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/visual/RegistroLaptop.fxml"));
             Stage stage = new Stage();
@@ -60,7 +133,6 @@ public class MenuPrincipalController {
 
     @FXML
     private void ControlarRegistrarSuplidor(ActionEvent event) {
-        System.out.println("Abriendo Registro de Suplidor...");
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/visual/RegistroSuplidor.fxml"));
             Stage stage = new Stage();
@@ -75,7 +147,6 @@ public class MenuPrincipalController {
 
     @FXML
     private void ControlarRegistrarEstante(ActionEvent event) {
-        System.out.println("Abriendo Registro de Estante...");
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/visual/RegistroEstante.fxml"));
             Stage stage = new Stage();
@@ -100,18 +171,16 @@ public class MenuPrincipalController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            System.out.println("Error al abrir el selector de listados: " + e.getMessage());
             e.printStackTrace();
         }
     }
+
     @FXML
     private void ControlarMovimientoInventario(ActionEvent event) {
-        System.out.println("Abriendo Movimiento de Inventario...");
     }
 
     @FXML
     private void ControlarContratoSuplidor(ActionEvent event) {
-        System.out.println("Abriendo Contrato de Suplidor...");
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/visual/RegistroSuplidorLaptop.fxml"));
             Stage stage = new Stage();
@@ -126,7 +195,6 @@ public class MenuPrincipalController {
 
     @FXML
     private void ControlarOrdenar(ActionEvent event) {
-        System.out.println("Abriendo Ordenar...");
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/visual/RegistroAdquisicion.fxml"));
             Stage stage = new Stage();
@@ -141,7 +209,6 @@ public class MenuPrincipalController {
 
     @FXML
     private void ControlarRealizarVenta(ActionEvent event) {
-        System.out.println("Abriendo Realizar Venta...");
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/visual/RegistroFacturacion.fxml"));
             Stage stage = new Stage();
@@ -153,19 +220,22 @@ public class MenuPrincipalController {
             e.printStackTrace();
         }
     }
+
     @FXML
     private void ControlarManejarOrdenes() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/visual/ManejarOrdenes.fxml"));
             Parent root = loader.load();
 
+            ManejarOrdenesController controller = loader.getController();
+            controller.setMenuPrincipalController(this);
+
             Stage stage = new Stage();
             stage.setTitle("Manejar Órdenes de Compra");
-            stage.initModality(Modality.APPLICATION_MODAL); // Abre la ventana en modo modal
+            stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(new Scene(root, 850, 600));
             stage.show();
         } catch (IOException e) {
-            System.out.println("Error al abrir la vista ManejarOrdenes.fxml: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -183,7 +253,6 @@ public class MenuPrincipalController {
             stage.show();
 
         } catch (IOException e) {
-            System.out.println("No se pudo abrir la ventana de reclamos: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -200,7 +269,6 @@ public class MenuPrincipalController {
             stage.show();
 
         } catch (IOException e) {
-            System.out.println("No se pudo abrir la ventana de resolver reclamo: " + e.getMessage());
             e.printStackTrace();
         }
     }

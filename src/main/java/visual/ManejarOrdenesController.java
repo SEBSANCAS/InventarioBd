@@ -1,21 +1,22 @@
 package visual;
 
 import DataBase.AdquisicionDAO;
+import DataBase.LaptopDAO;
 import javafx.beans.property.SimpleObjectProperty;
-import logico.Adquisicion;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
+import logico.Adquisicion;
+import logico.DetalleAdquisicion;
+import logico.Laptop;
+import logico.Servicio;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 
 public class ManejarOrdenesController {
 
-    // --- TABLA SUPERIOR: ÓRDES PENDIENTES ---
     @FXML private TableView<Adquisicion> tablaPendientes;
     @FXML private TableColumn<Adquisicion, String> colPendId;
     @FXML private TableColumn<Adquisicion, String> colPendSuplidor;
@@ -23,7 +24,6 @@ public class ManejarOrdenesController {
     @FXML private TableColumn<Adquisicion, Float> colPendTotal;
     @FXML private TableColumn<Adquisicion, String> colPendEstado;
 
-    // --- TABLA INFERIOR: ÓRDENES ACEPTADAS ---
     @FXML private TableView<Adquisicion> tablaAceptadas;
     @FXML private TableColumn<Adquisicion, String> colAceptId;
     @FXML private TableColumn<Adquisicion, String> colAceptSuplidor;
@@ -37,11 +37,16 @@ public class ManejarOrdenesController {
     private Adquisicion ordenPendienteSeleccionada;
     private Adquisicion ordenAceptadaSeleccionada;
 
+    private MenuPrincipalController menuPrincipalController;
+
+    public void setMenuPrincipalController(MenuPrincipalController menuPrincipalController) {
+        this.menuPrincipalController = menuPrincipalController;
+    }
+
     @FXML
     public void initialize() {
         configurarColumnas();
 
-        // Listeners para captura de selecciones
         tablaPendientes.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
             ordenPendienteSeleccionada = newSel;
         });
@@ -54,7 +59,6 @@ public class ManejarOrdenesController {
     }
 
     private void configurarColumnas() {
-        // Mapeo Tabla Pendientes (Llamando directamente a tus métodos get)
         colPendId.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getIdCompra()));
         colPendFecha.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getFechaEmision()));
         colPendTotal.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getMontoTotal()));
@@ -63,7 +67,6 @@ public class ManejarOrdenesController {
                 cell.getValue().getSuplidor() != null ? cell.getValue().getSuplidor().getNombreComercial() : "N/A"
         ));
 
-        // Mapeo Tabla Aceptadas (Llamando directamente a tus métodos get)
         colAceptId.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getIdCompra()));
         colAceptFecha.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getFechaEmision()));
         colAceptTotal.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getMontoTotal()));
@@ -77,22 +80,17 @@ public class ManejarOrdenesController {
         listaPendientes.clear();
         listaAceptadas.clear();
 
-        ArrayList<Adquisicion> todas = AdquisicionDAO.getInstance().EncontrarTodos();
-        if (todas != null) {
-            for (Adquisicion ord : todas) {
-
-                if ("Emitida".equalsIgnoreCase(ord.getEstado())) {
-                    listaPendientes.add(ord);
-                } else if ("Aceptada".equalsIgnoreCase(ord.getEstado())) {
-                    listaAceptadas.add(ord);
-                }
+        for (Adquisicion ord : Servicio.getInstance().getMisAdquisiciones().values()) {
+            if ("Emitida".equalsIgnoreCase(ord.getEstado())) {
+                listaPendientes.add(ord);
+            } else if ("Aceptada".equalsIgnoreCase(ord.getEstado())) {
+                listaAceptadas.add(ord);
             }
         }
 
         tablaPendientes.setItems(listaPendientes);
         tablaAceptadas.setItems(listaAceptadas);
     }
-
 
     @FXML
     private void handleAceptarOrden() {
@@ -104,11 +102,10 @@ public class ManejarOrdenesController {
         ordenPendienteSeleccionada.setEstado("Aceptada");
         AdquisicionDAO.getInstance().actualizar(ordenPendienteSeleccionada);
 
-        cargarTablas(); // Refresca las dos listas
+        cargarTablas();
         mostrarAlerta("Éxito", "Orden marcaba como Aceptada.");
     }
 
-    // ACCIÓN: Rechazar Orden Pendiente
     @FXML
     private void handleRechazarOrden() {
         if (ordenPendienteSeleccionada == null) {
@@ -123,7 +120,6 @@ public class ManejarOrdenesController {
         mostrarAlerta("Éxito", "Orden ha sido Rechazada.");
     }
 
-    // ACCIÓN: Marcar "La compra llegó" (Pasa a estado Recibido)
     @FXML
     private void handleCompraLlego() {
         if (ordenAceptadaSeleccionada == null) {
@@ -131,14 +127,34 @@ public class ManejarOrdenesController {
             return;
         }
 
-        ordenAceptadaSeleccionada.setEstado("Recibido");
+        ordenAceptadaSeleccionada.setEstado("Recibida");
         ordenAceptadaSeleccionada.setFechaEntrega(LocalDate.now());
 
-        // Al guardar en BD como 'Recibido', el trigger de la base de datos se encargará de ajustar el stock
         AdquisicionDAO.getInstance().actualizar(ordenAceptadaSeleccionada);
 
+        if (ordenAceptadaSeleccionada.getDetallesAdquision() != null) {
+            for (DetalleAdquisicion detalle : ordenAceptadaSeleccionada.getDetallesAdquision()) {
+                if (detalle.getModeloLaptopAdquirida() != null) {
+                    String idLaptop = detalle.getModeloLaptopAdquirida().getIdLaptop();
+
+                    Laptop laptopFrescaBD = LaptopDAO.getInstance().encontrarPorId(idLaptop);
+
+                    if (laptopFrescaBD != null) {
+                        Laptop laptopMemoria = Servicio.getInstance().getMisLaptops().get(idLaptop);
+                        if (laptopMemoria != null) {
+                            laptopMemoria.setCostoPromedioCompra(laptopFrescaBD.getCostoPromedioCompra());
+                        }
+                    }
+                }
+            }
+        }
+
         cargarTablas();
-        mostrarAlerta("Éxito", "¡Compra registrada como Recibida! El inventario ha sido actualizado.");
+        mostrarAlerta("Éxito", "¡Compra registrada como Recibida! El costo promedio ha sido sincronizado.");
+
+        if (menuPrincipalController != null) {
+            menuPrincipalController.cargarNotificaciones();
+        }
     }
 
     private void mostrarAlerta(String titulo, String mensaje) {
