@@ -4,8 +4,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<VBox spacing="10" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="visual.ListaClientesController" prefWidth="900" prefHeight="580"
+<VBox spacing="10" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="visual.ListaClientesController" prefWidth="900" prefHeight="600"
       style="-fx-background-color: #ecf0f1;">
     <padding>
         <Insets top="15" right="15" bottom="15" left="15"/>
@@ -36,29 +36,36 @@
                 <Insets top="10" right="10" bottom="10" left="10"/>
             </padding>
 
-            <!-- Deshabilitados para impedir la modificación de estos tipos -->
+            <!-- FILA 0 -->
             <Label text="Tipo Cliente:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
             <ComboBox fx:id="cbTipoCliente" disable="true" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
             <Label text="Tipo Identificación:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
             <ComboBox fx:id="cbTipoIdentificacion" disable="true" prefWidth="200" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
 
+            <!-- FILA 1 -->
             <Label text="No. Identificación:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
             <TextField fx:id="txtIdentificacion" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
             <Label text="Nombres:" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
             <TextField fx:id="txtNombres" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
 
+            <!-- FILA 2 -->
             <Label text="Apellidos:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
             <TextField fx:id="txtApellidos" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
             <Label text="Correo:" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
             <TextField fx:id="txtCorreo" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
 
-            <HBox spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="4" alignment="CENTER_RIGHT">
-                <Button text="Actualizar" onAction="#handleActualizar" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;"/>
-                <Button text="Eliminar" onAction="#handleEliminar" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-weight: bold;"/>
-                <Button text="Limpiar" onAction="#handleLimpiar"/>
+            <!-- FILA 3 (NUEVA: Para Género) -->
+            <Label text="Género:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+            <ComboBox fx:id="cbGenero" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+            <!-- FILA 4: Botones movidos una fila abajo -->
+            <HBox spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="4" GridPane.columnSpan="4" alignment="CENTER_RIGHT">
+                <Button text="Actualizar" onAction="#handleActualizar" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
+                <Button text="Eliminar" onAction="#handleEliminar" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
+                <Button text="Limpiar" onAction="#handleLimpiar" style="-fx-cursor: hand;"/>
             </HBox>
         </GridPane>
     </TitledPane>

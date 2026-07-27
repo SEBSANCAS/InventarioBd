@@ -20,14 +20,20 @@ public class ListaLaptopController {
     @FXML private TableColumn<Laptop, String> colNombre;
     @FXML private TableColumn<Laptop, String> colModelo;
     @FXML private TableColumn<Laptop, String> colProcesador;
+    @FXML private TableColumn<Laptop, String> colGpu;
     @FXML private TableColumn<Laptop, Float> colRam;
+    @FXML private TableColumn<Laptop, String> colAlmacenamiento;
+    @FXML private TableColumn<Laptop, Integer> colGarantia;
     @FXML private TableColumn<Laptop, Float> colPrecio;
     @FXML private TableColumn<Laptop, Integer> colStock;
 
     @FXML private TextField txtNombre;
     @FXML private TextField txtModelo;
     @FXML private TextField txtProcesador;
+    @FXML private TextField txtGpu;
     @FXML private TextField txtRam;
+    @FXML private TextField txtAlmacenamiento;
+    @FXML private TextField txtGarantia;
     @FXML private TextField txtPrecio;
     @FXML private TextField txtStock;
 
@@ -36,24 +42,39 @@ public class ListaLaptopController {
 
     @FXML
     public void initialize() {
-        // --- MAPEO DIRECTO CON LAMBDAS (Resuelve textos invisibles) ---
+        // --- MAPEO DE COLUMNAS CON LAMBDAS ---
         colId.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getIdLaptop() != null ? cell.getValue().getIdLaptop() : ""));
         colNombre.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getNombreComercial() != null ? cell.getValue().getNombreComercial() : ""));
         colModelo.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getNumeroModelo() != null ? cell.getValue().getNumeroModelo() : ""));
         colProcesador.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getProcesador() != null ? cell.getValue().getProcesador() : ""));
+        colGpu.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getGpu() != null ? cell.getValue().getGpu() : ""));
 
         colRam.setCellValueFactory(cell -> new SimpleFloatProperty(cell.getValue().getCantidadRam()).asObject());
+
+        colAlmacenamiento.setCellValueFactory(cell -> {
+            String tipo = cell.getValue().getTipoAlmacenamiento() != null ? cell.getValue().getTipoAlmacenamiento() : "";
+            float cap = cell.getValue().getCantidadAlmacenamiento();
+            return new SimpleStringProperty(tipo + " " + cap + " GB");
+        });
+
+        colGarantia.setCellValueFactory(cell -> new SimpleIntegerProperty(cell.getValue().getMesesGarantia()).asObject());
         colPrecio.setCellValueFactory(cell -> new SimpleFloatProperty(cell.getValue().getPrecioDetalle()).asObject());
         colStock.setCellValueFactory(cell -> new SimpleIntegerProperty(cell.getValue().getStockActual()).asObject());
 
-        // Evento al seleccionar una fila
+        // --- LISTENER DE SELECCIÓN (Para llenar los TextFields al hacer clic) ---
         tablaLaptops.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
             if (newSel != null) {
                 laptopSeleccionada = newSel;
+
                 txtNombre.setText(laptopSeleccionada.getNombreComercial() != null ? laptopSeleccionada.getNombreComercial() : "");
                 txtModelo.setText(laptopSeleccionada.getNumeroModelo() != null ? laptopSeleccionada.getNumeroModelo() : "");
                 txtProcesador.setText(laptopSeleccionada.getProcesador() != null ? laptopSeleccionada.getProcesador() : "");
+                txtGpu.setText(laptopSeleccionada.getGpu() != null ? laptopSeleccionada.getGpu() : "");
+
                 txtRam.setText(String.valueOf(laptopSeleccionada.getCantidadRam()));
+                txtAlmacenamiento.setText(String.valueOf(laptopSeleccionada.getCantidadAlmacenamiento()));
+
+                txtGarantia.setText(String.valueOf(laptopSeleccionada.getMesesGarantia()));
                 txtPrecio.setText(String.valueOf(laptopSeleccionada.getPrecioDetalle()));
                 txtStock.setText(String.valueOf(laptopSeleccionada.getStockActual()));
             }
@@ -82,7 +103,10 @@ public class ListaLaptopController {
             laptopSeleccionada.setNombreComercial(txtNombre.getText().trim());
             laptopSeleccionada.setNumeroModelo(txtModelo.getText().trim());
             laptopSeleccionada.setProcesador(txtProcesador.getText().trim());
+            laptopSeleccionada.setGpu(txtGpu.getText().trim());
             laptopSeleccionada.setCantidadRam(Float.parseFloat(txtRam.getText().trim()));
+            laptopSeleccionada.setCantidadAlmacenamiento(Float.parseFloat(txtAlmacenamiento.getText().trim()));
+            laptopSeleccionada.setMesesGarantia(Integer.parseInt(txtGarantia.getText().trim()));
             laptopSeleccionada.setPrecioDetalle(Float.parseFloat(txtPrecio.getText().trim()));
             laptopSeleccionada.setStockActual(Integer.parseInt(txtStock.getText().trim()));
 
@@ -92,7 +116,7 @@ public class ListaLaptopController {
             tablaLaptops.refresh();
             handleLimpiar();
         } catch (NumberFormatException e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error", "Valores numéricos inválidos.");
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", "Por favor, verifica que los campos numéricos contengan valores válidos.");
         }
     }
 
@@ -121,7 +145,10 @@ public class ListaLaptopController {
         txtNombre.clear();
         txtModelo.clear();
         txtProcesador.clear();
+        txtGpu.clear();
         txtRam.clear();
+        txtAlmacenamiento.clear();
+        txtGarantia.clear();
         txtPrecio.clear();
         txtStock.clear();
     }

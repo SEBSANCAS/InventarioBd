@@ -23,30 +23,37 @@ public class ListaClientesController {
     @FXML private TableColumn<Cliente, String> colCorreo;
     @FXML private TableColumn<Cliente, String> colTipoCliente;
     @FXML private TableColumn<Cliente, String> colGenero;
+
     @FXML private TextField txtIdentificacion;
     @FXML private TextField txtNombres;
     @FXML private TextField txtApellidos;
     @FXML private TextField txtCorreo;
+
     @FXML private ComboBox<String> cbTipoCliente;
     @FXML private ComboBox<String> cbTipoIdentificacion;
+    @FXML private ComboBox<String> cbGenero;
 
     private final ObservableList<Cliente> listaClientes = FXCollections.observableArrayList();
     private Cliente clienteSeleccionado;
 
     @FXML
     public void initialize() {
-        // Mapeo explicito con Lambdas para asegurar visibilidad
+        // Mapeo explicito con Lambdas
         colId.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getIdCliente() != null ? cell.getValue().getIdCliente() : ""));
         colTipoCliente.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getTipoCLiente() != null ? cell.getValue().getTipoCLiente() : ""));
         colTipoIdentificacion.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getTipoIdentificacion() != null ? cell.getValue().getTipoIdentificacion() : ""));
         colIdentificacion.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getNumeroIdentificacion() != null ? cell.getValue().getNumeroIdentificacion() : ""));
         colNombres.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getNombres() != null ? cell.getValue().getNombres() : ""));
         colApellidos.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getApellidos() != null ? cell.getValue().getApellidos() : ""));
-        colGenero.setCellValueFactory(new PropertyValueFactory<>("genero"));
+        colGenero.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getGenero() != null ? cell.getValue().getGenero() : ""));
         colCorreo.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getCorreo() != null ? cell.getValue().getCorreo() : ""));
 
+        // Opciones de ComboBox
         cbTipoCliente.setItems(FXCollections.observableArrayList("Persona", "Empresa"));
         cbTipoIdentificacion.setItems(FXCollections.observableArrayList("Cedula", "Rnc", "Pasaporte", "Tax_id_intl", "Otro"));
+
+        // AQUÍ ESTÁ EL CAMBIO: Masculino, Femenino u Otro
+        cbGenero.setItems(FXCollections.observableArrayList("Masculino", "Femenino", "Otro"));
 
         tablaClientes.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
             if (newSel != null) {
@@ -74,14 +81,20 @@ public class ListaClientesController {
 
         cbTipoCliente.setValue(cliente.getTipoCLiente());
         cbTipoIdentificacion.setValue(cliente.getTipoIdentificacion());
+        cbGenero.setValue(cliente.getGenero());
 
-        // Regla: Si es Empresa, apellidos va nulo/vacío y deshabilitado
+        // Regla: Si es Empresa, apellidos y género van nulos y deshabilitados
         if ("Empresa".equalsIgnoreCase(cliente.getTipoCLiente())) {
             txtApellidos.clear();
             txtApellidos.setDisable(true);
+
+            cbGenero.getSelectionModel().clearSelection();
+            cbGenero.setDisable(true);
         } else {
             txtApellidos.setDisable(false);
             txtApellidos.setText(cliente.getApellidos() != null ? cliente.getApellidos() : "");
+
+            cbGenero.setDisable(false);
         }
     }
 
@@ -97,6 +110,7 @@ public class ListaClientesController {
         String apellidos = txtApellidos.getText().trim();
         String tipoCliente = clienteSeleccionado.getTipoCLiente();
         String tipoId = clienteSeleccionado.getTipoIdentificacion();
+        String genero = cbGenero.getValue();
 
         // Validaciones básicas
         if (numId.isEmpty() || nombres.isEmpty()) {
@@ -104,10 +118,16 @@ public class ListaClientesController {
             return;
         }
 
-        // Validación de Apellidos según tipo_cliente
-        if ("Persona".equalsIgnoreCase(tipoCliente) && apellidos.isEmpty()) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Validación SQL", "Para clientes de tipo 'Persona', los apellidos son obligatorios.");
-            return;
+        // Validación de Apellidos y Género según tipo_cliente
+        if ("Persona".equalsIgnoreCase(tipoCliente)) {
+            if (apellidos.isEmpty()) {
+                mostrarAlerta(Alert.AlertType.ERROR, "Validación SQL", "Para clientes de tipo 'Persona', los apellidos son obligatorios.");
+                return;
+            }
+            if (genero == null) {
+                mostrarAlerta(Alert.AlertType.ERROR, "Validación SQL", "Para clientes de tipo 'Persona', debe seleccionar un Género.");
+                return;
+            }
         }
 
         // Validación de formato de documento segun la restriccion CHECK de MySQL
@@ -125,6 +145,7 @@ public class ListaClientesController {
         clienteSeleccionado.setNombres(nombres);
         clienteSeleccionado.setApellidos("Empresa".equalsIgnoreCase(tipoCliente) ? null : apellidos);
         clienteSeleccionado.setCorreo(txtCorreo.getText().trim());
+        clienteSeleccionado.setGenero("Empresa".equalsIgnoreCase(tipoCliente) ? null : genero);
 
         ClienteDAO.getInstance().actualizar(clienteSeleccionado);
 
@@ -161,13 +182,25 @@ public class ListaClientesController {
         txtCorreo.clear();
         cbTipoCliente.setValue(null);
         cbTipoIdentificacion.setValue(null);
+        cbGenero.getSelectionModel().clearSelection();
+
         txtApellidos.setDisable(false);
+        cbGenero.setDisable(false);
     }
 
     private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
-        Alert alert = new Alert(tipo, mensaje);
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        if (tipo == Alert.AlertType.INFORMATION) {
+            alert = new Alert(Alert.AlertType.INFORMATION);
+        } else if (tipo == Alert.AlertType.WARNING) {
+            alert = new Alert(Alert.AlertType.WARNING);
+        } else if (tipo == Alert.AlertType.CONFIRMATION) {
+            alert = new Alert(Alert.AlertType.CONFIRMATION);
+        }
+
         alert.setTitle(titulo);
         alert.setHeaderText(null);
+        alert.setContentText(mensaje);
         alert.showAndWait();
     }
 }

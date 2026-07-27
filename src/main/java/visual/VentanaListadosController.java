@@ -21,6 +21,7 @@ public class VentanaListadosController {
         cbListados.setItems(FXCollections.observableArrayList(
                 "Listado de Clientes",
                 "Listado de Laptops",
+                "Listado de Equipos", // <-- NUEVA OPCIÓN AGREGADA AQUÍ
                 "Listado de Estantes",
                 "Listado de Suplidores",
                 "Listado de Marcas",
@@ -48,6 +49,10 @@ public class VentanaListadosController {
                 fxmlPath = "/visual/ListaLaptop.fxml";
                 titulo = "Gestión y Listado de Laptops";
                 break;
+            case "Listado de Equipos": // <-- NUEVO CASO AGREGADO AQUÍ
+                fxmlPath = "/visual/ListaEquipo.fxml";
+                titulo = "Gestión de Inventario de Equipos";
+                break;
             case "Listado de Estantes":
                 fxmlPath = "/visual/ListaEstante.fxml";
                 titulo = "Gestión y Listado de Estantes";
@@ -57,8 +62,8 @@ public class VentanaListadosController {
                 titulo = "Gestión y Listado de Suplidores";
                 break;
             case "Listado de Marcas":
-                // Asegúrate de que el nombre aquí coincida EXACTAMENTE con el nombre de tu archivo FXML
-                fxmlPath = "/visual/ListaMarca..fxml";
+                // Corregido: Tenía dos puntos (..) antes
+                fxmlPath = "/visual/ListaMarca.fxml";
                 titulo = "Gestión y Listado de Marcas";
                 break;
             case "Listado de Adquisiciones":
@@ -91,7 +96,7 @@ public class VentanaListadosController {
                 System.err.println("❌ ERROR: No se encontró el archivo FXML en la ruta: " + fxmlPath);
                 mostrarAlertaError("Archivo no encontrado",
                         "No se encontró el archivo FXML en " + fxmlPath +
-                                "\n\nAsegúrate de que el archivo 'ListaMarca.fxml' esté en 'src/main/resources/visual/'.");
+                                "\n\nAsegúrate de que el archivo esté en 'src/main/resources/visual/'.");
                 return;
             }
 
