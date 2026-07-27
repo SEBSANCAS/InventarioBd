@@ -225,23 +225,40 @@ public class RegistroFacturacionController {
             offsetsMovimientos.put(eq.getIdEquipo(), countMov + 1);
 
             String estanteOrigenId = null;
-            for (Estante estante : Servicio.getInstance().getMisEstantes().values()) {
-                boolean retirado = estante.getEquiposAlmacenados().removeIf(e -> e.getIdEquipo().equals(eq.getIdEquipo()));
-                if (retirado) {
-                    estanteOrigenId = estante.getIdEstante();
-                    break;
+            int nivelOrigen = 0;
+
+            String sqlUbicacion = "SELECT id_ubicacion FROM Equipo WHERE IdEquipo = '" + eq.getIdEquipo() + "'";
+            try (java.sql.Connection conn = DataBase.DatabaseConnection.getConnection();
+                 java.sql.Statement stmt = conn.createStatement();
+                 java.sql.ResultSet rs = stmt.executeQuery(sqlUbicacion)) {
+                if (rs.next()) {
+                    String idUbi = rs.getString("id_ubicacion");
+                    if (idUbi != null) {
+                        String[] partes = idUbi.split("-N");
+                        if (partes.length == 2) {
+                            estanteOrigenId = partes[0];
+                            nivelOrigen = Integer.parseInt(partes[1]);
+                        }
+                    }
                 }
+            } catch (Exception e) {
+                System.out.println("Error al obtener ubicación del equipo: " + e.getMessage());
+            }
+
+            for (Estante estante : Servicio.getInstance().getMisEstantes().values()) {
+                estante.getEquiposAlmacenados().removeIf(e -> e.getIdEquipo().equals(eq.getIdEquipo()));
             }
 
             Movimiento mov = new Movimiento();
             mov.setIdMovimiento(idMovimiento);
             mov.setIdEquipo(eq.getIdEquipo());
-            mov.setTipoMovimiento("Salida/Venta");
+            mov.setTipoMovimiento("Salida por Venta");
             mov.setDescripcionMovimiento("Venta bajo la factura: " + idFactura);
             mov.setFechaHoraMovimiento(LocalDateTime.now());
             mov.setIdEstanteOrigen(estanteOrigenId);
-            mov.setNivelOrigen(1);
+            mov.setNivelOrigen(nivelOrigen);
             mov.setIdEstanteDestino(null);
+            mov.setNivelDestino(0);
 
             MovimientoDAO.getInstance().guardar(mov);
         }

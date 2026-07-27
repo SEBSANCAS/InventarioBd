@@ -55,30 +55,62 @@ public class RegistroEquipoAdquisicionController {
         String idEquipo = Servicio.getInstance().generarIdEquipo();
         Laptop laptopEnMemoria = Servicio.getInstance().getMisLaptops().get(detalleAsociado.getModeloLaptopAdquirida().getIdLaptop());
 
-        // El ID de Estante se asigna en el EquipoDAO automáticamente.
-        // Respetando los constraints: estado="nuevo", disponibilidad="Disponible"
         Equipo equipo = new Equipo(
                 idEquipo,
                 laptopEnMemoria,
                 campoSerial.getText().trim(),
                 campoColor.getText().trim(),
-                "nuevo", // Constraint: "nuevo", "open-box", "reparado"
-                "Disponible", // Constraint: "Disponible", "En Reparacion", etc.
-                0.0f, // Descuento obvio
+                "nuevo",
+                "Disponible",
+                0.0f,
                 LocalDate.now(),
                 detalleAsociado.getIdDetalleAdquisicion()
         );
 
-        // 1. Guarda el equipo en la memoria y en la BD (El DAO lo pondrá en el estante disponible)
+        // 1. Guarda el equipo (El DAO lo asignará al primer estante disponible en BD)
         Servicio.getInstance().registrarEquipo(equipo);
 
-        // 2. Sumamos 1 al stock de la laptop en la corrida (La BD se maneja con su trigger)
+        // 2. Sumamos 1 al stock de la laptop en la corrida
         laptopEnMemoria.setStockActual(laptopEnMemoria.getStockActual() + 1);
+
+        // 3. Crear el Movimiento "Entrada por Compra"
+        // Obtenemos el ID de la primera ubicación disponible para usarlo como destino
+        String idUbicacionDestino = DataBase.EstanteDAO.getInstance().obtenerPrimeraUbicacionDisponible();
+
+        // Asignamos el equipo al estante en memoria para la corrida
+        if (idUbicacionDestino != null) {
+            String codigoEstante = idUbicacionDestino.split("-N")[0];
+            logico.Estante estante = Servicio.getInstance().getMisEstantes().get(codigoEstante);
+            if (estante != null) {
+                estante.getEquiposAlmacenados().add(equipo);
+            }
+        }
+
+        int countMov = DataBase.MovimientoDAO.getInstance().encontrarPorEquipo(equipo.getIdEquipo()).size();
+        String idMovimiento = Servicio.getInstance().generarIdDependiente(equipo.getIdEquipo(), countMov);
+
+        logico.Movimiento mov = new logico.Movimiento();
+        mov.setIdMovimiento(idMovimiento);
+        mov.setIdEquipo(equipo.getIdEquipo());
+        mov.setTipoMovimiento("Entrada por Compra");
+        mov.setDescripcionMovimiento("Ingreso desde la orden de compra.");
+        mov.setFechaHoraMovimiento(java.time.LocalDateTime.now());
+        mov.setIdEstanteOrigen(null); // Viene de afuera
+
+        // Configuramos el destino extrayendo código y nivel del id_ubicacion (Ej. "EST001-N1")
+        if (idUbicacionDestino != null) {
+            String[] partes = idUbicacionDestino.split("-N");
+            if (partes.length == 2) {
+                mov.setIdEstanteDestino(partes[0]);
+                mov.setNivelDestino(Integer.parseInt(partes[1]));
+            }
+        }
+
+        DataBase.MovimientoDAO.getInstance().guardar(mov);
 
         lblMensaje.setStyle("-fx-text-fill: #2e7d32;");
         lblMensaje.setText("Equipo registrado correctamente.");
 
-        // Cerrar la ventana tras 1 segundo para que vea el mensaje
         javafx.animation.PauseTransition delay = new javafx.animation.PauseTransition(javafx.util.Duration.seconds(1));
         delay.setOnFinished(e -> ControlarCancelar(null));
         delay.play();
