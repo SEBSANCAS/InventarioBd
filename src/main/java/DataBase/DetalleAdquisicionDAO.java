@@ -64,11 +64,13 @@ public class DetalleAdquisicionDAO {
             System.out.println("No se pudo actualizar el detalle de adquisicion: " + e.getMessage());
         }
     }
+
     public ArrayList<DetalleAdquisicion> encontrarPorIdAdquisicion(String idCompra) {
 
         ArrayList<DetalleAdquisicion> detalles = new ArrayList<>();
 
-        final String sql = "SELECT * FROM Detalle_Adquisicion WHERE id_compra = ?";
+        // CORRECCIÓN: Tabla y columna corregidas
+        final String sql = "SELECT * FROM Detalle_Orden_Compra WHERE id_orden_compra = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -82,11 +84,12 @@ public class DetalleAdquisicionDAO {
                     Laptop laptop = LaptopDAO.getInstance()
                             .encontrarPorId(resultSet.getString("id_laptop"));
 
+                    // CORRECCIÓN: Nombres de columnas actualizados al esquema real
                     DetalleAdquisicion detalle = new DetalleAdquisicion(
-                            resultSet.getString("id_detalle"),
+                            resultSet.getString("id_detalle_orden"),
                             laptop,
-                            resultSet.getInt("cantidad"),
-                            resultSet.getFloat("precio_unitario_compra"),
+                            resultSet.getInt("cantidad_solicitada"),
+                            resultSet.getFloat("costo_unitario_acordado"),
                             resultSet.getFloat("subtotal_linea")
                     );
 
@@ -100,6 +103,7 @@ public class DetalleAdquisicionDAO {
 
         return detalles;
     }
+
     public void borrar(String idDetalleAdquisicion) {
         final String sql = "DELETE FROM Detalle_Orden_Compra WHERE id_detalle_orden = ?";
 

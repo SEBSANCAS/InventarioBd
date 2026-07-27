@@ -18,7 +18,7 @@ public class EquipoDAO {
     }
 
     public void guardar(Equipo equipo) {
-        final String sql = "INSERT INTO Equipo (id_equipo, numero_serie, id_laptop, id_ubicacion, id_detalle_orden, estado, disponibilidad, color, fecha_ingreso, descuento_por_condicion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        final String sql = "INSERT INTO Equipo (IdEquipo, numero_serie, id_laptop, id_ubicacion, id_detalle_orden, estado, disponibilidad, color, fecha_ingreso, descuento_por_condicion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -58,7 +58,7 @@ public class EquipoDAO {
                         "color=?, " +
                         "fecha_ingreso=?, " +
                         "descuento_por_condicion=? " +
-                        "WHERE id_equipo=?";
+                        "WHERE IdEquipo=?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -81,7 +81,7 @@ public class EquipoDAO {
     }
 
     public void borrar(String idEquipo) {
-        final String sql = "DELETE FROM Equipo WHERE id_equipo = ?";
+        final String sql = "DELETE FROM Equipo WHERE IdEquipo = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -113,7 +113,7 @@ public class EquipoDAO {
                             .encontrarPorId(resultSet.getString("id_laptop"));
 
                     Equipo equipo = new Equipo(
-                            resultSet.getString("id_equipo"),
+                            resultSet.getString("IdEquipo"),
                             laptop,
                             resultSet.getString("numero_serie"),
                             resultSet.getString("color"),
@@ -134,6 +134,7 @@ public class EquipoDAO {
 
         return equipos;
     }
+
     public ArrayList<Equipo> encontrarPorDisponibilidad(String disponibilidad) {
 
         ArrayList<Equipo> equipos = new ArrayList<>();
@@ -153,7 +154,7 @@ public class EquipoDAO {
                             .encontrarPorId(resultSet.getString("id_laptop"));
 
                     Equipo equipo = new Equipo(
-                            resultSet.getString("id_equipo"),
+                            resultSet.getString("IdEquipo"),
                             laptop,
                             resultSet.getString("numero_serie"),
                             resultSet.getString("color"),
@@ -174,6 +175,7 @@ public class EquipoDAO {
 
         return equipos;
     }
+
     public ArrayList<Equipo> EncontrarTodos() {
         ArrayList<Equipo> equipos = new ArrayList<>();
 
@@ -191,7 +193,7 @@ public class EquipoDAO {
                         .encontrarPorId(idLaptop);
 
                 Equipo eq = new Equipo(
-                        resultSet.getString("id_equipo"),
+                        resultSet.getString("IdEquipo"),
                         laptop,
                         resultSet.getString("numero_serie"),
                         resultSet.getString("color"),
@@ -211,7 +213,7 @@ public class EquipoDAO {
 
     public Equipo encontrarPorId(String idEquipo) {
         Equipo eq = null;
-        final String sql ="SELECT * FROM Equipo WHERE id_equipo = ?";
+        final String sql ="SELECT * FROM Equipo WHERE IdEquipo = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -227,7 +229,7 @@ public class EquipoDAO {
                             .encontrarPorId(idLaptop);
 
                     eq = new Equipo(
-                            resultSet.getString("id_equipo"),
+                            resultSet.getString("IdEquipo"),
                             laptop,
                             resultSet.getString("numero_serie"),
                             resultSet.getString("color"),
