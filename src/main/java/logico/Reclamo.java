@@ -1,20 +1,24 @@
 package logico;
 
+import java.time.LocalDate;
+
 public class Reclamo {
     private String idReclamo;
     private String idFactura;
     private String idDetalleFactura;
     private String idCliente;
+    private LocalDate fecha; // <-- NUEVO CAMPO AÑADIDO
     private boolean enGarantia;
     private String tipoSolicitud;
     private String diagnosticoTecnico;
     private String estadoCaso;
 
-    public Reclamo(String idReclamo, String idFactura, String idDetalleFactura, String idCliente, boolean enGarantia, String tipoSolicitud, String diagnosticoTecnico, String estadoCaso) {
+    public Reclamo(String idReclamo, String idFactura, String idDetalleFactura, String idCliente, LocalDate fecha, boolean enGarantia, String tipoSolicitud, String diagnosticoTecnico, String estadoCaso) {
         this.idReclamo = idReclamo;
         this.idFactura = idFactura;
         this.idDetalleFactura = idDetalleFactura;
         this.idCliente = idCliente;
+        this.fecha = fecha; // <-- ASIGNACIÓN
         this.enGarantia = enGarantia;
         this.tipoSolicitud = tipoSolicitud;
         this.diagnosticoTecnico = diagnosticoTecnico;
@@ -54,6 +58,14 @@ public class Reclamo {
 
     public void setIdCliente(String idCliente) {
         this.idCliente = idCliente;
+    }
+
+    public LocalDate getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(LocalDate fecha) {
+        this.fecha = fecha;
     }
 
     public boolean isEnGarantia() {

@@ -2,6 +2,7 @@ package DataBase;
 
 import logico.Reclamo;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class ReclamoDAO {
@@ -15,7 +16,8 @@ public class ReclamoDAO {
     }
 
     public void guardar(Reclamo reclamo) {
-        final String sql = "INSERT INTO Reclamo (id_reclamo, id_factura, id_detalle, id_cliente, en_garantia, tipo_solicitud, diagnostico_tecnico, estado_caso) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        // Se agregó 'fecha' al INSERT y un '?' adicional (son 9 parámetros ahora)
+        final String sql = "INSERT INTO Reclamo (id_reclamo, id_factura, id_detalle, id_cliente, fecha, en_garantia, tipo_solicitud, diagnostico_tecnico, estado_caso) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -24,10 +26,14 @@ public class ReclamoDAO {
             preparedStatement.setString(2, reclamo.getIdFactura());
             preparedStatement.setString(3, reclamo.getIdDetalleFactura());
             preparedStatement.setString(4, reclamo.getIdCliente());
-            preparedStatement.setBoolean(5, reclamo.isEnGarantia());
-            preparedStatement.setString(6, reclamo.getTipoSolicitud());
-            preparedStatement.setString(7, reclamo.getDiagnosticoTecnico());
-            preparedStatement.setString(8, reclamo.getEstadoCaso());
+
+            // Si la fecha es null, se guarda la fecha del sistema actual por defecto
+            preparedStatement.setObject(5, reclamo.getFecha() != null ? reclamo.getFecha() : LocalDate.now());
+
+            preparedStatement.setBoolean(6, reclamo.isEnGarantia());
+            preparedStatement.setString(7, reclamo.getTipoSolicitud());
+            preparedStatement.setString(8, reclamo.getDiagnosticoTecnico());
+            preparedStatement.setString(9, reclamo.getEstadoCaso());
 
             preparedStatement.executeUpdate();
 
@@ -37,7 +43,8 @@ public class ReclamoDAO {
     }
 
     public void actualizar(Reclamo reclamo) {
-        final String sql = "UPDATE Reclamo SET id_factura=?, id_detalle=?, id_cliente=?, en_garantia=?, tipo_solicitud=?, diagnostico_tecnico=?, estado_caso=? WHERE id_reclamo=?";
+        // Se agregó 'fecha=?' al UPDATE (son 9 parámetros ahora)
+        final String sql = "UPDATE Reclamo SET id_factura=?, id_detalle=?, id_cliente=?, fecha=?, en_garantia=?, tipo_solicitud=?, diagnostico_tecnico=?, estado_caso=? WHERE id_reclamo=?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -45,11 +52,12 @@ public class ReclamoDAO {
             preparedStatement.setString(1, reclamo.getIdFactura());
             preparedStatement.setString(2, reclamo.getIdDetalleFactura());
             preparedStatement.setString(3, reclamo.getIdCliente());
-            preparedStatement.setBoolean(4, reclamo.isEnGarantia());
-            preparedStatement.setString(5, reclamo.getTipoSolicitud());
-            preparedStatement.setString(6, reclamo.getDiagnosticoTecnico());
-            preparedStatement.setString(7, reclamo.getEstadoCaso());
-            preparedStatement.setString(8, reclamo.getIdReclamo());
+            preparedStatement.setObject(4, reclamo.getFecha());
+            preparedStatement.setBoolean(5, reclamo.isEnGarantia());
+            preparedStatement.setString(6, reclamo.getTipoSolicitud());
+            preparedStatement.setString(7, reclamo.getDiagnosticoTecnico());
+            preparedStatement.setString(8, reclamo.getEstadoCaso());
+            preparedStatement.setString(9, reclamo.getIdReclamo());
 
             preparedStatement.executeUpdate();
 
@@ -132,12 +140,14 @@ public class ReclamoDAO {
         return reclamos;
     }
 
+    // Se actualizó este método para incluir la extracción de la fecha desde la BD
     private Reclamo mapearReclamo(ResultSet resultSet) throws SQLException {
         return new Reclamo(
                 resultSet.getString("id_reclamo"),
                 resultSet.getString("id_factura"),
                 resultSet.getString("id_detalle"),
                 resultSet.getString("id_cliente"),
+                resultSet.getObject("fecha", LocalDate.class), // <-- Se extrae la fecha
                 resultSet.getBoolean("en_garantia"),
                 resultSet.getString("tipo_solicitud"),
                 resultSet.getString("diagnostico_tecnico"),

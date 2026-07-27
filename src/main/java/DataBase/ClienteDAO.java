@@ -16,7 +16,8 @@ public class ClienteDAO {
     }
 
     public void guardar(Cliente cliente) {
-        final String sql = "INSERT INTO Cliente (id_cliente, numero_identificacion, nombres, apellidos, correo_electronico, fecha_registro, tipo_cliente, tipo_identificacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        // Se agregó 'genero' (9 parámetros en total)
+        final String sql = "INSERT INTO Cliente (id_cliente, numero_identificacion, nombres, apellidos, genero, correo_electronico, fecha_registro, tipo_cliente, tipo_identificacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -25,16 +26,24 @@ public class ClienteDAO {
             preparedStatement.setString(2, cliente.getNumeroIdentificacion());
             preparedStatement.setString(3, cliente.getNombres());
 
+            // Manejo del apellido (NULL para Empresa)
             if (cliente.getApellidos() != null && !cliente.getApellidos().trim().isEmpty()) {
                 preparedStatement.setString(4, cliente.getApellidos());
             } else {
                 preparedStatement.setNull(4, Types.VARCHAR);
             }
 
-            preparedStatement.setString(5, cliente.getCorreo());
-            preparedStatement.setObject(6, LocalDate.now());
-            preparedStatement.setString(7, cliente.getTipoCLiente());
-            preparedStatement.setString(8, cliente.getTipoIdentificacion());
+            // Manejo del genero (NULL para Empresa)
+            if (cliente.getGenero() != null && !cliente.getGenero().trim().isEmpty()) {
+                preparedStatement.setString(5, cliente.getGenero());
+            } else {
+                preparedStatement.setNull(5, Types.VARCHAR);
+            }
+
+            preparedStatement.setString(6, cliente.getCorreo());
+            preparedStatement.setObject(7, LocalDate.now());
+            preparedStatement.setString(8, cliente.getTipoCLiente());
+            preparedStatement.setString(9, cliente.getTipoIdentificacion());
 
             preparedStatement.executeUpdate();
 
@@ -48,7 +57,8 @@ public class ClienteDAO {
     }
 
     public void actualizar(Cliente cliente) {
-        final String sql = "UPDATE Cliente SET numero_identificacion=?, nombres=?, apellidos=?, correo_electronico=?, tipo_cliente=?, tipo_identificacion=? WHERE id_cliente=?";
+        // Se agregó 'genero' (8 parámetros en total)
+        final String sql = "UPDATE Cliente SET numero_identificacion=?, nombres=?, apellidos=?, genero=?, correo_electronico=?, tipo_cliente=?, tipo_identificacion=? WHERE id_cliente=?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -56,16 +66,24 @@ public class ClienteDAO {
             preparedStatement.setString(1, cliente.getNumeroIdentificacion());
             preparedStatement.setString(2, cliente.getNombres());
 
+            // Manejo del apellido
             if (cliente.getApellidos() != null && !cliente.getApellidos().trim().isEmpty()) {
                 preparedStatement.setString(3, cliente.getApellidos());
             } else {
                 preparedStatement.setNull(3, Types.VARCHAR);
             }
 
-            preparedStatement.setString(4, cliente.getCorreo());
-            preparedStatement.setString(5, cliente.getTipoCLiente());
-            preparedStatement.setString(6, cliente.getTipoIdentificacion());
-            preparedStatement.setString(7, cliente.getIdCliente());
+            // Manejo del genero
+            if (cliente.getGenero() != null && !cliente.getGenero().trim().isEmpty()) {
+                preparedStatement.setString(4, cliente.getGenero());
+            } else {
+                preparedStatement.setNull(4, Types.VARCHAR);
+            }
+
+            preparedStatement.setString(5, cliente.getCorreo());
+            preparedStatement.setString(6, cliente.getTipoCLiente());
+            preparedStatement.setString(7, cliente.getTipoIdentificacion());
+            preparedStatement.setString(8, cliente.getIdCliente());
 
             preparedStatement.executeUpdate();
 
@@ -97,13 +115,14 @@ public class ClienteDAO {
              ResultSet resultSet = statement.executeQuery(sql)) {
 
             while (resultSet.next()) {
-                // Instanciamos el cliente usando el constructor completo que extrae todo del ResultSet
+                // Instanciamos usando el constructor de 8 parámetros que incluye 'genero'
                 Cliente cliente = new Cliente(
                         resultSet.getString("numero_identificacion"),
                         resultSet.getString("correo_electronico"),
                         resultSet.getString("id_cliente"),
                         resultSet.getString("nombres"),
                         resultSet.getString("apellidos"),
+                        resultSet.getString("genero"), // Se lee el género de la BD
                         resultSet.getString("tipo_cliente"),
                         resultSet.getString("tipo_identificacion")
                 );
@@ -127,12 +146,14 @@ public class ClienteDAO {
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
+                    // Instanciamos usando el constructor de 8 parámetros que incluye 'genero'
                     cliente = new Cliente(
                             resultSet.getString("numero_identificacion"),
                             resultSet.getString("correo_electronico"),
                             resultSet.getString("id_cliente"),
                             resultSet.getString("nombres"),
                             resultSet.getString("apellidos"),
+                            resultSet.getString("genero"), // Se lee el género de la BD
                             resultSet.getString("tipo_cliente"),
                             resultSet.getString("tipo_identificacion")
                     );

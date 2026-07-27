@@ -171,12 +171,37 @@ public class MenuPrincipalController {
     }
 
     @FXML
-    private void ControlarReclamo(ActionEvent event) {
-        System.out.println("Abriendo Reclamo...");
+    private void abrirRegistroReclamo(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/visual/RegistroReclamo.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Gestión de Reclamos y Garantías");
+            stage.setScene(new Scene(root));
+
+            stage.show();
+
+        } catch (IOException e) {
+            System.out.println("No se pudo abrir la ventana de reclamos: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void ControlarResolverReclamo(ActionEvent event) {
-        System.out.println("Abriendo Resolver Reclamo...");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/visual/ResolverReclamo.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Resolver Reclamo / Garantía");
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (IOException e) {
+            System.out.println("No se pudo abrir la ventana de resolver reclamo: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

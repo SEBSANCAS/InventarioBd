@@ -1,6 +1,7 @@
 package visual;
 
 import DataBase.ClienteDAO;
+import javafx.scene.control.cell.PropertyValueFactory;
 import logico.Cliente;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -21,7 +22,7 @@ public class ListaClientesController {
     @FXML private TableColumn<Cliente, String> colApellidos;
     @FXML private TableColumn<Cliente, String> colCorreo;
     @FXML private TableColumn<Cliente, String> colTipoCliente;
-
+    @FXML private TableColumn<Cliente, String> colGenero;
     @FXML private TextField txtIdentificacion;
     @FXML private TextField txtNombres;
     @FXML private TextField txtApellidos;
@@ -41,6 +42,7 @@ public class ListaClientesController {
         colIdentificacion.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getNumeroIdentificacion() != null ? cell.getValue().getNumeroIdentificacion() : ""));
         colNombres.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getNombres() != null ? cell.getValue().getNombres() : ""));
         colApellidos.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getApellidos() != null ? cell.getValue().getApellidos() : ""));
+        colGenero.setCellValueFactory(new PropertyValueFactory<>("genero"));
         colCorreo.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getCorreo() != null ? cell.getValue().getCorreo() : ""));
 
         cbTipoCliente.setItems(FXCollections.observableArrayList("Persona", "Empresa"));

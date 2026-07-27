@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane fitToWidth="true" style="-fx-background: white; -fx-background-color: white;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="visual.ResolverReclamoController">
+    <VBox spacing="18" style="-fx-background-color: white;">
+        <padding>
+            <Insets top="25" right="35" bottom="25" left="35"/>
+        </padding>
+
+        <Label text="Resolver Reclamo / Garantía" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1c3f6e;"/>
+        <Label text="Seleccione el reclamo a resolver e indique la acción tomada." style="-fx-font-size: 12px; -fx-text-fill: #7a7a7a;"/>
+
+        <Separator/>
+
+        <!-- SECCIÓN 1: BÚSQUEDA DEL RECLAMO -->
+        <GridPane hgap="15" vgap="14">
+            <columnConstraints>
+                <ColumnConstraints minWidth="150"/>
+                <ColumnConstraints minWidth="350" hgrow="ALWAYS"/>
+            </columnConstraints>
+
+            <Label text="ID Resolución:" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <TextField fx:id="campoIdResolucion" editable="false" promptText="Auto-generado" style="-fx-background-color: #f2f2f2; -fx-border-color: #d6d6d6; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 8;" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+            <Label text="ID Reclamo:" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <HBox spacing="10" GridPane.rowIndex="1" GridPane.columnIndex="1">
+                <TextField fx:id="campoIdReclamo" promptText="Ej. REC001" HBox.hgrow="ALWAYS" style="-fx-border-color: #AEDFF7; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 8;"/>
+                <Button text="Buscar" onAction="#ControlarBuscarReclamo" style="-fx-background-color: #eaf4fc; -fx-text-fill: #1c3f6e; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;"/>
+            </HBox>
+
+            <Label text="Cliente / Factura:" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <TextField fx:id="campoInfoReclamo" editable="false" promptText="Información del reclamo cargada automáticamente" style="-fx-background-color: #f2f2f2; -fx-border-color: #d6d6d6; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 8;" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+        </GridPane>
+
+        <Separator/>
+
+        <!-- SECCIÓN 2: DETALLES DE LA RESOLUCIÓN -->
+        <Label text="Acción y Ajustes Financieros" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1c3f6e;"/>
+
+        <GridPane hgap="15" vgap="14">
+            <columnConstraints>
+                <ColumnConstraints minWidth="150"/>
+                <ColumnConstraints minWidth="350" hgrow="ALWAYS"/>
+            </columnConstraints>
+
+            <Label text="Fecha de Resolución:" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <DatePicker fx:id="dateFechaResolucion" maxWidth="Infinity" style="-fx-border-color: #AEDFF7; -fx-border-radius: 8; -fx-background-radius: 8;" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+            <Label text="Acción Tomada:" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="comboAccionTomada" maxWidth="Infinity" promptText="Seleccione la acción realizada" style="-fx-border-color: #AEDFF7; -fx-border-radius: 8; -fx-background-radius: 8;" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+            <Label text="Equipo Entrante (Dañado):" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <TextField fx:id="campoEquipoEntrante" promptText="ID del equipo que ingresa por garantía" style="-fx-border-color: #AEDFF7; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 8;" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+            <Label text="Equipo Saliente (Nuevo/Rep):" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+            <TextField fx:id="campoEquipoSaliente" promptText="ID del equipo de salida (si aplica cambio)" style="-fx-border-color: #AEDFF7; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 8;" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+            <Label text="Monto Cobrado:" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+            <TextField fx:id="campoMontoCobrado" text="0.0" promptText="0.00" style="-fx-border-color: #AEDFF7; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 8;" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+            <Label text="Monto Reembolsado:" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+            <TextField fx:id="campoMontoReembolsado" text="0.0" promptText="0.00" style="-fx-border-color: #AEDFF7; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 8;" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+        </GridPane>
+
+        <Label fx:id="lblMensaje" wrapText="true"/>
+
+        <!-- SECCIÓN 3: BOTONES DE ACCIÓN -->
+        <HBox alignment="CENTER_RIGHT" spacing="15">
+            <Button text="Cancelar" onAction="#ControlarCancelar" style="-fx-background-color: white; -fx-text-fill: #b23b3b; -fx-border-color: #b23b3b; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 8 20 8 20; -fx-cursor: hand;"/>
+            <Button text="Limpiar" onAction="#ControlarLimpiar" style="-fx-background-color: #e6e6e6; -fx-text-fill: #333333; -fx-background-radius: 8; -fx-padding: 8 20 8 20; -fx-cursor: hand;"/>
+            <Button text="Guardar Resolución" onAction="#ControlarGuardar" style="-fx-background-color: #1c3f6e; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 8 20 8 20; -fx-cursor: hand;"/>
+        </HBox>
+    </VBox>
+</ScrollPane>

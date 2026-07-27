@@ -61,17 +61,18 @@
 
             <Button fx:id="btnMovimientoInventario" maxHeight="Infinity" maxWidth="Infinity" onAction="#ControlarMovimientoInventario" style="-fx-background-color: white; -fx-border-color: #7f8c8d; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-cursor: hand;" text="Movimiento de Inventario" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="0" />
 
-
+            <!-- FILA 1 -->
             <Button fx:id="btnContratoSuplidor" maxHeight="Infinity" maxWidth="Infinity" onAction="#ControlarContratoSuplidor" style="-fx-background-color: white; -fx-border-color: #7f8c8d; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-cursor: hand;" text="Contrato Suplidor" GridPane.columnIndex="0" GridPane.rowIndex="1" />
 
             <Button fx:id="btnOrdenar" maxHeight="Infinity" maxWidth="Infinity" onAction="#ControlarOrdenar" style="-fx-background-color: white; -fx-border-color: #7f8c8d; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-cursor: hand;" text="Ordenar" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
             <Button fx:id="btnRealizarVenta" maxHeight="Infinity" maxWidth="Infinity" onAction="#ControlarRealizarVenta" style="-fx-background-color: white; -fx-border-color: #7f8c8d; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-cursor: hand;" text="Realizar Venta" GridPane.columnIndex="2" GridPane.rowIndex="1" />
 
-
+            <!-- FILA 2 -->
             <Button fx:id="btnManejarOrdenes" maxHeight="Infinity" maxWidth="Infinity" onAction="#ControlarManejarOrdenes" style="-fx-background-color: white; -fx-border-color: #7f8c8d; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-cursor: hand;" text="Manejar Órdenes" GridPane.columnIndex="0" GridPane.rowIndex="2" />
 
-            <Button fx:id="btnReclamo" maxHeight="Infinity" maxWidth="Infinity" onAction="#ControlarReclamo" style="-fx-background-color: white; -fx-border-color: #7f8c8d; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-cursor: hand;" text="Reclamo" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <!-- Botón de Registrar Reclamo ubicado en la Columna 1, Fila 2 con el estilo idéntico -->
+            <Button fx:id="btnRegistrarReclamo" maxHeight="Infinity" maxWidth="Infinity" onAction="#abrirRegistroReclamo" style="-fx-background-color: white; -fx-border-color: #7f8c8d; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-cursor: hand;" text="Registrar Reclamo" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
             <Button fx:id="btnResolverReclamo" maxHeight="Infinity" maxWidth="Infinity" onAction="#ControlarResolverReclamo" style="-fx-background-color: white; -fx-border-color: #7f8c8d; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-cursor: hand;" text="Resolver Reclamo" GridPane.columnIndex="2" GridPane.rowIndex="2" />
         </GridPane>

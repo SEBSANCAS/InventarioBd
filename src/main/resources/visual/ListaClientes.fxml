@@ -22,6 +22,7 @@
             <TableColumn fx:id="colId" text="ID Cliente"/>
             <TableColumn fx:id="colTipoCliente" text="Tipo Cliente"/>
             <TableColumn fx:id="colTipoIdentificacion" text="Tipo ID"/>
+            <TableColumn fx:id="colGenero" text="Género" prefWidth="100"/>
             <TableColumn fx:id="colIdentificacion" text="No. Identificación"/>
             <TableColumn fx:id="colNombres" text="Nombres"/>
             <TableColumn fx:id="colApellidos" text="Apellidos"/>

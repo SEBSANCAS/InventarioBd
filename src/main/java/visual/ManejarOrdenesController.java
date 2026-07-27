@@ -1,6 +1,7 @@
 package visual;
 
 import DataBase.AdquisicionDAO;
+import javafx.beans.property.SimpleObjectProperty;
 import logico.Adquisicion;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -53,20 +54,20 @@ public class ManejarOrdenesController {
     }
 
     private void configurarColumnas() {
-        // Mapeo Tabla Pendientes
-        colPendId.setCellValueFactory(new PropertyValueFactory<>("idCompra"));
-        colPendFecha.setCellValueFactory(new PropertyValueFactory<>("fechaEmision"));
-        colPendTotal.setCellValueFactory(new PropertyValueFactory<>("montoTotal"));
-        colPendEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
+        // Mapeo Tabla Pendientes (Llamando directamente a tus métodos get)
+        colPendId.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getIdCompra()));
+        colPendFecha.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getFechaEmision()));
+        colPendTotal.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getMontoTotal()));
+        colPendEstado.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getEstado()));
         colPendSuplidor.setCellValueFactory(cell -> new SimpleStringProperty(
                 cell.getValue().getSuplidor() != null ? cell.getValue().getSuplidor().getNombreComercial() : "N/A"
         ));
 
-        // Mapeo Tabla Aceptadas
-        colAceptId.setCellValueFactory(new PropertyValueFactory<>("idCompra"));
-        colAceptFecha.setCellValueFactory(new PropertyValueFactory<>("fechaEmision"));
-        colAceptTotal.setCellValueFactory(new PropertyValueFactory<>("montoTotal"));
-        colAceptEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
+        // Mapeo Tabla Aceptadas (Llamando directamente a tus métodos get)
+        colAceptId.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getIdCompra()));
+        colAceptFecha.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getFechaEmision()));
+        colAceptTotal.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getMontoTotal()));
+        colAceptEstado.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getEstado()));
         colAceptSuplidor.setCellValueFactory(cell -> new SimpleStringProperty(
                 cell.getValue().getSuplidor() != null ? cell.getValue().getSuplidor().getNombreComercial() : "N/A"
         ));
@@ -79,7 +80,8 @@ public class ManejarOrdenesController {
         ArrayList<Adquisicion> todas = AdquisicionDAO.getInstance().EncontrarTodos();
         if (todas != null) {
             for (Adquisicion ord : todas) {
-                if ("Pendiente".equalsIgnoreCase(ord.getEstado())) {
+
+                if ("Emitida".equalsIgnoreCase(ord.getEstado())) {
                     listaPendientes.add(ord);
                 } else if ("Aceptada".equalsIgnoreCase(ord.getEstado())) {
                     listaAceptadas.add(ord);
@@ -91,7 +93,7 @@ public class ManejarOrdenesController {
         tablaAceptadas.setItems(listaAceptadas);
     }
 
-    // ACCIÓN: Aceptar Orden Pendiente
+
     @FXML
     private void handleAceptarOrden() {
         if (ordenPendienteSeleccionada == null) {

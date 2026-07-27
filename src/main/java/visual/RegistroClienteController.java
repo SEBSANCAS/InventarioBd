@@ -7,7 +7,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -35,6 +37,25 @@ public class RegistroClienteController {
 
     @FXML
     private TextField campoApellidos;
+
+    // NUEVOS COMPONENTES PARA EL GÉNERO
+    @FXML
+    private Label lblGenero;
+
+    @FXML
+    private HBox contenedorGenero;
+
+    @FXML
+    private ToggleGroup grupoGenero;
+
+    @FXML
+    private RadioButton rbMasculino;
+
+    @FXML
+    private RadioButton rbFemenino;
+
+    @FXML
+    private RadioButton rbOtro;
 
     @FXML
     private ComboBox<String> comboTipoIdentificacion;
@@ -91,12 +112,23 @@ public class RegistroClienteController {
         String tipo = comboTipoCliente.getValue();
         boolean esEmpresa = "Empresa".equals(tipo);
 
+        // Ocultar apellidos si es empresa
         lblApellidos.setVisible(!esEmpresa);
         lblApellidos.setManaged(!esEmpresa);
         campoApellidos.setVisible(!esEmpresa);
         campoApellidos.setManaged(!esEmpresa);
+
+        // Ocultar género si es empresa
+        lblGenero.setVisible(!esEmpresa);
+        lblGenero.setManaged(!esEmpresa);
+        contenedorGenero.setVisible(!esEmpresa);
+        contenedorGenero.setManaged(!esEmpresa);
+
         if (esEmpresa) {
             campoApellidos.clear();
+            if (grupoGenero != null) {
+                grupoGenero.selectToggle(null); // Limpiar selección de género
+            }
         }
 
         comboTipoIdentificacion.getItems().clear();
@@ -207,8 +239,15 @@ public class RegistroClienteController {
         }
 
         boolean esEmpresa = "Empresa".equals(comboTipoCliente.getValue());
-        if (!esEmpresa && (campoApellidos.getText() == null || campoApellidos.getText().trim().isEmpty())) {
-            errores.append("- El apellido es obligatorio para clientes tipo Persona.\n");
+
+        // Validación estricta para Personas (Apellidos y Género)
+        if (!esEmpresa) {
+            if (campoApellidos.getText() == null || campoApellidos.getText().trim().isEmpty()) {
+                errores.append("- El apellido es obligatorio para clientes tipo Persona.\n");
+            }
+            if (grupoGenero == null || grupoGenero.getSelectedToggle() == null) {
+                errores.append("- Debe seleccionar un género para clientes tipo Persona.\n");
+            }
         }
 
         String tipoIdentificacion = comboTipoIdentificacion.getValue();
@@ -228,14 +267,14 @@ public class RegistroClienteController {
         if (campoCorreo.getText() == null || campoCorreo.getText().trim().isEmpty()) {
             errores.append("- El correo es obligatorio.\n");
         } else if (!PATRON_CORREO.matcher(campoCorreo.getText().trim()).matches()) {
-            errores.append("- El correo no tiene un formato valido.\n");
+            errores.append("- El correo no tiene un formato válido.\n");
         }
 
         long telefonosConNumero = filasTelefono.stream()
                 .filter(f -> f.campoNumero.getText() != null && !f.campoNumero.getText().trim().isEmpty())
                 .count();
         if (telefonosConNumero == 0) {
-            errores.append("- Debe ingresar al menos un telefono.\n");
+            errores.append("- Debe ingresar al menos un teléfono.\n");
         }
 
         long principalesMarcados = filasTelefono.stream()
@@ -244,7 +283,7 @@ public class RegistroClienteController {
                         && !f.campoNumero.getText().trim().isEmpty())
                 .count();
         if (telefonosConNumero > 0 && principalesMarcados != 1) {
-            errores.append("- Debe marcar exactamente un telefono como principal.\n");
+            errores.append("- Debe marcar exactamente un teléfono como principal.\n");
         }
 
         if (errores.length() > 0) {
@@ -265,12 +304,21 @@ public class RegistroClienteController {
         String tipoIdentificacion = comboTipoIdentificacion.getValue();
         String idCliente = Servicio.getInstance().generarIdCliente();
 
+        // Extracción del valor del género seleccionado
+        String generoSeleccionado = null;
+        if (!esEmpresa && grupoGenero != null && grupoGenero.getSelectedToggle() != null) {
+            RadioButton seleccionado = (RadioButton) grupoGenero.getSelectedToggle();
+            generoSeleccionado = seleccionado.getText(); // Captura "Masculino", "Femenino" u "Otro"
+        }
+
+        // Se usa el constructor actualizado con los 8 parámetros
         Cliente cliente = new Cliente(
                 campoIdentificacion.getText().trim(),
                 campoCorreo.getText().trim(),
                 idCliente,
                 campoNombres.getText().trim(),
                 esEmpresa ? null : campoApellidos.getText().trim(),
+                generoSeleccionado, // Se inyecta el género
                 esEmpresa ? "Empresa" : "Persona",
                 tipoIdentificacion
         );
@@ -299,6 +347,10 @@ public class RegistroClienteController {
         campoApellidos.clear();
         campoCorreo.clear();
         campoIdentificacion.clear();
+
+        if (grupoGenero != null) {
+            grupoGenero.selectToggle(null);
+        }
 
         comboTipoCliente.getSelectionModel().select("Persona");
         actualizarSegunTipoCliente();
