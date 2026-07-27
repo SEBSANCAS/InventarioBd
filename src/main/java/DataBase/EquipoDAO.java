@@ -176,7 +176,6 @@ public class EquipoDAO {
     }
     public ArrayList<Equipo> EncontrarTodos() {
         ArrayList<Equipo> equipos = new ArrayList<>();
-
         final String sql = "SELECT * FROM Equipo";
 
         try (Connection connection = DatabaseConnection.getConnection();
@@ -190,21 +189,30 @@ public class EquipoDAO {
                         .getInstance()
                         .encontrarPorId(idLaptop);
 
+                // 1. FORMA SEGURA DE LEER LA FECHA SIN QUE FALLE
+                LocalDate fecha = null;
+                Date sqlDate = resultSet.getDate("fecha_ingreso");
+                if (sqlDate != null) {
+                    fecha = sqlDate.toLocalDate();
+                }
+
+                // 2. SE CAMBIÓ "id_equipo" POR "IdEquipo" PARA QUE COINCIDA CON TU SQL
                 Equipo eq = new Equipo(
-                        resultSet.getString("id_equipo"),
+                        resultSet.getString("IdEquipo"),
                         laptop,
                         resultSet.getString("numero_serie"),
                         resultSet.getString("color"),
                         resultSet.getString("estado"),
                         resultSet.getString("disponibilidad"),
                         resultSet.getFloat("descuento_por_condicion"),
-                        resultSet.getObject("fecha_ingreso", LocalDate.class),
+                        fecha, // Usamos la fecha convertida de forma segura
                         resultSet.getString("id_detalle_orden")
                 );
                 equipos.add(eq);
             }
         } catch (SQLException e) {
             System.out.println("No se pudo obtener la lista de equipos: " + e.getMessage());
+            e.printStackTrace(); // Esto te mostrará en consola qué falla exactamente si sigue sin cargar
         }
         return equipos;
     }

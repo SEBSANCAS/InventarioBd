@@ -1,16 +1,19 @@
 package visual;
 
+import DataBase.AdquisicionDAO;
+import DataBase.EquipoDAO;
+import logico.Equipo;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.List;
 
 public class MenuPrincipalController {
 
@@ -24,19 +27,25 @@ public class MenuPrincipalController {
 
     public void cargarNotificaciones() {
         listaAlertas.getChildren().clear();
+        List<Equipo> equiposEnBD = EquipoDAO.getInstance().EncontrarTodos();
+        List<logico.Adquisicion> adquisicionesEnBD = AdquisicionDAO.getInstance().EncontrarTodos();
+        System.out.println("Adquisiciones encontradas en BD: " + (adquisicionesEnBD != null ? adquisicionesEnBD.size() : 0));
+        if (adquisicionesEnBD != null) {
+            for (logico.Adquisicion adq : adquisicionesEnBD) {
 
-        for (logico.Adquisicion adq : logico.Servicio.getInstance().getMisAdquisiciones().values()) {
-            if ("Recibida".equalsIgnoreCase(adq.getEstado())) {
+                if ("Recibida".equalsIgnoreCase(adq.getEstado())) {
 
-                for (logico.DetalleAdquisicion detalle : adq.getDetallesAdquision()) {
-                    long registrados = logico.Servicio.getInstance().getMisEquipos().values().stream()
-                            .filter(e -> e.getIdAdquisicionOrigen() != null && e.getIdAdquisicionOrigen().equals(detalle.getIdDetalleAdquisicion()))
-                            .count();
+                    for (logico.DetalleAdquisicion detalle : adq.getDetallesAdquision()) {
 
-                    long faltantes = detalle.getCantidad() - registrados;
+                        long registrados = equiposEnBD.stream()
+                                .filter(e -> e.getIdAdquisicionOrigen() != null && e.getIdAdquisicionOrigen().equals(detalle.getIdDetalleAdquisicion()))
+                                .count();
 
-                    if (faltantes > 0) {
-                        crearTarjetaNotificacion(adq.getIdCompra(), detalle, faltantes);
+                        long faltantes = detalle.getCantidad() - registrados;
+
+                        if (faltantes > 0) {
+                            crearTarjetaNotificacion(adq.getIdCompra(), detalle, faltantes);
+                        }
                     }
                 }
             }
