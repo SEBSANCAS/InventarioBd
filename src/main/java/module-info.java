@@ -3,6 +3,7 @@ module com.example.inventarioproyectobd {
     requires javafx.fxml;
     requires java.sql;
     requires mysql.connector.j;
+    requires org.kordamp.ikonli.fontawesome6;
 
 
     opens com.example.inventarioproyectobd to javafx.fxml;

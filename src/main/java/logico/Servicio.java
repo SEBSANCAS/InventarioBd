@@ -1,6 +1,7 @@
 package logico;
 
 import DataBase.*;
+import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -217,6 +218,7 @@ public class Servicio {
         }
         ServicioDAO.getInstance().guardarContadores(this);
     }
+
     public void registrarResolucion(Resolucion resolucion) {
         misResoluciones.put(resolucion.getIdResolucion(), resolucion);
         ResolucionDAO.getInstance().guardar(resolucion);

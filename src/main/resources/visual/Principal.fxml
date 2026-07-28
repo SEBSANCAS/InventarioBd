@@ -6,6 +6,7 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.BorderPane?>
@@ -14,81 +15,383 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="650" prefWidth="1100" style="-fx-background-color: #ecf0f1;" xmlns="http://javafx.com/javafx/21.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="visual.MenuPrincipalController">
-
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.Pane?>
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="visual.MenuPrincipalController"
+            prefWidth="1200"
+            prefHeight="700"
+            minWidth="1100"
+            minHeight="650"
+            stylesheets="@estiloMenu.css"
+            styleClass="root">
     <top>
-        <MenuBar style="-fx-background-color: #ecf0f1; -fx-border-color: #bdc3c7; -fx-border-width: 0 0 1 0;">
-            <menus>
-                <Menu style="-fx-text-fill: white;" text="Ver Rentabilidad">
-                </Menu>
-                <Menu style="-fx-text-fill: white;" text="Informes">
-                    <items>
-                    </items>
-                </Menu>
-                <Menu style="-fx-text-fill: white;" text="Información General">
-                    <items>
-                    </items>
-                </Menu>
-            </menus>
-        </MenuBar>
-    </top>
 
+        <VBox>
+
+            <HBox styleClass="header">
+
+                <HBox alignment="CENTER_LEFT" spacing="10">
+
+                    <FontIcon iconLiteral="fas-laptop"
+                              iconSize="28"
+                              iconColor="white"/>
+
+                    <Label text="Laptop Inventory"
+                           styleClass="titulo"/>
+
+                </HBox>
+
+                <Pane HBox.hgrow="ALWAYS"/>
+
+                <Label text="Administrador"
+                       styleClass="usuario"/>
+
+            </HBox>
+
+            <MenuBar styleClass="menuBar">
+
+                <Menu text="Rentabilidad"/>
+
+                <Menu text="Informes"/>
+
+                <Menu text="Información"/>
+
+            </MenuBar>
+
+        </VBox>
+
+    </top>
     <center>
-        <GridPane hgap="20" style="-fx-padding: 30;" vgap="20">
+
+        <GridPane
+                fx:id="panelPrincipal"
+                styleClass="panelPrincipal"
+                hgap="15"
+                vgap="15"
+               alignment="CENTER">
             <columnConstraints>
-                <ColumnConstraints hgrow="ALWAYS" percentWidth="33.33" />
-                <ColumnConstraints hgrow="ALWAYS" percentWidth="33.33" />
-                <ColumnConstraints hgrow="ALWAYS" percentWidth="33.34" />
+
+                <ColumnConstraints percentWidth="32.3"/>
+
+                <ColumnConstraints percentWidth="32.3"/>
+
+                <ColumnConstraints percentWidth="32.4"/>
+
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints percentHeight="33.33" vgrow="ALWAYS" />
-                <RowConstraints percentHeight="33.33" vgrow="ALWAYS" />
-                <RowConstraints percentHeight="33.34" vgrow="ALWAYS" />
+
+                <RowConstraints percentHeight="33"/>
+
+                <RowConstraints percentHeight="33"/>
+
+                <RowConstraints percentHeight="34"/>
+
             </rowConstraints>
 
-            <!-- FILA 0 -->
-            <MenuButton fx:id="btnRegistros" alignment="CENTER" maxHeight="Infinity" maxWidth="Infinity" style="-fx-background-color: white; -fx-border-color: #7f8c8d; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-cursor: hand;" text="Registros" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                <items>
-                    <MenuItem onAction="#ControlarRegistrarMarca" text="Registrar Marca" />
-                    <MenuItem onAction="#ControlarRegistrarModelo" text="Registrar Modelo de Laptop" />
-                    <MenuItem onAction="#ControlarRegistrarCliente" text="Registrar Cliente" />
-                    <MenuItem onAction="#ControlarRegistrarSuplidor" text="Registrar Suplidor" />
-                    <MenuItem onAction="#ControlarRegistrarEstante" text="Registrar Estante" />
-                </items>
-            </MenuButton>
+            <StackPane GridPane.columnIndex="0"
+                       GridPane.rowIndex="0"
+                       styleClass="card">
 
-            <Button fx:id="btnListados" maxHeight="Infinity" maxWidth="Infinity" onAction="#ControlarListados" style="-fx-background-color: white; -fx-border-color: #7f8c8d; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-cursor: hand;" text="Listados" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                <VBox alignment="CENTER"
+                      spacing="12">
 
-            <Button fx:id="btnMovimientoInventario" maxHeight="Infinity" maxWidth="Infinity" onAction="#ControlarMovimientoInventario" style="-fx-background-color: white; -fx-border-color: #7f8c8d; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-cursor: hand;" text="Movimiento de Inventario" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                    <FontIcon iconLiteral="fas-folder-plus"
+                              iconSize="34"
+                              iconColor="#1565C0"/>
 
-            <!-- FILA 1 -->
-            <Button fx:id="btnContratoSuplidor" maxHeight="Infinity" maxWidth="Infinity" onAction="#ControlarContratoSuplidor" style="-fx-background-color: white; -fx-border-color: #7f8c8d; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-cursor: hand;" text="Contrato Suplidor" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                    <MenuButton
+                            fx:id="btnRegistros"
+                            text="Registros"
+                            styleClass="botonMenu">
 
-            <Button fx:id="btnOrdenar" maxHeight="Infinity" maxWidth="Infinity" onAction="#ControlarOrdenar" style="-fx-background-color: white; -fx-border-color: #7f8c8d; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-cursor: hand;" text="Ordenar" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <items>
 
-            <Button fx:id="btnRealizarVenta" maxHeight="Infinity" maxWidth="Infinity" onAction="#ControlarRealizarVenta" style="-fx-background-color: white; -fx-border-color: #7f8c8d; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-cursor: hand;" text="Realizar Venta" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                            <MenuItem text="Registrar Marca"
+                                      onAction="#ControlarRegistrarMarca"/>
 
-            <!-- FILA 2 -->
-            <Button fx:id="btnManejarOrdenes" maxHeight="Infinity" maxWidth="Infinity" onAction="#ControlarManejarOrdenes" style="-fx-background-color: white; -fx-border-color: #7f8c8d; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-cursor: hand;" text="Manejar Órdenes" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                            <MenuItem text="Registrar Modelo de Laptop"
+                                      onAction="#ControlarRegistrarModelo"/>
 
-            <!-- Botón de Registrar Reclamo ubicado en la Columna 1, Fila 2 con el estilo idéntico -->
-            <Button fx:id="btnRegistrarReclamo" maxHeight="Infinity" maxWidth="Infinity" onAction="#abrirRegistroReclamo" style="-fx-background-color: white; -fx-border-color: #7f8c8d; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-cursor: hand;" text="Registrar Reclamo" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                            <MenuItem text="Registrar Cliente"
+                                      onAction="#ControlarRegistrarCliente"/>
 
-            <Button fx:id="btnResolverReclamo" maxHeight="Infinity" maxWidth="Infinity" onAction="#ControlarResolverReclamo" style="-fx-background-color: white; -fx-border-color: #7f8c8d; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-cursor: hand;" text="Resolver Reclamo" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                            <MenuItem text="Registrar Suplidor"
+                                      onAction="#ControlarRegistrarSuplidor"/>
+
+                            <MenuItem text="Registrar Estante"
+                                      onAction="#ControlarRegistrarEstante"/>
+
+                        </items>
+
+                    </MenuButton>
+
+                    <Label text="Clientes, marcas, laptops y estantes."
+                           wrapText="true"
+                           styleClass="descripcion"/>
+
+                </VBox>
+
+            </StackPane>
+            <StackPane GridPane.columnIndex="1"
+                       GridPane.rowIndex="0"
+                       styleClass="card">
+
+                <VBox alignment="CENTER" spacing="18">
+
+                    <FontIcon iconLiteral="fas-table"
+                              iconSize="34"
+                              iconColor="#1565C0"/>
+
+                    <Button fx:id="btnListados"
+                            text="Listados"
+                            styleClass="botonCard"
+                            onAction="#ControlarListados"/>
+
+                    <Label text="Consultar toda la información registrada."
+                           wrapText="true"
+                           styleClass="descripcion"/>
+
+                </VBox>
+
+            </StackPane>
+            <StackPane GridPane.columnIndex="2"
+                       GridPane.rowIndex="0"
+                       styleClass="card">
+
+                <VBox alignment="CENTER"
+                      spacing="18">
+
+                    <FontIcon iconLiteral="fas-boxes"
+                              iconSize="45"
+                              iconColor="#1565C0"/>
+
+                    <Button
+                            fx:id="btnMovimientoInventario"
+                            text="Movimiento de Inventario"
+                            wrapText="true"
+                            styleClass="botonCard"
+                            onAction="#ControlarMovimientoInventario"/>
+
+                    <Label
+                            text="Entradas, salidas y movimientos del almacén."
+                            wrapText="true"
+                            styleClass="descripcion"/>
+
+                </VBox>
+
+            </StackPane>
+            <StackPane GridPane.columnIndex="0"
+                       GridPane.rowIndex="1"
+                       styleClass="card">
+
+                <VBox alignment="CENTER"
+                      spacing="18">
+
+                    <FontIcon iconLiteral="fas-handshake"
+                              iconSize="34"
+                              iconColor="#1565C0"/>
+
+                    <Button
+                            fx:id="btnContratoSuplidor"
+                            text="Contrato Suplidor"
+                            styleClass="botonCard"
+                            onAction="#ControlarContratoSuplidor"/>
+
+                    <Label
+                            text="Gestiona acuerdos con proveedores."
+                            wrapText="true"
+                            styleClass="descripcion"/>
+
+                </VBox>
+
+            </StackPane>
+            <StackPane GridPane.columnIndex="1"
+                       GridPane.rowIndex="1"
+                       styleClass="card">
+
+                <VBox alignment="CENTER"
+                      spacing="18">
+
+                    <FontIcon iconLiteral="fas-shopping-cart"
+                              iconSize="34"
+                              iconColor="#1565C0"/>
+
+                    <Button
+                            fx:id="btnOrdenar"
+                            text="Ordenar"
+                            styleClass="botonCard"
+                            onAction="#ControlarOrdenar"/>
+
+                    <Label
+                            text="Crear nuevas órdenes de compra."
+                            wrapText="true"
+                            styleClass="descripcion"/>
+
+                </VBox>
+
+            </StackPane>
+            <StackPane GridPane.columnIndex="2"
+                       GridPane.rowIndex="1"
+                       styleClass="card">
+
+                <VBox alignment="CENTER"
+                      spacing="18">
+
+                    <FontIcon iconLiteral="fas-cash-register"
+                              iconSize="34"
+                              iconColor="#1565C0"/>
+
+                    <Button
+                            fx:id="btnRealizarVenta"
+                            text="Realizar Venta"
+                            styleClass="botonCard"
+                            onAction="#ControlarRealizarVenta"/>
+
+                    <Label
+                            text="Facturación y venta de equipos."
+                            wrapText="true"
+                            styleClass="descripcion"/>
+
+                </VBox>
+
+            </StackPane>
+            <StackPane GridPane.columnIndex="0"
+                       GridPane.rowIndex="2"
+                       styleClass="card">
+
+                <VBox alignment="CENTER"
+                      spacing="18">
+
+                    <FontIcon iconLiteral="fas-clipboard-list"
+                              iconSize="34"
+                              iconColor="#1565C0"/>
+
+                    <Button
+                            fx:id="btnManejarOrdenes"
+                            text="Manejar Órdenes"
+                            styleClass="botonCard"
+                            onAction="#ControlarManejarOrdenes"/>
+
+                    <Label
+                            text="Administrar órdenes de compra."
+                            wrapText="true"
+                            styleClass="descripcion"/>
+
+                </VBox>
+
+            </StackPane>
+            <StackPane GridPane.columnIndex="1"
+                       GridPane.rowIndex="2"
+                       styleClass="card">
+
+                <VBox alignment="CENTER"
+                      spacing="18">
+
+                    <FontIcon iconLiteral="fas-exclamation-triangle"
+                              iconSize="34"
+                              iconColor="#1565C0"/>
+
+                    <Button
+                            fx:id="btnRegistrarReclamo"
+                            text="Registrar Reclamo"
+                            styleClass="botonCard"
+                            onAction="#abrirRegistroReclamo"/>
+
+                    <Label
+                            text="Registrar incidencias y garantías."
+                            wrapText="true"
+                            styleClass="descripcion"/>
+
+                </VBox>
+
+            </StackPane>
+            <StackPane GridPane.columnIndex="2"
+                       GridPane.rowIndex="2"
+                       styleClass="card">
+
+                <VBox alignment="CENTER"
+                      spacing="18">
+
+                    <FontIcon iconLiteral="fas-check-circle"
+                              iconSize="34"
+                              iconColor="#1565C0"/>
+
+                    <Button
+                            fx:id="btnResolverReclamo"
+                            text="Resolver Reclamo"
+                            styleClass="botonCard"
+                            onAction="#ControlarResolverReclamo"/>
+
+                    <Label
+                            text="Dar seguimiento y solución a reclamos."
+                            wrapText="true"
+                            styleClass="descripcion"/>
+
+                </VBox>
+
+            </StackPane>
         </GridPane>
     </center>
 
     <right>
-        <VBox fx:id="panelNotificaciones" prefWidth="280" spacing="10" style="-fx-background-color: #ffffff; -fx-border-color: #bdc3c7; -fx-border-width: 0 0 0 2; -fx-padding: 15;">
-            <Label style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="Notificaciones" />
-            <Separator />
-            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: #ffffff; -fx-border-color: transparent;" vbarPolicy="AS_NEEDED">
+
+        <VBox fx:id="panelNotificaciones"
+              prefWidth="260"
+              spacing="18"
+              styleClass="panelDerecho">
+
+            <HBox alignment="CENTER_LEFT"
+                  spacing="10">
+
+                <FontIcon iconLiteral="fas-bell"
+                          iconSize="22"
+                          iconColor="#1565C0"/>
+
+                <Label text="Notificaciones"
+                       styleClass="tituloPanel"/>
+
+            </HBox>
+
+            <Separator/>
+
+            <ScrollPane fitToWidth="true"
+                        hbarPolicy="NEVER"
+                        vbarPolicy="AS_NEEDED"
+                        styleClass="scrollNotificaciones">
+
                 <content>
-                    <VBox fx:id="listaAlertas" spacing="10" style="-fx-background-color: #ffffff;">
-                    </VBox>
+
+                    <VBox fx:id="listaAlertas"
+                          spacing="15"
+                          styleClass="contenedorAlertas"/>
+
                 </content>
+
             </ScrollPane>
+
         </VBox>
+
     </right>
 
+    <bottom>
+
+        <HBox alignment="CENTER_RIGHT"
+              spacing="15"
+              style="-fx-background-color:#1565C0;
+             -fx-padding:10;">
+
+            <Label text="Sistema de Inventario de Laptops"
+                   style="-fx-text-fill:white;"/>
+
+            <Pane HBox.hgrow="ALWAYS"/>
+
+            <Label fx:id="lblHora"
+                   style="-fx-text-fill:white;"/>
+
+        </HBox>
+
+    </bottom>
 </BorderPane>

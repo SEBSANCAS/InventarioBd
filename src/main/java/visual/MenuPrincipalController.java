@@ -1,27 +1,73 @@
 package visual;
 
+import javafx.animation.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class MenuPrincipalController {
 
     @FXML
     private VBox listaAlertas;
+    @FXML
+    private GridPane panelPrincipal;
+    @FXML
+    private VBox panelNotificaciones;
 
     @FXML
     public void initialize() {
         cargarNotificaciones();
-    }
+        panelPrincipal.lookupAll(".card")
+                .forEach(this::animarTarjeta);
+        FadeTransition fade =
+                new FadeTransition(Duration.seconds(.8), panelPrincipal);
 
+        fade.setFromValue(0);
+
+        fade.setToValue(1);
+
+        fade.play();
+        TranslateTransition tt =
+                new TranslateTransition(Duration.seconds(.5),
+                        panelNotificaciones);
+
+        tt.setFromX(250);
+
+        tt.setToX(0);
+
+        tt.play();
+        Timeline reloj =
+                new Timeline(
+                        new KeyFrame(
+                                Duration.seconds(1),
+                                e->lblHora.setText(
+                                        LocalDateTime.now()
+                                                .format(DateTimeFormatter.ofPattern("HH:mm:ss"))
+                                )
+                        )
+                );
+
+        reloj.setCycleCount(Animation.INDEFINITE);
+
+        reloj.play();
+
+    }
+    @FXML
+    private Label lblHora;
     public void cargarNotificaciones() {
         listaAlertas.getChildren().clear();
 
@@ -50,16 +96,48 @@ public class MenuPrincipalController {
     }
 
     private void crearTarjetaNotificacion(String idAdq, logico.DetalleAdquisicion detalle, long faltantes) {
-        javafx.scene.layout.VBox tarjeta = new javafx.scene.layout.VBox(8);
-        tarjeta.setStyle("-fx-background-color: #f8f9fa; -fx-border-color: #e0e0e0; -fx-border-radius: 5; -fx-background-radius: 5; -fx-padding: 10;");
-
+        VBox tarjeta = new VBox(12);
+        tarjeta.setStyle(
+                "-fx-background-color:white;" +
+                        "-fx-background-radius:18;" +
+                        "-fx-border-radius:18;" +
+                        "-fx-border-color:#D7E3F5;" +
+                        "-fx-border-width:1;" +
+                        "-fx-padding:16;" +
+                        "-fx-effect:dropshadow(gaussian,rgba(0,0,0,.12),12,0,0,3);");
         String nombreLaptop = detalle.getModeloLaptopAdquirida().getNombreComercial();
-        javafx.scene.control.Label lblInfo = new javafx.scene.control.Label("Orden: " + idAdq + "\nModelo: " + nombreLaptop + "\nFaltan: " + faltantes + " equipos.");
-        lblInfo.setStyle("-fx-font-size: 13px; -fx-text-fill: #2c3e50;");
+        Label lblInfo = new Label(
+
+                "📦 Orden: " + idAdq +
+
+                        "\n\nLaptop: " + nombreLaptop +
+
+                        "\n\nPendientes: " + faltantes
+
+        );
+        lblInfo.setStyle(
+                "-fx-font-size:14;" +
+                        "-fx-font-weight:bold;" +
+                        "-fx-text-fill:#2F3A56;");
         lblInfo.setWrapText(true);
 
         javafx.scene.control.Button btnRegistrar = new javafx.scene.control.Button("Registrar Equipo");
-        btnRegistrar.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
+        btnRegistrar.setStyle(
+
+                "-fx-background-color:#1565C0;" +
+
+                        "-fx-text-fill:white;" +
+
+                        "-fx-font-weight:bold;" +
+
+                        "-fx-font-size:14;" +
+
+                        "-fx-background-radius:10;" +
+
+                        "-fx-cursor:hand;"
+
+        );
+        btnRegistrar.setPrefHeight(38);
         btnRegistrar.setMaxWidth(Double.MAX_VALUE);
 
         btnRegistrar.setOnAction(e -> {
@@ -70,7 +148,25 @@ public class MenuPrincipalController {
         tarjeta.getChildren().addAll(lblInfo, btnRegistrar);
         listaAlertas.getChildren().add(tarjeta);
     }
+    private void animarTarjeta(Node nodo){
 
+        ScaleTransition entrar =
+                new ScaleTransition(Duration.millis(180), nodo);
+
+        entrar.setToX(1.03);
+        entrar.setToY(1.03);
+
+        ScaleTransition salir =
+                new ScaleTransition(Duration.millis(180), nodo);
+
+        salir.setToX(1);
+        salir.setToY(1);
+
+        nodo.setOnMouseEntered(e->entrar.playFromStart());
+
+        nodo.setOnMouseExited(e->salir.playFromStart());
+
+    }
     private void abrirRegistroEquipo(logico.DetalleAdquisicion detalle) {
         try {
             javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/visual/RegistroEquipoAdquisicion.fxml"));
