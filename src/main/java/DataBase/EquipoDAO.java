@@ -18,7 +18,7 @@ public class EquipoDAO {
     }
 
     public void guardar(Equipo equipo) {
-        final String sql = "INSERT INTO Equipo (id_equipo, numero_serie, id_laptop, id_ubicacion, id_detalle_orden, estado, disponibilidad, color, fecha_ingreso, descuento_por_condicion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        final String sql = "INSERT INTO Equipo (IdEquipo, numero_serie, id_laptop, id_ubicacion, id_detalle_orden, estado, disponibilidad, color, fecha_ingreso, descuento_por_condicion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -58,7 +58,7 @@ public class EquipoDAO {
                         "color=?, " +
                         "fecha_ingreso=?, " +
                         "descuento_por_condicion=? " +
-                        "WHERE id_equipo=?";
+                        "WHERE IdEquipo=?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -81,7 +81,7 @@ public class EquipoDAO {
     }
 
     public void borrar(String idEquipo) {
-        final String sql = "DELETE FROM Equipo WHERE id_equipo = ?";
+        final String sql = "DELETE FROM Equipo WHERE IdEquipo = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -112,15 +112,21 @@ public class EquipoDAO {
                     Laptop laptop = LaptopDAO.getInstance()
                             .encontrarPorId(resultSet.getString("id_laptop"));
 
+                    LocalDate fecha = null;
+                    Date sqlDate = resultSet.getDate("fecha_ingreso");
+                    if (sqlDate != null) {
+                        fecha = sqlDate.toLocalDate();
+                    }
+
                     Equipo equipo = new Equipo(
-                            resultSet.getString("id_equipo"),
+                            resultSet.getString("IdEquipo"),
                             laptop,
                             resultSet.getString("numero_serie"),
                             resultSet.getString("color"),
                             resultSet.getString("estado"),
                             resultSet.getString("disponibilidad"),
                             resultSet.getFloat("descuento_por_condicion"),
-                            resultSet.getObject("fecha_ingreso", LocalDate.class),
+                            fecha,
                             resultSet.getString("id_detalle_orden")
                     );
 
@@ -134,6 +140,7 @@ public class EquipoDAO {
 
         return equipos;
     }
+
     public ArrayList<Equipo> encontrarPorDisponibilidad(String disponibilidad) {
 
         ArrayList<Equipo> equipos = new ArrayList<>();
@@ -152,15 +159,21 @@ public class EquipoDAO {
                     Laptop laptop = LaptopDAO.getInstance()
                             .encontrarPorId(resultSet.getString("id_laptop"));
 
+                    LocalDate fecha = null;
+                    Date sqlDate = resultSet.getDate("fecha_ingreso");
+                    if (sqlDate != null) {
+                        fecha = sqlDate.toLocalDate();
+                    }
+
                     Equipo equipo = new Equipo(
-                            resultSet.getString("id_equipo"),
+                            resultSet.getString("IdEquipo"),
                             laptop,
                             resultSet.getString("numero_serie"),
                             resultSet.getString("color"),
                             resultSet.getString("estado"),
                             resultSet.getString("disponibilidad"),
                             resultSet.getFloat("descuento_por_condicion"),
-                            resultSet.getObject("fecha_ingreso", LocalDate.class),
+                            fecha,
                             resultSet.getString("id_detalle_orden")
                     );
 
@@ -174,6 +187,7 @@ public class EquipoDAO {
 
         return equipos;
     }
+
     public ArrayList<Equipo> EncontrarTodos() {
         ArrayList<Equipo> equipos = new ArrayList<>();
         final String sql = "SELECT * FROM Equipo";
@@ -189,14 +203,12 @@ public class EquipoDAO {
                         .getInstance()
                         .encontrarPorId(idLaptop);
 
-                // 1. FORMA SEGURA DE LEER LA FECHA SIN QUE FALLE
                 LocalDate fecha = null;
                 Date sqlDate = resultSet.getDate("fecha_ingreso");
                 if (sqlDate != null) {
                     fecha = sqlDate.toLocalDate();
                 }
 
-                // 2. SE CAMBIÓ "id_equipo" POR "IdEquipo" PARA QUE COINCIDA CON TU SQL
                 Equipo eq = new Equipo(
                         resultSet.getString("IdEquipo"),
                         laptop,
@@ -205,21 +217,21 @@ public class EquipoDAO {
                         resultSet.getString("estado"),
                         resultSet.getString("disponibilidad"),
                         resultSet.getFloat("descuento_por_condicion"),
-                        fecha, // Usamos la fecha convertida de forma segura
+                        fecha,
                         resultSet.getString("id_detalle_orden")
                 );
                 equipos.add(eq);
             }
         } catch (SQLException e) {
             System.out.println("No se pudo obtener la lista de equipos: " + e.getMessage());
-            e.printStackTrace(); // Esto te mostrará en consola qué falla exactamente si sigue sin cargar
+            e.printStackTrace();
         }
         return equipos;
     }
 
     public Equipo encontrarPorId(String idEquipo) {
         Equipo eq = null;
-        final String sql ="SELECT * FROM Equipo WHERE id_equipo = ?";
+        final String sql ="SELECT * FROM Equipo WHERE IdEquipo = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -234,15 +246,21 @@ public class EquipoDAO {
                             .getInstance()
                             .encontrarPorId(idLaptop);
 
+                    LocalDate fecha = null;
+                    Date sqlDate = resultSet.getDate("fecha_ingreso");
+                    if (sqlDate != null) {
+                        fecha = sqlDate.toLocalDate();
+                    }
+
                     eq = new Equipo(
-                            resultSet.getString("id_equipo"),
+                            resultSet.getString("IdEquipo"),
                             laptop,
                             resultSet.getString("numero_serie"),
                             resultSet.getString("color"),
                             resultSet.getString("estado"),
                             resultSet.getString("disponibilidad"),
                             resultSet.getFloat("descuento_por_condicion"),
-                            resultSet.getObject("fecha_ingreso", LocalDate.class),
+                            fecha,
                             resultSet.getString("id_detalle_orden")
                     );
                 }

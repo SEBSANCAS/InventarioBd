@@ -87,8 +87,7 @@ public class ListaAdquisicionController {
 
         adquisicionSeleccionada.setEstado(cbEstado.getValue());
 
-        // Si el estado pasa a "Recibido", actualizamos la fecha de entrega
-        if ("Recibido".equalsIgnoreCase(cbEstado.getValue()) && adquisicionSeleccionada.getFechaEntrega() == null) {
+        if ("Recibida".equalsIgnoreCase(cbEstado.getValue()) && adquisicionSeleccionada.getFechaEntrega() == null) {
             adquisicionSeleccionada.setFechaEntrega(LocalDate.now());
         }
 
