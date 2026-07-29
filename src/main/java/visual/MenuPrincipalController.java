@@ -273,6 +273,17 @@ public class MenuPrincipalController {
 
     @FXML
     private void ControlarMovimientoInventario(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/visual/RegistroMovimiento.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Registrar Movimiento de Inventario");
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

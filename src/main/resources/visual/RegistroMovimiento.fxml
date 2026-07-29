@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane fitToWidth="true" style="-fx-background: white; -fx-background-color: white;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="visual.RegistrarMovimientoController">
+    <VBox spacing="18" style="-fx-background-color: white;">
+        <padding>
+            <Insets top="25" right="35" bottom="25" left="35"/>
+        </padding>
+
+        <Label text="Registro de Movimientos de Inventario" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1c3f6e;"/>
+        <Label text="Registre traslados, ajustes o salidas excepcionales del almacén." style="-fx-font-size: 12px; -fx-text-fill: #7a7a7a;"/>
+
+        <Separator/>
+
+        <GridPane hgap="15" vgap="14">
+            <columnConstraints>
+                <ColumnConstraints minWidth="150"/>
+                <ColumnConstraints minWidth="350" hgrow="ALWAYS"/>
+            </columnConstraints>
+
+            <Label text="Tipo de Movimiento:" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="comboTipoMovimiento" maxWidth="Infinity" promptText="Seleccione el tipo de movimiento" style="-fx-border-color: #AEDFF7; -fx-border-radius: 8; -fx-background-radius: 8;" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+            <Label text="Equipo:" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="comboEquipo" maxWidth="Infinity" promptText="Seleccione el Equipo" style="-fx-border-color: #AEDFF7; -fx-border-radius: 8; -fx-background-radius: 8;" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+            <Label text="Ubicación Actual:" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <TextField fx:id="campoUbicacionActual" editable="false" promptText="Se cargará automáticamente" style="-fx-background-color: #f2f2f2; -fx-border-color: #d6d6d6; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 8;" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+            <Label text="Estante Destino:" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="comboEstanteDestino" maxWidth="Infinity" promptText="Seleccione el estante destino" style="-fx-border-color: #AEDFF7; -fx-border-radius: 8; -fx-background-radius: 8;" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+        </GridPane>
+
+        <Separator/>
+
+        <Label text="Descripción / Justificación:" style="-fx-font-weight: bold; -fx-text-fill: #1c3f6e;"/>
+        <TextArea fx:id="areaDescripcion" prefHeight="100" promptText="Detalle el motivo de este movimiento (obligatorio)..." style="-fx-border-color: #AEDFF7; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 5;"/>
+
+        <Label fx:id="lblMensaje" wrapText="true"/>
+
+        <HBox alignment="CENTER_RIGHT" spacing="15">
+            <Button text="Cancelar" onAction="#ControlarCancelar" style="-fx-background-color: white; -fx-text-fill: #b23b3b; -fx-border-color: #b23b3b; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 8 20 8 20; -fx-cursor: hand;"/>
+            <Button text="Limpiar" onAction="#ControlarLimpiar" style="-fx-background-color: #e6e6e6; -fx-text-fill: #333333; -fx-background-radius: 8; -fx-padding: 8 20 8 20; -fx-cursor: hand;"/>
+            <Button text="Registrar Movimiento" onAction="#ControlarGuardar" style="-fx-background-color: #1c3f6e; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 8 20 8 20; -fx-cursor: hand;"/>
+        </HBox>
+    </VBox>
+</ScrollPane>

@@ -1,19 +1,29 @@
 package visual;
 
-import DataBase.FacturaDAO;
-import DataBase.ReclamoDAO;
 import DataBase.DetalleFacturaDAO;
+import DataBase.EquipoDAO;
+import DataBase.EstanteDAO;
+import DataBase.FacturaDAO;
+import DataBase.MovimientoDAO;
+import DataBase.ReclamoDAO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import logico.Factura;
-import logico.Reclamo;
+import logico.Cliente;
 import logico.DetalleFactura;
+import logico.Equipo;
+import logico.Factura;
+import logico.Laptop;
+import logico.Movimiento;
+import logico.Reclamo;
 import logico.Servicio;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.List;
 
 public class RegistroReclamoController {
 
@@ -24,10 +34,10 @@ public class RegistroReclamoController {
     private DatePicker dateFecha;
 
     @FXML
-    private TextField campoIdFactura;
+    private ComboBox<String> comboCliente;
 
     @FXML
-    private TextField campoIdCliente;
+    private ComboBox<String> comboFactura;
 
     @FXML
     private ComboBox<String> comboIdDetalle;
@@ -39,96 +49,121 @@ public class RegistroReclamoController {
     private ComboBox<String> comboTipoSolicitud;
 
     @FXML
-    private ComboBox<String> comboEstadoCaso;
-
-    @FXML
     private TextArea areaDiagnostico;
 
     @FXML
     private Label lblMensaje;
 
+    private Factura facturaSeleccionada;
+    private DetalleFactura detalleSeleccionado;
+
     @FXML
     public void initialize() {
         comboTipoSolicitud.getItems().setAll(
-                "Devolución por Reembolso",
-                "Reparación Técnica",
+                "Devolucion por Reembolso",
+                "Reparacion Tecnica",
                 "Cambio por Reemplazo de Equipo"
         );
         comboTipoSolicitud.getSelectionModel().selectFirst();
 
-        comboEstadoCaso.getItems().setAll("Abierto", "En Revisión Técnica", "Cerrado");
-        comboEstadoCaso.getSelectionModel().select("Abierto");
-
         dateFecha.setValue(LocalDate.now());
+        checkEnGarantia.setDisable(true);
         actualizarIdPreview();
+        cargarClientes();
+
+        comboCliente.setOnAction(e -> cargarFacturas());
+        comboFactura.setOnAction(e -> cargarDetalles());
+        comboIdDetalle.setOnAction(e -> evaluarGarantia());
     }
 
     private void actualizarIdPreview() {
-        // Asume que en tu clase Servicio tienes un generador para reclamos
         int siguiente = Servicio.getInstance().getGenIdReclamo();
         campoIdReclamo.setText(String.format("REC%03d", siguiente));
     }
 
-    @FXML
-    private void ControlarBuscarFactura(ActionEvent event) {
-        String idFacturaBusqueda = campoIdFactura.getText();
-
-        if (idFacturaBusqueda == null || idFacturaBusqueda.trim().isEmpty()) {
-            mostrarError("- Por favor, introduzca un ID de Factura para buscar.");
-            return;
+    private void cargarClientes() {
+        comboCliente.getItems().clear();
+        for (Cliente c : Servicio.getInstance().getMisClientes().values()) {
+            comboCliente.getItems().add(c.getIdCliente() + " - " + c.getNombres());
         }
+    }
 
-        try {
-            // Buscamos la factura usando tu FacturaDAO
-            Factura factura = FacturaDAO.getInstance().encontrarPorId(idFacturaBusqueda.trim());
+    private void cargarFacturas() {
+        comboFactura.getItems().clear();
+        comboIdDetalle.getItems().clear();
+        facturaSeleccionada = null;
+        detalleSeleccionado = null;
+        checkEnGarantia.setSelected(false);
 
-            if (factura != null) {
-                campoIdCliente.setText(factura.getCliente().getIdCliente());
-
-                comboIdDetalle.getItems().clear();
-
-                ArrayList<DetalleFactura> detalles = DetalleFacturaDAO.getInstance().encontrarPorFactura(factura.getIdFactura());
-
-                if (detalles != null && !detalles.isEmpty()) {
-                    for (DetalleFactura detalle : detalles) {
-                        // Agregamos el ID del detalle al ComboBox
-                        comboIdDetalle.getItems().add(detalle.getIdDetalleFactura());
-                    }
-                    comboIdDetalle.getSelectionModel().selectFirst();
-
-                    lblMensaje.setStyle("-fx-text-fill: #2e7d32; -fx-font-weight: bold;");
-                    lblMensaje.setText("Factura encontrada. Seleccione el equipo afectado.");
-                } else {
-                    mostrarError("- La factura existe, pero no tiene equipos registrados (Detalles vacíos).");
+        String clienteSel = comboCliente.getValue();
+        if (clienteSel != null) {
+            String idCliente = clienteSel.split(" - ")[0];
+            for (Factura f : Servicio.getInstance().getMiInventarioFacturas().values()) {
+                if (f.getCliente() != null && f.getCliente().getIdCliente().equals(idCliente)) {
+                    comboFactura.getItems().add(f.getIdFactura());
                 }
+            }
+        }
+    }
 
-            } else {
-                mostrarError("- No se encontró ninguna factura con el ID proporcionado.");
-                campoIdCliente.clear();
-                comboIdDetalle.getItems().clear();
+    private void cargarDetalles() {
+        comboIdDetalle.getItems().clear();
+        detalleSeleccionado = null;
+        checkEnGarantia.setSelected(false);
+
+        String idFactura = comboFactura.getValue();
+        if (idFactura != null) {
+            facturaSeleccionada = Servicio.getInstance().getMiInventarioFacturas().get(idFactura);
+            if (facturaSeleccionada != null) {
+                ArrayList<DetalleFactura> detalles = DetalleFacturaDAO.getInstance().encontrarPorFactura(idFactura);
+                if (detalles != null) {
+                    for (DetalleFactura df : detalles) {
+                        comboIdDetalle.getItems().add(df.getIdDetalleFactura() + " - " + df.getEquipoVendido().getIdEquipo());
+                    }
+                }
+            }
+        }
+    }
+
+    private void evaluarGarantia() {
+        String selDetalle = comboIdDetalle.getValue();
+        checkEnGarantia.setSelected(false);
+        detalleSeleccionado = null;
+
+        if (selDetalle != null && facturaSeleccionada != null) {
+            String idDet = selDetalle.split(" - ")[0];
+            ArrayList<DetalleFactura> detalles = DetalleFacturaDAO.getInstance().encontrarPorFactura(facturaSeleccionada.getIdFactura());
+            for (DetalleFactura df : detalles) {
+                if (df.getIdDetalleFactura().equals(idDet)) {
+                    detalleSeleccionado = df;
+                    break;
+                }
             }
 
-        } catch (Exception e) {
-            mostrarError("Error al buscar la factura: " + e.getMessage());
-            e.printStackTrace();
+            if (detalleSeleccionado != null && detalleSeleccionado.getEquipoVendido() != null) {
+                Laptop laptop = detalleSeleccionado.getEquipoVendido().getLaptop();
+                long mesesTranscurridos = ChronoUnit.MONTHS.between(facturaSeleccionada.getFechaEmision(), LocalDate.now());
+
+                int mesesGarantia = laptop.getMesesGarantia();
+                checkEnGarantia.setSelected(mesesTranscurridos <= mesesGarantia);
+            }
         }
     }
 
     private boolean validarCampos() {
         StringBuilder errores = new StringBuilder();
 
-        if (campoIdFactura.getText() == null || campoIdFactura.getText().trim().isEmpty()) {
-            errores.append("- Debe buscar y asociar una Factura.\n");
+        if (comboFactura.getValue() == null) {
+            errores.append("- Debe seleccionar una Factura.\n");
         }
 
-        if (campoIdCliente.getText() == null || campoIdCliente.getText().trim().isEmpty()) {
-            errores.append("- No hay un Cliente asociado (Busque la factura primero).\n");
+        if (comboCliente.getValue() == null) {
+            errores.append("- Debe seleccionar un Cliente.\n");
         }
 
-        // Descomenta esto cuando el ComboBox de detalles ya esté cargando datos reales
-        // if (comboIdDetalle.getValue() == null || comboIdDetalle.getValue().trim().isEmpty()) {
-        //     errores.append("- Debe seleccionar un Equipo (Detalle) de la factura.\n");
-        // }
+        if (comboIdDetalle.getValue() == null) {
+            errores.append("- Debe seleccionar un Equipo de la factura.\n");
+        }
 
         if (dateFecha.getValue() == null) {
             errores.append("- Debe seleccionar la fecha del reclamo.\n");
@@ -138,12 +173,8 @@ public class RegistroReclamoController {
             errores.append("- Debe seleccionar el tipo de solicitud.\n");
         }
 
-        if (comboEstadoCaso.getValue() == null) {
-            errores.append("- Debe seleccionar el estado inicial del caso.\n");
-        }
-
         if (areaDiagnostico.getText() == null || areaDiagnostico.getText().trim().isEmpty()) {
-            errores.append("- El diagnóstico técnico / razón es obligatorio.\n");
+            errores.append("- El diagnostico tecnico es obligatorio.\n");
         }
 
         if (errores.length() > 0) {
@@ -159,18 +190,20 @@ public class RegistroReclamoController {
             return;
         }
 
+        String tipoSolicitud = comboTipoSolicitud.getValue();
+
+        if (!checkEnGarantia.isSelected() && (tipoSolicitud.equals("Devolucion por Reembolso") || tipoSolicitud.equals("Cambio por Reemplazo de Equipo"))) {
+            mostrarError("- No se aceptan reembolsos ni devoluciones fuera de garantia.");
+            return;
+        }
+
         String idReclamo = Servicio.getInstance().generarIdReclamo();
-        String idFactura = campoIdFactura.getText().trim();
-        String idCliente = campoIdCliente.getText().trim();
-
-        // Si el combo está vacío temporalmente, mandamos un valor de prueba.
-        // Cambia esto a comboIdDetalle.getValue() cuando conectes los detalles.
-        String idDetalle = comboIdDetalle.getValue() != null ? comboIdDetalle.getValue() : "DET-PRUEBA";
-
+        String idFactura = comboFactura.getValue();
+        String idCliente = comboCliente.getValue().split(" - ")[0];
+        String idDetalle = comboIdDetalle.getValue().split(" - ")[0];
         LocalDate fechaSeleccionada = dateFecha.getValue();
         boolean aplicaGarantia = checkEnGarantia.isSelected();
-        String tipoSolicitud = comboTipoSolicitud.getValue();
-        String estadoCaso = comboEstadoCaso.getValue();
+        String estadoCaso = "Activo";
         String diagnostico = areaDiagnostico.getText().trim();
 
         Reclamo nuevoReclamo = new Reclamo(
@@ -189,29 +222,85 @@ public class RegistroReclamoController {
             ReclamoDAO.getInstance().guardar(nuevoReclamo);
             Servicio.getInstance().registrarReclamo(nuevoReclamo);
 
+            if (detalleSeleccionado != null && detalleSeleccionado.getEquipoVendido() != null) {
+                Equipo equipo = EquipoDAO.getInstance().encontrarPorId(detalleSeleccionado.getEquipoVendido().getIdEquipo());
+                if (equipo != null) {
+                    int countMov = MovimientoDAO.getInstance().encontrarPorEquipo(equipo.getIdEquipo()).size();
+                    String idMovimiento = Servicio.getInstance().generarIdDependiente(equipo.getIdEquipo(), countMov);
+
+                    Movimiento mov = new Movimiento();
+                    mov.setIdMovimiento(idMovimiento);
+                    mov.setIdEquipo(equipo.getIdEquipo());
+                    mov.setFechaHoraMovimiento(LocalDateTime.now());
+                    mov.setDescripcionMovimiento("Reclamo: " + idReclamo);
+
+                    if (tipoSolicitud.equals("Devolucion por Reembolso") || tipoSolicitud.equals("Cambio por Reemplazo de Equipo")) {
+                        String idUbicacionDestino = EstanteDAO.getInstance().obtenerPrimeraUbicacionDisponible();
+                        mov.setTipoMovimiento("Entrada por Devolucion de Cliente");
+                        mov.setIdEstanteOrigen(null);
+                        mov.setNivelOrigen(0);
+
+                        if (idUbicacionDestino != null) {
+                            String[] partes = idUbicacionDestino.split("-N");
+                            if (partes.length == 2) {
+                                mov.setIdEstanteDestino(partes[0]);
+                                mov.setNivelDestino(Integer.parseInt(partes[1]));
+                            }
+                        } else {
+                            mov.setIdEstanteDestino(null);
+                            mov.setNivelDestino(0);
+                        }
+
+                        equipo.setDisponibilidad("Disponible");
+                        equipo.setEstado("open-box");
+                        equipo.setDescuentoPorCondicion((float)(equipo.getLaptop().getPrecioDetalle() * 0.15));
+
+                    } else if (tipoSolicitud.equals("Reparacion Tecnica")) {
+                        mov.setTipoMovimiento("Ingreso a Soporte Tecnico");
+                        mov.setIdEstanteOrigen(null);
+                        mov.setNivelOrigen(0);
+                        mov.setIdEstanteDestino(null);
+                        mov.setNivelDestino(0);
+
+                        equipo.setDisponibilidad("En Reparacion");
+                    }
+
+                    MovimientoDAO.getInstance().guardar(mov);
+                    EquipoDAO.getInstance().actualizar(equipo);
+
+                    logico.Estante estante = null;
+                    if (mov.getIdEstanteDestino() != null) {
+                        estante = Servicio.getInstance().getMisEstantes().get(mov.getIdEstanteDestino());
+                        if (estante != null) {
+                            estante.getEquiposAlmacenados().add(equipo);
+                        }
+                    }
+                }
+            }
+
             lblMensaje.setStyle("-fx-text-fill: #2e7d32; -fx-font-weight: bold;");
             lblMensaje.setText("¡Reclamo " + idReclamo + " registrado correctamente!");
 
             limpiarFormulario();
 
         } catch (Exception e) {
-            mostrarError("Error al guardar en BD: " + e.getMessage());
-            e.printStackTrace();
+            mostrarError("Error al procesar el reclamo: " + e.getMessage());
         }
     }
 
     private void limpiarFormulario() {
-        campoIdFactura.clear();
-        campoIdCliente.clear();
+        comboFactura.getItems().clear();
+        comboCliente.getSelectionModel().clearSelection();
         comboIdDetalle.getItems().clear();
         areaDiagnostico.clear();
         checkEnGarantia.setSelected(false);
         dateFecha.setValue(LocalDate.now());
 
         comboTipoSolicitud.getSelectionModel().selectFirst();
-        comboEstadoCaso.getSelectionModel().select("Abierto");
 
         actualizarIdPreview();
+        facturaSeleccionada = null;
+        detalleSeleccionado = null;
     }
 
     private void mostrarError(String mensaje) {
@@ -227,7 +316,7 @@ public class RegistroReclamoController {
 
     @FXML
     private void ControlarCancelar(ActionEvent event) {
-        Stage stage = (Stage) campoIdFactura.getScene().getWindow();
+        Stage stage = (Stage) comboCliente.getScene().getWindow();
         stage.close();
     }
 }

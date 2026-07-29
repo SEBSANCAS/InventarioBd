@@ -4,19 +4,15 @@ public class Ciudad {
     private String idCiudad;
     private String idPais;
     private String nombreCiudad;
-    private double latMin;
-    private double latMax;
-    private double lonMin;
-    private double lonMax;
+    private double latitud;
+    private double longitud;
 
-    public Ciudad(String idCiudad, String idPais, String nombreCiudad, double latMin, double latMax, double lonMin, double lonMax) {
+    public Ciudad(String idCiudad, String idPais, String nombreCiudad, double latitud,double longitud) {
         this.idCiudad = idCiudad;
         this.idPais = idPais;
         this.nombreCiudad = nombreCiudad;
-        this.latMin = latMin;
-        this.latMax = latMax;
-        this.lonMin = lonMin;
-        this.lonMax = lonMax;
+        this.latitud = latitud;
+        this.longitud = longitud;
     }
 
     public Ciudad() {}
@@ -45,36 +41,20 @@ public class Ciudad {
         this.nombreCiudad = nombreCiudad;
     }
 
-    public double getLatMin() {
-        return latMin;
+    public double getLatitud() {
+        return latitud;
     }
 
-    public void setLatMin(double latMin) {
-        this.latMin = latMin;
+    public void setLatitud(double latitud) {
+        this.latitud = latitud;
     }
 
-    public double getLatMax() {
-        return latMax;
+    public double getLongitud() {
+        return longitud;
     }
 
-    public void setLatMax(double latMax) {
-        this.latMax = latMax;
-    }
-
-    public double getLonMin() {
-        return lonMin;
-    }
-
-    public void setLonMin(double lonMin) {
-        this.lonMin = lonMin;
-    }
-
-    public double getLonMax() {
-        return lonMax;
-    }
-
-    public void setLonMax(double lonMax) {
-        this.lonMax = lonMax;
+    public void setLongitud(double longitud) {
+        this.longitud = longitud;
     }
 
     @Override

@@ -27,10 +27,8 @@ public class CiudadDAO {
                         resultSet.getString("id_ciudad"),
                         resultSet.getString("id_pais"),
                         resultSet.getString("nombre_ciudad"),
-                        resultSet.getDouble("lat_min"),
-                        resultSet.getDouble("lat_max"),
-                        resultSet.getDouble("lon_min"),
-                        resultSet.getDouble("lon_max")
+                        resultSet.getDouble("latitud"),
+                        resultSet.getDouble("longitud")
                 );
                 ciudades.add(ciudad);
             }
@@ -55,10 +53,8 @@ public class CiudadDAO {
                             resultSet.getString("id_ciudad"),
                             resultSet.getString("id_pais"),
                             resultSet.getString("nombre_ciudad"),
-                            resultSet.getDouble("lat_min"),
-                            resultSet.getDouble("lat_max"),
-                            resultSet.getDouble("lon_min"),
-                            resultSet.getDouble("lon_max")
+                            resultSet.getDouble("latitud"),
+                            resultSet.getDouble("longitud")
                     );
                 }
             }
