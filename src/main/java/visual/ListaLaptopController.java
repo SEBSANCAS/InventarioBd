@@ -1,14 +1,22 @@
 package visual;
 
 import DataBase.CambioParametroLaptopDAO;
+import DataBase.ImagenLaptopDAO;
 import DataBase.LaptopDAO;
+import logico.ImagenLaptop;
 import logico.Laptop;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
@@ -55,6 +63,8 @@ public class ListaLaptopController {
     @FXML private TextField txtAlertaStock;
     @FXML private TextField txtStock;
 
+    @FXML private Button btnVerImagen;
+
     private final ObservableList<Laptop> listaLaptops = FXCollections.observableArrayList();
     private Laptop laptopSeleccionada;
 
@@ -95,6 +105,9 @@ public class ListaLaptopController {
         tablaLaptops.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
             if (newSel != null) {
                 laptopSeleccionada = newSel;
+                if (btnVerImagen != null) {
+                    btnVerImagen.setDisable(false);
+                }
 
                 setTextFieldSeguro(txtNombre, laptopSeleccionada.getNombreComercial());
                 setTextFieldSeguro(txtModelo, laptopSeleccionada.getNumeroModelo());
@@ -114,6 +127,10 @@ public class ListaLaptopController {
                 setTextFieldSeguro(txtMinimaMayorista, laptopSeleccionada.getCantMinMayorista());
                 setTextFieldSeguro(txtAlertaStock, laptopSeleccionada.getCantidadAlerta());
                 setTextFieldSeguro(txtStock, laptopSeleccionada.getStockActual());
+            } else {
+                if (btnVerImagen != null) {
+                    btnVerImagen.setDisable(true);
+                }
             }
         });
 
@@ -127,6 +144,30 @@ public class ListaLaptopController {
             listaLaptops.addAll(laptopsBD);
         }
         tablaLaptops.setItems(listaLaptops);
+    }
+
+    @FXML
+    private void handleVerImagen() {
+        if (laptopSeleccionada == null) return;
+
+        ArrayList<ImagenLaptop> imagenes = ImagenLaptopDAO.getInstance().encontrarPorLaptop(laptopSeleccionada.getIdLaptop());
+
+        if (imagenes != null && !imagenes.isEmpty()) {
+            byte[] bytes = imagenes.get(0).getImagen();
+            Image img = new Image(new ByteArrayInputStream(bytes));
+            ImageView imgView = new ImageView(img);
+            imgView.setFitWidth(500);
+            imgView.setPreserveRatio(true);
+
+            StackPane pane = new StackPane(imgView);
+            Scene scene = new Scene(pane, 550, 550);
+            Stage stage = new Stage();
+            stage.setTitle("Imagen - " + laptopSeleccionada.getNombreComercial());
+            stage.setScene(scene);
+            stage.show();
+        } else {
+            mostrarAlerta(Alert.AlertType.INFORMATION, "Sin Imagen", "Esta laptop no tiene una imagen registrada.");
+        }
     }
 
     @FXML
@@ -256,6 +297,10 @@ public class ListaLaptopController {
         if(txtMinimaMayorista != null) txtMinimaMayorista.clear();
         if(txtAlertaStock != null) txtAlertaStock.clear();
         if(txtStock != null) txtStock.clear();
+
+        if (btnVerImagen != null) {
+            btnVerImagen.setDisable(true);
+        }
     }
 
     private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {

@@ -1,14 +1,23 @@
 package visual;
 
+import DataBase.ImagenLaptopDAO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import logico.ImagenLaptop;
 import logico.Laptop;
 import logico.Marca;
 import logico.Servicio;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.nio.file.Files;
 
 public class RegistroLaptopController {
 
@@ -55,7 +64,12 @@ public class RegistroLaptopController {
     private TextField campoGarantia;
 
     @FXML
+    private ImageView previewImagen;
+
+    @FXML
     private Label lblMensaje;
+
+    private byte[] imagenBytes;
 
     @FXML
     public void initialize() {
@@ -116,7 +130,7 @@ public class RegistroLaptopController {
 
         validarEntero(campoCantMinMayorista.getText(), "Cantidad min. mayorista", errores, false);
         validarEntero(campoCantAlerta.getText(), "Cantidad alerta stock", errores, false);
-        validarEntero(campoGarantia.getText(), "Meses de garantía", errores, true); // Permite 0
+        validarEntero(campoGarantia.getText(), "Meses de garantía", errores, true);
 
         if (errores.length() > 0) {
             lblMensaje.setStyle("-fx-text-fill: #b23b3b;");
@@ -166,6 +180,25 @@ public class RegistroLaptopController {
     }
 
     @FXML
+    private void seleccionarImagen(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Seleccionar Imagen de Laptop");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Imágenes", "*.png", "*.jpg", "*.jpeg"));
+        File file = fileChooser.showOpenDialog(campoIdLaptop.getScene().getWindow());
+
+        if (file != null) {
+            try {
+                imagenBytes = Files.readAllBytes(file.toPath());
+                Image img = new Image(new ByteArrayInputStream(imagenBytes));
+                previewImagen.setImage(img);
+            } catch (Exception e) {
+                lblMensaje.setStyle("-fx-text-fill: #b23b3b;");
+                lblMensaje.setText("Error al cargar la imagen: " + e.getMessage());
+            }
+        }
+    }
+
+    @FXML
     private void ControlarGuardar(ActionEvent event) {
         if (!validarCampos()) {
             return;
@@ -188,16 +221,21 @@ public class RegistroLaptopController {
                 Float.parseFloat(campoCantidadAlmacenamiento.getText().trim()),
                 Float.parseFloat(campoTamanoPantalla.getText().trim()),
                 comboResolucion.getValue(),
-                0.0f, // Costo promedio inicializado en 0 por trigger logic
+                0.0f,
                 Float.parseFloat(campoPrecioDetalle.getText().trim()),
                 Float.parseFloat(campoPrecioMayorista.getText().trim()),
                 Integer.parseInt(campoCantMinMayorista.getText().trim()),
                 Integer.parseInt(campoCantAlerta.getText().trim()),
-                0, // Stock inicializado en 0 por trigger logic
+                0,
                 Integer.parseInt(campoGarantia.getText().trim())
         );
 
         Servicio.getInstance().registrarLaptop(laptop);
+
+        if (imagenBytes != null) {
+            ImagenLaptop imgLap = new ImagenLaptop(0, laptop, imagenBytes);
+            ImagenLaptopDAO.getInstance().guardar(imgLap);
+        }
 
         limpiarFormulario();
 
@@ -217,6 +255,8 @@ public class RegistroLaptopController {
         campoCantMinMayorista.clear();
         campoCantAlerta.clear();
         campoGarantia.clear();
+        imagenBytes = null;
+        previewImagen.setImage(null);
 
         cargarCombos();
         actualizarIdPreview();

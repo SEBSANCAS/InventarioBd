@@ -110,6 +110,7 @@
                 <TextField fx:id="txtCostoPromedio" GridPane.columnIndex="5" GridPane.rowIndex="5"/>
 
                 <HBox spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="6" GridPane.columnSpan="6" alignment="CENTER_RIGHT">
+                    <Button fx:id="btnVerImagen" text="Ver Imagen" disable="true" onAction="#handleVerImagen" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
                     <Button text="Actualizar" onAction="#handleActualizar" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
                     <Button text="Eliminar" onAction="#handleEliminar" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
                     <Button text="Limpiar" onAction="#handleLimpiar" style="-fx-cursor: hand;"/>

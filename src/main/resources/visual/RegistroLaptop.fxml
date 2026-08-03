@@ -6,13 +6,14 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.layout.ColumnConstraints?>
 
-<VBox alignment="TOP_CENTER" prefHeight="650.0" prefWidth="600.0" spacing="10.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="visual.RegistroLaptopController">
+<VBox alignment="TOP_CENTER" prefHeight="750.0" prefWidth="600.0" spacing="10.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="visual.RegistroLaptopController">
     <padding>
         <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
     </padding>
@@ -110,6 +111,12 @@
                     <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
                         <Label text="Cant. Alerta Stock:" />
                         <TextField fx:id="campoCantAlerta" promptText="Ej: 3" style="-fx-border-color: #AEDFF7; -fx-border-radius: 5; -fx-background-radius: 5;" />
+                    </VBox>
+
+                    <VBox alignment="CENTER" spacing="10.0" GridPane.columnIndex="0" GridPane.rowIndex="9" GridPane.columnSpan="2">
+                        <Label text="Imagen de la Laptop" style="-fx-font-weight: bold;"/>
+                        <ImageView fx:id="previewImagen" fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" />
+                        <Button mnemonicParsing="false" onAction="#seleccionarImagen" text="Seleccionar Imagen" />
                     </VBox>
                 </GridPane>
             </content>
