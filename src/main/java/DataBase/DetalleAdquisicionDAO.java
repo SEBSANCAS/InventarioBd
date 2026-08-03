@@ -68,8 +68,6 @@ public class DetalleAdquisicionDAO {
     public ArrayList<DetalleAdquisicion> encontrarPorIdAdquisicion(String idCompra) {
 
         ArrayList<DetalleAdquisicion> detalles = new ArrayList<>();
-
-        // CORRECCIÓN: Tabla y columna corregidas
         final String sql = "SELECT * FROM Detalle_Orden_Compra WHERE id_orden_compra = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
@@ -84,9 +82,9 @@ public class DetalleAdquisicionDAO {
                     Laptop laptop = LaptopDAO.getInstance()
                             .encontrarPorId(resultSet.getString("id_laptop"));
 
-                    // CORRECCIÓN: Nombres de columnas actualizados al esquema real
                     DetalleAdquisicion detalle = new DetalleAdquisicion(
                             resultSet.getString("id_detalle_orden"),
+                            resultSet.getString("id_orden_compra"),
                             laptop,
                             resultSet.getInt("cantidad_solicitada"),
                             resultSet.getFloat("costo_unitario_acordado"),
@@ -135,6 +133,7 @@ public class DetalleAdquisicionDAO {
 
                 DetalleAdquisicion det = new DetalleAdquisicion(
                         resultSet.getString("id_detalle_orden"),
+                        resultSet.getString("id_orden_compra"),
                         laptopCascaron,
                         resultSet.getInt("cantidad_solicitada"),
                         resultSet.getFloat("costo_unitario_acordado"),
@@ -167,6 +166,7 @@ public class DetalleAdquisicionDAO {
 
                     det = new DetalleAdquisicion(
                             resultSet.getString("id_detalle_orden"),
+                            resultSet.getString("id_orden_compra"),
                             laptopCascaron,
                             resultSet.getInt("cantidad_solicitada"),
                             resultSet.getFloat("costo_unitario_acordado"),

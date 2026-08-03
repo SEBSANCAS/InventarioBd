@@ -1,6 +1,8 @@
 package visual;
 
 import DataBase.AuditoriaRentabilidadDAO;
+import DataBase.EquipoDAO;
+import DataBase.LaptopDAO;
 import DataBase.MovimientoDAO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -87,7 +89,7 @@ public class RegistroFacturacionController {
             String selEq = linea.comboEquipo.getValue();
             if (selEq != null) {
                 String idEq = extraerId(selEq);
-                Equipo eq = Servicio.getInstance().getMisEquipos().get(idEq);
+                Equipo eq = EquipoDAO.getInstance().encontrarPorId(idEq);
                 if (eq != null) {
                     String idLaptop = eq.getLaptop().getIdLaptop();
                     conteoModelos.put(idLaptop, conteoModelos.getOrDefault(idLaptop, 0) + 1);
@@ -99,7 +101,7 @@ public class RegistroFacturacionController {
             String selEq = linea.comboEquipo.getValue();
             if (selEq != null) {
                 String idEq = extraerId(selEq);
-                Equipo eq = Servicio.getInstance().getMisEquipos().get(idEq);
+                Equipo eq = EquipoDAO.getInstance().encontrarPorId(idEq);
                 if (eq != null) {
                     Laptop lap = eq.getLaptop();
                     int cantidadModeloEnFactura = conteoModelos.getOrDefault(lap.getIdLaptop(), 0);
@@ -130,7 +132,9 @@ public class RegistroFacturacionController {
                 float desc = Float.parseFloat(linea.campoDescuento.getText().trim());
                 float subtotalLinea = precio - desc;
 
-                if(subtotalLinea < 0) subtotalLinea = 0;
+                if (subtotalLinea < 0) {
+                    subtotalLinea = 0;
+                }
 
                 linea.lblSubtotal.setText(String.format("%.2f", subtotalLinea));
                 subtotalGeneral += subtotalLinea;
@@ -178,16 +182,21 @@ public class RegistroFacturacionController {
         for (LineaFactura linea : lineas) {
             String selEquipo = linea.comboEquipo.getValue();
             String idEquipo = extraerId(selEquipo);
-            Equipo equipo = Servicio.getInstance().getMisEquipos().get(idEquipo);
+            Equipo equipo = EquipoDAO.getInstance().encontrarPorId(idEquipo);
 
             float precio = Float.parseFloat(linea.campoPrecio.getText().trim());
             float descuento = Float.parseFloat(linea.campoDescuento.getText().trim());
             float subtotal = precio - descuento;
 
+            if (subtotal < 0) {
+                subtotal = 0;
+            }
+
             String idDetalle = Servicio.getInstance().generarIdDependiente(idFactura, index);
 
             DetalleFactura detalle = new DetalleFactura(
                     idDetalle,
+                    idFactura,
                     precio,
                     descuento,
                     subtotal,
@@ -206,6 +215,7 @@ public class RegistroFacturacionController {
 
         for (DetalleFactura det : detalles) {
             Equipo eq = det.getEquipoVendido();
+            Servicio.getInstance().getMisEquipos().put(eq.getIdEquipo(), eq);
             Laptop lap = eq.getLaptop();
 
             int countAud = AuditoriaRentabilidadDAO.getInstance().busca(lap.getIdLaptop()).size() + offsetsAuditorias.getOrDefault(lap.getIdLaptop(), 0);
@@ -241,8 +251,7 @@ public class RegistroFacturacionController {
                         }
                     }
                 }
-            } catch (Exception e) {
-                System.out.println("Error al obtener ubicación del equipo: " + e.getMessage());
+            } catch (Exception ignored) {
             }
 
             for (Estante estante : Servicio.getInstance().getMisEstantes().values()) {
@@ -297,21 +306,24 @@ public class RegistroFacturacionController {
                 errorLineas = true;
             } else {
                 String idEq = extraerId(linea.comboEquipo.getValue());
-                if(equiposSeleccionados.contains(idEq)) {
-                    errores.append("- El equipo " + idEq + " está duplicado en la factura.\n");
+                if (equiposSeleccionados.contains(idEq)) {
+                    errores.append("- El equipo ").append(idEq).append(" está duplicado en la factura.\n");
                 }
                 equiposSeleccionados.add(idEq);
             }
             try {
-                Float.parseFloat(linea.campoDescuento.getText().trim());
-                Float.parseFloat(linea.campoPrecio.getText().trim());
+                float desc = Float.parseFloat(linea.campoDescuento.getText().trim());
+                float prec = Float.parseFloat(linea.campoPrecio.getText().trim());
+                if (desc < 0 || prec < 0) {
+                    errorLineas = true;
+                }
             } catch (Exception e) {
                 errorLineas = true;
             }
         }
 
         if (errorLineas) {
-            errores.append("- Verifique que todas las líneas tengan un equipo seleccionado y montos válidos.\n");
+            errores.append("- Verifique que todas las líneas tengan un equipo seleccionado y montos válidos (no negativos).\n");
         }
 
         if (errores.length() > 0) {
@@ -358,7 +370,7 @@ public class RegistroFacturacionController {
             comboLaptop.setStyle("-fx-border-color: #AEDFF7; -fx-border-radius: 5; -fx-background-radius: 5;");
             comboLaptop.setPromptText("Filtrar por modelo...");
 
-            List<Equipo> disponibles = Servicio.getInstance().getMisEquipos().values().stream()
+            List<Equipo> disponibles = EquipoDAO.getInstance().EncontrarTodos().stream()
                     .filter(e -> e.getDisponibilidad().equalsIgnoreCase("Disponible"))
                     .collect(Collectors.toList());
 
@@ -369,6 +381,9 @@ public class RegistroFacturacionController {
 
             for (String idLap : idsLaptopsConStock) {
                 Laptop l = Servicio.getInstance().getMisLaptops().get(idLap);
+                if (l == null) {
+                    l = LaptopDAO.getInstance().encontrarPorId(idLap);
+                }
                 if (l != null) {
                     comboLaptop.getItems().add(l.getIdLaptop() + " - " + l.getNombreComercial());
                 }
@@ -409,12 +424,12 @@ public class RegistroFacturacionController {
                             .filter(eq -> eq.getLaptop().getIdLaptop().equals(idLap))
                             .collect(Collectors.toList());
 
-                    for(Equipo eq : eqDisponibles) {
+                    for (Equipo eq : eqDisponibles) {
                         boolean yaSeleccionado = lineas.stream()
                                 .filter(l -> l != this && l.comboEquipo.getValue() != null)
                                 .anyMatch(l -> extraerId(l.comboEquipo.getValue()).equals(eq.getIdEquipo()));
 
-                        if(!yaSeleccionado) {
+                        if (!yaSeleccionado) {
                             comboEquipo.getItems().add(eq.getIdEquipo() + " - " + eq.getNumeroSerie());
                         }
                     }

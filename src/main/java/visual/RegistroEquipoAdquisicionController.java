@@ -41,7 +41,8 @@ public class RegistroEquipoAdquisicionController {
     }
 
     private void actualizarIdPreview() {
-        campoIdEquipo.setText(Servicio.getInstance().generarIdEquipo());
+        int siguiente = Servicio.getInstance().getGenIdEquipo();
+        campoIdEquipo.setText(String.format("CLI%03d", siguiente));
     }
 
     @FXML

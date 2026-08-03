@@ -1,13 +1,8 @@
 package logico;
 
 import DataBase.*;
-import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.HashMap;
-import java.util.*;
+import java.util.ArrayList;
 
 public class Servicio {
     private HashMap<String, Cliente> misClientes;
@@ -19,8 +14,6 @@ public class Servicio {
     private HashMap<String, Adquisicion> misAdquisiciones;
     private HashMap<String, Factura> miInventarioFacturas;
     private HashMap<String, Resolucion> misResoluciones;
-
-    // NUEVO: HashMap para Reclamos
     private HashMap<String, Reclamo> misReclamos;
 
     private int genIdCliente;
@@ -32,8 +25,6 @@ public class Servicio {
     private int genIdAdquisicion;
     private int genIdFactura;
     private int genIdResolucion;
-
-    // NUEVO: Contador para Reclamos
     private int genIdReclamo;
 
     private static Servicio miServicio = null;
@@ -49,17 +40,17 @@ public class Servicio {
         this.miInventarioFacturas = new HashMap<>();
         this.misReclamos = new HashMap<>();
         this.misResoluciones = new HashMap<>();
-        this.genIdResolucion = 1;
 
-        this.genIdCliente=1;
-        this.genIdMarca=1;
-        this.genIdSuplidor=1;
-        this.genIdEstante=1;
-        this.genIdLaptop=1;
-        this.genIdEquipo=1;
-        this.genIdAdquisicion=1;
-        this.genIdFactura=1;
-        this.genIdReclamo=1; // Inicialización
+        this.genIdCliente = 1;
+        this.genIdMarca = 1;
+        this.genIdSuplidor = 1;
+        this.genIdEstante = 1;
+        this.genIdLaptop = 1;
+        this.genIdEquipo = 1;
+        this.genIdAdquisicion = 1;
+        this.genIdFactura = 1;
+        this.genIdResolucion = 1;
+        this.genIdReclamo = 1;
     }
 
     public static Servicio getInstance() {
@@ -72,19 +63,9 @@ public class Servicio {
     public HashMap<String, Cliente> getMisClientes() {
         return misClientes;
     }
+
     public HashMap<String, Resolucion> getMisResoluciones() {
         return misResoluciones;
-    }
-    public int getSiguienteIdResolucion() {
-        return genIdResolucion++;
-    }
-
-    public int getGenIdResolucion() {
-        return genIdResolucion;
-    }
-
-    public void setGenIdResolucion(int genIdResolucion) {
-        this.genIdResolucion = genIdResolucion;
     }
 
     public HashMap<String, Marca> getMisMarcas() {
@@ -115,7 +96,6 @@ public class Servicio {
         return miInventarioFacturas;
     }
 
-    // NUEVO: Getter para misReclamos
     public HashMap<String, Reclamo> getMisReclamos() {
         return misReclamos;
     }
@@ -123,8 +103,9 @@ public class Servicio {
     public int getSiguienteIdCliente() {
         return genIdCliente++;
     }
-    public String generarIdResolucion() {
-        return String.format("RES%03d", getSiguienteIdResolucion());
+
+    public int getSiguienteIdResolucion() {
+        return genIdResolucion++;
     }
 
     public int getSiguienteIdMarca() {
@@ -155,7 +136,6 @@ public class Servicio {
         return genIdFactura++;
     }
 
-    // NUEVO: Siguiente ID Reclamo
     public int getSiguienteIdReclamo() {
         return genIdReclamo++;
     }
@@ -168,46 +148,19 @@ public class Servicio {
     public int getGenIdEquipo() { return genIdEquipo; }
     public int getGenIdAdquisicion() { return genIdAdquisicion; }
     public int getGenIdFactura() { return genIdFactura; }
-
-    // NUEVO: Getter GenIdReclamo
+    public int getGenIdResolucion() { return genIdResolucion; }
     public int getGenIdReclamo() { return genIdReclamo; }
 
-    public void setGenIdCliente(int genIdCliente) {
-        this.genIdCliente = genIdCliente;
-    }
-
-    public void setGenIdMarca(int genIdMarca) {
-        this.genIdMarca = genIdMarca;
-    }
-
-    public void setGenIdSuplidor(int genIdSuplidor) {
-        this.genIdSuplidor = genIdSuplidor;
-    }
-
-    public void setGenIdEstante(int genIdEstante) {
-        this.genIdEstante = genIdEstante;
-    }
-
-    public void setGenIdLaptop(int genIdLaptop) {
-        this.genIdLaptop = genIdLaptop;
-    }
-
-    public void setGenIdEquipo(int genIdEquipo) {
-        this.genIdEquipo = genIdEquipo;
-    }
-
-    public void setGenIdAdquisicion(int genIdAdquisicion) {
-        this.genIdAdquisicion = genIdAdquisicion;
-    }
-
-    public void setGenIdFactura(int genIdFactura) {
-        this.genIdFactura = genIdFactura;
-    }
-
-    // NUEVO: Setter GenIdReclamo
-    public void setGenIdReclamo(int genIdReclamo) {
-        this.genIdReclamo = genIdReclamo;
-    }
+    public void setGenIdCliente(int genIdCliente) { this.genIdCliente = genIdCliente; }
+    public void setGenIdMarca(int genIdMarca) { this.genIdMarca = genIdMarca; }
+    public void setGenIdSuplidor(int genIdSuplidor) { this.genIdSuplidor = genIdSuplidor; }
+    public void setGenIdEstante(int genIdEstante) { this.genIdEstante = genIdEstante; }
+    public void setGenIdLaptop(int genIdLaptop) { this.genIdLaptop = genIdLaptop; }
+    public void setGenIdEquipo(int genIdEquipo) { this.genIdEquipo = genIdEquipo; }
+    public void setGenIdAdquisicion(int genIdAdquisicion) { this.genIdAdquisicion = genIdAdquisicion; }
+    public void setGenIdFactura(int genIdFactura) { this.genIdFactura = genIdFactura; }
+    public void setGenIdResolucion(int genIdResolucion) { this.genIdResolucion = genIdResolucion; }
+    public void setGenIdReclamo(int genIdReclamo) { this.genIdReclamo = genIdReclamo; }
 
     public void registrarNuevaAdquisicion(Adquisicion adquisicion, ArrayList<DetalleAdquisicion> detalles) {
         adquisicion.setDetallesAdquision(detalles);
@@ -246,51 +199,25 @@ public class Servicio {
         ServicioDAO.getInstance().guardarContadores(this);
     }
 
-    public String generarIdCliente() {
-        return String.format("CLI%03d", getSiguienteIdCliente());
-    }
-
-    public String generarIdMarca() {
-        return String.format("MAR%03d", getSiguienteIdMarca());
-    }
-
-    public String generarIdSuplidor() {
-        return String.format("SUP%03d", getSiguienteIdSuplidor());
-    }
-
-    public String generarIdEstante() {
-        return String.format("EST%03d", getSiguienteIdEstante());
-    }
-
-    public String generarIdLaptop() {
-        return String.format("LAP%03d", getSiguienteIdLaptop());
-    }
-
-    public String generarIdEquipo() {
-        return String.format("EQP%03d", getSiguienteIdEquipo());
-    }
-
-    public String generarIdAdquisicion() {
-        return String.format("ADQ%03d", getSiguienteIdAdquisicion());
-    }
-
-    public String generarIdFactura() {
-        return String.format("FAC%03d", getSiguienteIdFactura());
-    }
-
-    // NUEVO: Generar ID Reclamo
-    public String generarIdReclamo() {
-        return String.format("REC%03d", getSiguienteIdReclamo());
-    }
+    public String generarIdCliente() { return String.format("CLI%03d", getSiguienteIdCliente()); }
+    public String generarIdMarca() { return String.format("MAR%03d", getSiguienteIdMarca()); }
+    public String generarIdSuplidor() { return String.format("SUP%03d", getSiguienteIdSuplidor()); }
+    public String generarIdEstante() { return String.format("EST%03d", getSiguienteIdEstante()); }
+    public String generarIdLaptop() { return String.format("LAP%03d", getSiguienteIdLaptop()); }
+    public String generarIdEquipo() { return String.format("EQP%03d", getSiguienteIdEquipo()); }
+    public String generarIdAdquisicion() { return String.format("ADQ%03d", getSiguienteIdAdquisicion()); }
+    public String generarIdFactura() { return String.format("FAC%03d", getSiguienteIdFactura()); }
+    public String generarIdReclamo() { return String.format("REC%03d", getSiguienteIdReclamo()); }
+    public String generarIdResolucion() { return String.format("RES%03d", getSiguienteIdResolucion()); }
 
     public void registrarMarca(Marca marca) {
-        misMarcas.put(marca.getIdMarca(),marca);
+        misMarcas.put(marca.getIdMarca(), marca);
         MarcaDAO.getInstance().guardar(marca);
         ServicioDAO.getInstance().guardarContadores(this);
     }
 
     public void registrarSuplidor(Suplidor suplidor) {
-        misSuplidores.put(suplidor.getIdSuplidor(),suplidor);
+        misSuplidores.put(suplidor.getIdSuplidor(), suplidor);
         SuplidorDAO.getInstance().guardar(suplidor);
         ServicioDAO.getInstance().guardarContadores(this);
     }
@@ -319,11 +246,10 @@ public class Servicio {
         ServicioDAO.getInstance().guardarContadores(this);
     }
 
-    // NUEVO: Registrar Reclamo
     public void registrarReclamo(Reclamo reclamo) {
         misReclamos.put(reclamo.getIdReclamo(), reclamo);
         ReclamoDAO.getInstance().guardar(reclamo);
-        ServicioDAO.getInstance().guardarContadores(this); // Guarda el nuevo contador del reclamo en la BD
+        ServicioDAO.getInstance().guardarContadores(this);
     }
 
     public String generarIdDependiente(String idPadre, int cantidadActual) {
@@ -331,21 +257,16 @@ public class Servicio {
     }
 
     public float calcularRentabilidadHistoricaLaptop(String idLaptop) {
-        ArrayList<Auditoria> auditorias =
-                AuditoriaRentabilidadDAO.getInstance().busca(idLaptop);
-
+        ArrayList<Auditoria> auditorias = AuditoriaRentabilidadDAO.getInstance().busca(idLaptop);
         float totalVentas = 0;
         float totalCostos = 0;
-
         for (Auditoria a : auditorias) {
             totalVentas += a.getPrecioVentaFinal();
             totalCostos += a.getCostoCompra();
         }
-
         if (totalCostos == 0) {
             return 0;
         }
-
         return ((totalVentas - totalCostos) / totalCostos) * 100;
     }
 }

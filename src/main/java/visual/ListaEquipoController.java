@@ -2,6 +2,7 @@ package visual;
 
 import DataBase.EquipoDAO;
 import logico.Equipo;
+import logico.Servicio;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -10,7 +11,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Optional;
 
 public class ListaEquipoController {
@@ -37,14 +37,14 @@ public class ListaEquipoController {
 
     @FXML
     public void initialize() {
-        // Inicializar opciones exactas de las restricciones CHECK de la base de datos
+        // ARREGLO: Se agregaron "Listo para Entrega" y "Ajuste - Inactivo"
         comboEstado.setItems(FXCollections.observableArrayList("nuevo", "open-box", "reparado"));
-        comboDisponibilidad.setItems(FXCollections.observableArrayList("Disponible", "En Reparacion", "Desechado", "Perdido/Robado", "Vendido"));
+        comboDisponibilidad.setItems(FXCollections.observableArrayList(
+                "Disponible", "En Reparacion", "Desechado", "Perdido/Robado", "Vendido", "Listo para Entrega", "Ajuste - Inactivo"
+        ));
 
-        // Mapeo seguro con Lambdas para evitar NullPointerExceptions
         colId.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getIdEquipo() != null ? cell.getValue().getIdEquipo() : ""));
 
-        // Manejamos si el DAO nos trae un equipo cuya Laptop es null
         colLaptop.setCellValueFactory(cell -> new SimpleStringProperty(
                 (cell.getValue().getLaptop() != null && cell.getValue().getLaptop().getIdLaptop() != null)
                         ? cell.getValue().getLaptop().getIdLaptop()
@@ -58,7 +58,6 @@ public class ListaEquipoController {
         colDescuento.setCellValueFactory(cell -> new SimpleStringProperty(String.valueOf(cell.getValue().getDescuentoPorCondicion())));
         colFecha.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getFechaIngreso()));
 
-        // Listener de selección
         tablaEquipos.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
             if (newSel != null) {
                 equipoSeleccionado = newSel;
@@ -71,10 +70,9 @@ public class ListaEquipoController {
 
     private void cargarTabla() {
         listaEquipos.clear();
-        // Llamamos directamente a tu EquipoDAO tal cual lo pasaste
-        ArrayList<Equipo> equiposBD = EquipoDAO.getInstance().EncontrarTodos();
-        if (equiposBD != null) {
-            listaEquipos.addAll(equiposBD);
+        // ARREGLO: Ahora leemos directamente desde la memoria RAM central para evitar fantasmas
+        if (Servicio.getInstance().getMisEquipos() != null) {
+            listaEquipos.addAll(Servicio.getInstance().getMisEquipos().values());
         }
         tablaEquipos.setItems(listaEquipos);
     }
@@ -96,21 +94,20 @@ public class ListaEquipoController {
         }
 
         try {
-            // Actualizamos los valores del objeto seleccionado
             equipoSeleccionado.setNumeroSerie(txtSerie.getText().trim());
             equipoSeleccionado.setColor(txtColor.getText().trim());
             equipoSeleccionado.setEstado(comboEstado.getValue());
             equipoSeleccionado.setDisponibilidad(comboDisponibilidad.getValue());
             equipoSeleccionado.setFechaIngreso(dateFecha.getValue());
 
-            // Verificamos si el descuento es numérico
             if (txtDescuento.getText().trim().isEmpty()) {
                 equipoSeleccionado.setDescuentoPorCondicion(0.0f);
             } else {
                 equipoSeleccionado.setDescuentoPorCondicion(Float.parseFloat(txtDescuento.getText().trim()));
             }
 
-            // Llamamos a tu método actualizar() sin modificar el DAO
+            // Al actualizar la BD aquí, la memoria RAM también se actualiza porque "equipoSeleccionado"
+            // es una referencia directa al objeto guardado en Servicio.getInstance().getMisEquipos()
             EquipoDAO.getInstance().actualizar(equipoSeleccionado);
 
             mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Equipo actualizado correctamente.");
@@ -135,9 +132,16 @@ public class ListaEquipoController {
         Optional<ButtonType> res = confirm.showAndWait();
 
         if (res.isPresent() && res.get() == ButtonType.OK) {
-            // Llama a tu método borrar()
+
+            // ARREGLO: Se elimina de la base de datos
             EquipoDAO.getInstance().borrar(equipoSeleccionado.getIdEquipo());
+
+            // ARREGLO: Se elimina de la memoria central para no causar errores de sincronización
+            Servicio.getInstance().getMisEquipos().remove(equipoSeleccionado.getIdEquipo());
+
+            // Se elimina de la tabla visual
             listaEquipos.remove(equipoSeleccionado);
+
             mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Equipo eliminado correctamente.");
             handleLimpiar();
         }

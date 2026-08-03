@@ -2,20 +2,21 @@ package logico;
 
 public class DetalleFactura {
     private String IdDetalleFactura;
+    private String idFactura;
     private float preciounitario;
     private float descuento;
     private float SubtotalLinea;
     private int MesesGarantiaAplicados;
     private Equipo equipo;
 
-
-    public DetalleFactura(String idDetalleFactura, float preciounitario, float descuento, float subtotalLinea, int mesesGarantiaAplicados,Equipo equipovendido) {
+    public DetalleFactura(String idDetalleFactura, String idFactura, float preciounitario, float descuento, float subtotalLinea, int mesesGarantiaAplicados, Equipo equipovendido) {
         IdDetalleFactura = idDetalleFactura;
+        this.idFactura = idFactura;
         this.preciounitario = preciounitario;
         this.descuento = descuento;
         SubtotalLinea = subtotalLinea;
         MesesGarantiaAplicados = mesesGarantiaAplicados;
-        this.equipo=equipovendido;
+        this.equipo = equipovendido;
     }
 
     public String getIdDetalleFactura() {
@@ -24,6 +25,14 @@ public class DetalleFactura {
 
     public void setIdDetalleFactura(String idDetalleFactura) {
         IdDetalleFactura = idDetalleFactura;
+    }
+
+    public String getIdFactura() {
+        return idFactura;
+    }
+
+    public void setIdFactura(String idFactura) {
+        this.idFactura = idFactura;
     }
 
     public float getPreciounitario() {

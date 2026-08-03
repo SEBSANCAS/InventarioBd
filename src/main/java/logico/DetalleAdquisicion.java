@@ -4,20 +4,23 @@ import java.util.ArrayList;
 
 public class DetalleAdquisicion {
     private String IdDetalleAdquisicion;
+    private String idOrdenCompra;
     private Laptop ModeloLaptopAdquirida;
     private int cantidad;
     private float CostoUnitario;
     private float SubtotalLinea;
     private ArrayList<Equipo> equipos;
 
-    public DetalleAdquisicion(String idDetalleAdquisicion, Laptop modeloLaptopAdquirida, int cantidad, float costoUnitario, float subtotalLinea) {
+    public DetalleAdquisicion(String idDetalleAdquisicion, String idOrdenCompra, Laptop modeloLaptopAdquirida, int cantidad, float costoUnitario, float subtotalLinea) {
         IdDetalleAdquisicion = idDetalleAdquisicion;
+        this.idOrdenCompra = idOrdenCompra;
         ModeloLaptopAdquirida = modeloLaptopAdquirida;
         this.cantidad = cantidad;
         CostoUnitario = costoUnitario;
         SubtotalLinea = subtotalLinea;
         equipos = new ArrayList<>();
     }
+
     public ArrayList<Equipo> getEquipos() {
         return equipos;
     }
@@ -25,12 +28,21 @@ public class DetalleAdquisicion {
     public void agregarEquipo(Equipo equipo) {
         equipos.add(equipo);
     }
+
     public String getIdDetalleAdquisicion() {
         return IdDetalleAdquisicion;
     }
 
     public void setIdDetalleAdquisicion(String idDetalleAdquisicion) {
         IdDetalleAdquisicion = idDetalleAdquisicion;
+    }
+
+    public String getIdOrdenCompra() {
+        return idOrdenCompra;
+    }
+
+    public void setIdOrdenCompra(String idOrdenCompra) {
+        this.idOrdenCompra = idOrdenCompra;
     }
 
     public Laptop getModeloLaptopAdquirida() {

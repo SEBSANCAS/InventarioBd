@@ -1,5 +1,7 @@
 package visual;
 
+import DataBase.LaptopDAO;
+import DataBase.SuplidorDAO;
 import DataBase.SuplidorLaptopDAO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -9,7 +11,6 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import logico.DetalleLaptopSuplidor;
 import logico.Laptop;
-import logico.Servicio;
 import logico.Suplidor;
 
 import java.util.HashMap;
@@ -45,7 +46,7 @@ public class RegistroSuplidorLaptopController {
     private void cargarDatos() {
         mapaSuplidores.clear();
         comboSuplidor.getItems().clear();
-        for (Suplidor s : Servicio.getInstance().getMisSuplidores().values()) {
+        for (Suplidor s : SuplidorDAO.getInstance().EncontrarTodos()) {
             String display = s.getIdSuplidor() + " - " + s.getNombreComercial();
             comboSuplidor.getItems().add(display);
             mapaSuplidores.put(display, s);
@@ -53,7 +54,7 @@ public class RegistroSuplidorLaptopController {
 
         mapaLaptops.clear();
         comboLaptop.getItems().clear();
-        for (Laptop l : Servicio.getInstance().getMisLaptops().values()) {
+        for (Laptop l : LaptopDAO.getInstance().EncontrarTodos()) {
             String display = l.getIdLaptop() + " - " + l.getNombreComercial();
             comboLaptop.getItems().add(display);
             mapaLaptops.put(display, l);

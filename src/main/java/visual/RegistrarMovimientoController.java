@@ -35,6 +35,7 @@ public class RegistrarMovimientoController {
 
     private Equipo equipoSeleccionado;
     private String idEstanteOrigen;
+    private int nivelOrigen = 0;
 
     @FXML
     public void initialize() {
@@ -59,6 +60,7 @@ public class RegistrarMovimientoController {
         campoUbicacionActual.clear();
         equipoSeleccionado = null;
         idEstanteOrigen = null;
+        nivelOrigen = 0;
         areaDescripcion.clear();
         lblMensaje.setText("");
 
@@ -71,11 +73,9 @@ public class RegistrarMovimientoController {
             comboEstanteDestino.setDisable(false);
             cargarEstantesDestino();
         } else {
-            for (Estante estante : Servicio.getInstance().getMisEstantes().values()) {
-                for (Equipo eq : estante.getEquiposAlmacenados()) {
-                    if ("Disponible".equalsIgnoreCase(eq.getDisponibilidad())) {
-                        comboEquipo.getItems().add(eq.getIdEquipo() + " - " + eq.getLaptop().getNombreComercial());
-                    }
+            for (Equipo eq : EquipoDAO.getInstance().EncontrarTodos()) {
+                if ("Disponible".equalsIgnoreCase(eq.getDisponibilidad())) {
+                    comboEquipo.getItems().add(eq.getIdEquipo() + " - " + eq.getLaptop().getNombreComercial());
                 }
             }
 
@@ -91,9 +91,7 @@ public class RegistrarMovimientoController {
     private void cargarEstantesDestino() {
         comboEstanteDestino.getItems().clear();
         for (Estante e : Servicio.getInstance().getMisEstantes().values()) {
-            if (e.getCapacidad() > e.getEquiposAlmacenados().size()) {
-                comboEstanteDestino.getItems().add(e.getIdEstante() + " - " + e.getIdEstante());
-            }
+            comboEstanteDestino.getItems().add(e.getIdEstante() + " - " + e.getIdEstante());
         }
     }
 
@@ -104,18 +102,28 @@ public class RegistrarMovimientoController {
         String idEquipo = sel.split(" - ")[0];
         equipoSeleccionado = EquipoDAO.getInstance().encontrarPorId(idEquipo);
         idEstanteOrigen = null;
+        nivelOrigen = 0;
         campoUbicacionActual.setText("No ubicado en estantes (Ej. Soporte/Vendido)");
 
         if (equipoSeleccionado != null) {
-            for (Estante estante : Servicio.getInstance().getMisEstantes().values()) {
-                for (Equipo eq : estante.getEquiposAlmacenados()) {
-                    if (eq.getIdEquipo().equals(equipoSeleccionado.getIdEquipo())) {
-                        idEstanteOrigen = estante.getIdEstante();
-                        campoUbicacionActual.setText(estante.getIdEstante() + " - " + estante.getIdEstante());
-                        break;
+            String sqlUbicacion = "SELECT id_ubicacion FROM Equipo WHERE IdEquipo = '" + idEquipo + "'";
+            try (java.sql.Connection conn = DataBase.DatabaseConnection.getConnection();
+                 java.sql.Statement stmt = conn.createStatement();
+                 java.sql.ResultSet rs = stmt.executeQuery(sqlUbicacion)) {
+                if (rs.next()) {
+                    String idUbi = rs.getString("id_ubicacion");
+                    if (idUbi != null && !idUbi.trim().isEmpty()) {
+                        String[] partes = idUbi.split("-N");
+                        if (partes.length == 2) {
+                            idEstanteOrigen = partes[0];
+                            nivelOrigen = Integer.parseInt(partes[1]);
+                        } else {
+                            idEstanteOrigen = idUbi;
+                        }
+                        campoUbicacionActual.setText(idUbi);
                     }
                 }
-                if (idEstanteOrigen != null) break;
+            } catch (Exception e) {
             }
         }
     }
@@ -171,18 +179,11 @@ public class RegistrarMovimientoController {
             mov.setNivelOrigen(0);
         } else {
             mov.setIdEstanteOrigen(idEstanteOrigen);
-            mov.setNivelOrigen(0);
-
-            if (idEstanteOrigen != null) {
-                Estante estanteAnterior = Servicio.getInstance().getMisEstantes().get(idEstanteOrigen);
-                if (estanteAnterior != null) {
-                    estanteAnterior.getEquiposAlmacenados().removeIf(eq -> eq.getIdEquipo().equals(equipoSeleccionado.getIdEquipo()));
-                }
-            }
+            mov.setNivelOrigen(nivelOrigen);
         }
 
         mov.setIdEstanteDestino(idDestino);
-        mov.setNivelDestino(0);
+        mov.setNivelDestino(idDestino != null ? 1 : 0);
 
         if ("Traslado Interno".equals(tipo)) {
             equipoSeleccionado.setDisponibilidad("Disponible");
@@ -196,16 +197,22 @@ public class RegistrarMovimientoController {
             equipoSeleccionado.setDisponibilidad("Listo para Entrega");
         }
 
-        if (idDestino != null) {
-            Estante estanteNuevo = Servicio.getInstance().getMisEstantes().get(idDestino);
-            if (estanteNuevo != null) {
-                estanteNuevo.getEquiposAlmacenados().add(equipoSeleccionado);
-            }
-        }
-
         try {
             MovimientoDAO.getInstance().guardar(mov);
             EquipoDAO.getInstance().actualizar(equipoSeleccionado);
+            Servicio.getInstance().getMisEquipos().put(equipoSeleccionado.getIdEquipo(), equipoSeleccionado);
+
+            String sqlUpdateUbi = "UPDATE Equipo SET id_ubicacion = ? WHERE IdEquipo = ?";
+            try (java.sql.Connection conn = DataBase.DatabaseConnection.getConnection();
+                 java.sql.PreparedStatement ps = conn.prepareStatement(sqlUpdateUbi)) {
+                if (idDestino != null) {
+                    ps.setString(1, idDestino + "-N1");
+                } else {
+                    ps.setNull(1, java.sql.Types.VARCHAR);
+                }
+                ps.setString(2, equipoSeleccionado.getIdEquipo());
+                ps.executeUpdate();
+            } catch(Exception e) {}
 
             lblMensaje.setStyle("-fx-text-fill: #2e7d32; -fx-font-weight: bold;");
             lblMensaje.setText("¡Movimiento registrado correctamente!");
@@ -226,6 +233,7 @@ public class RegistrarMovimientoController {
         areaDescripcion.clear();
         equipoSeleccionado = null;
         idEstanteOrigen = null;
+        nivelOrigen = 0;
     }
 
     @FXML

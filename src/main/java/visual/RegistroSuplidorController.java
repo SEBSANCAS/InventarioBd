@@ -266,7 +266,7 @@ public class RegistroSuplidorController {
 
         try {
             // 4. Guardado en la Base de Datos mediante el DAO
-            SuplidorDAO.getInstance().guardar(suplidor);
+            Servicio.getInstance().registrarSuplidor(suplidor);
 
             // 5. Limpiar formulario y actualizar IDs (se llama antes del mensaje para que el preview se actualice)
             limpiarFormulario();

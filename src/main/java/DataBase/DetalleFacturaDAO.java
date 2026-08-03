@@ -96,6 +96,7 @@ public class DetalleFacturaDAO {
 
                 DetalleFactura det = new DetalleFactura(
                         resultSet.getString("id_detalle"),
+                        resultSet.getString("id_factura"),
                         resultSet.getFloat("precio_unitario_venta"),
                         resultSet.getFloat("monto_descuento"),
                         resultSet.getFloat("subtotal_linea"),
@@ -129,6 +130,7 @@ public class DetalleFacturaDAO {
 
                     det = new DetalleFactura(
                             resultSet.getString("id_detalle"),
+                            resultSet.getString("id_factura"),
                             resultSet.getFloat("precio_unitario_venta"),
                             resultSet.getFloat("monto_descuento"),
                             resultSet.getFloat("subtotal_linea"),
@@ -142,10 +144,10 @@ public class DetalleFacturaDAO {
         }
         return det;
     }
+
     public ArrayList<DetalleFactura> encontrarPorFactura(String idFactura) {
 
         ArrayList<DetalleFactura> detalles = new ArrayList<>();
-
         final String sql = "SELECT * FROM Detalle_Factura WHERE id_factura = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
@@ -162,6 +164,7 @@ public class DetalleFacturaDAO {
 
                     DetalleFactura detalle = new DetalleFactura(
                             resultSet.getString("id_detalle"),
+                            resultSet.getString("id_factura"),
                             resultSet.getFloat("precio_unitario_venta"),
                             resultSet.getFloat("monto_descuento"),
                             resultSet.getFloat("subtotal_linea"),

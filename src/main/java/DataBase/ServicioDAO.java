@@ -3,6 +3,8 @@ package DataBase;
 import logico.Adquisicion;
 import logico.Factura;
 import logico.Servicio;
+import logico.Reclamo;
+import logico.Resolucion;
 import java.sql.*;
 
 public class ServicioDAO {
@@ -16,11 +18,11 @@ public class ServicioDAO {
     }
 
     public void guardarContadores(Servicio servicio) {
-
         final String updateSql =
                 "UPDATE ControlContadores SET " +
                         "id_cliente=?, id_marca=?, id_suplidor=?, id_estante=?, " +
-                        "id_laptop=?, id_equipo=?, id_adquisicion=?, id_factura=? " +
+                        "id_laptop=?, id_equipo=?, id_adquisicion=?, id_factura=?, " +
+                        "gen_id_reclamo=?, gen_id_resolucion=? " +
                         "WHERE id=1";
 
         try (Connection connection = DatabaseConnection.getConnection();
@@ -34,16 +36,18 @@ public class ServicioDAO {
             ps.setInt(6, servicio.getGenIdEquipo());
             ps.setInt(7, servicio.getGenIdAdquisicion());
             ps.setInt(8, servicio.getGenIdFactura());
+            ps.setInt(9, servicio.getGenIdReclamo());
+            ps.setInt(10, servicio.getGenIdResolucion());
 
             int filas = ps.executeUpdate();
 
             if (filas == 0) {
-
                 final String insertSql =
                         "INSERT INTO ControlContadores (" +
                                 "id, id_cliente, id_marca, id_suplidor, id_estante, " +
-                                "id_laptop, id_equipo, id_adquisicion, id_factura" +
-                                ") VALUES (?,?,?,?,?,?,?,?,?)";
+                                "id_laptop, id_equipo, id_adquisicion, id_factura, " +
+                                "gen_id_reclamo, gen_id_resolucion" +
+                                ") VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 
                 try (PreparedStatement insert = connection.prepareStatement(insertSql)) {
                     insert.setInt(1, 1);
@@ -55,6 +59,8 @@ public class ServicioDAO {
                     insert.setInt(7, servicio.getGenIdEquipo());
                     insert.setInt(8, servicio.getGenIdAdquisicion());
                     insert.setInt(9, servicio.getGenIdFactura());
+                    insert.setInt(10, servicio.getGenIdReclamo());
+                    insert.setInt(11, servicio.getGenIdResolucion());
 
                     insert.executeUpdate();
                 }
@@ -65,7 +71,6 @@ public class ServicioDAO {
     }
 
     public void cargarContadores(Servicio servicio) {
-
         final String sql = "SELECT * FROM ControlContadores WHERE id=1";
 
         try(Connection connection = DatabaseConnection.getConnection();
@@ -81,6 +86,8 @@ public class ServicioDAO {
                 servicio.setGenIdEquipo(rs.getInt("id_equipo"));
                 servicio.setGenIdAdquisicion(rs.getInt("id_adquisicion"));
                 servicio.setGenIdFactura(rs.getInt("id_factura"));
+                servicio.setGenIdReclamo(rs.getInt("gen_id_reclamo"));
+                servicio.setGenIdResolucion(rs.getInt("gen_id_resolucion"));
             } else {
                 guardarContadores(servicio);
             }
@@ -123,6 +130,14 @@ public class ServicioDAO {
 
         FacturaDAO.getInstance().EncontrarTodos().forEach(f ->
                 servicio.getMiInventarioFacturas().put(f.getIdFactura(), f)
+        );
+
+        ReclamoDAO.getInstance().EncontrarTodos().forEach(r ->
+                servicio.getMisReclamos().put(r.getIdReclamo(), r)
+        );
+
+        ResolucionDAO.getInstance().EncontrarTodos().forEach(res ->
+                servicio.getMisResoluciones().put(res.getIdResolucion(), res)
         );
 
         for (Adquisicion a : servicio.getMisAdquisiciones().values()) {

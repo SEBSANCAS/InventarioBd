@@ -39,7 +39,7 @@
                               iconSize="28"
                               iconColor="white"/>
 
-                    <Label text="Laptop Inventory"
+                    <Label text="Inventario de Laptops"
                            styleClass="titulo"/>
 
                 </HBox>

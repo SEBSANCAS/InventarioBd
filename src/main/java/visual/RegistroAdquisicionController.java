@@ -63,7 +63,8 @@ public class RegistroAdquisicionController {
     }
 
     private void actualizarIdPreview() {
-        campoIdAdquisicion.setText(Servicio.getInstance().generarIdAdquisicion());
+        int siguiente = Servicio.getInstance().getGenIdAdquisicion();
+        campoIdAdquisicion.setText(String.format("ADQ%03d", siguiente));
     }
 
     private void cargarSuplidores() {
@@ -90,6 +91,11 @@ public class RegistroAdquisicionController {
                 int cant = Integer.parseInt(linea.campoCantidad.getText().trim());
                 float prec = Float.parseFloat(linea.campoPrecio.getText().trim());
                 float sub = cant * prec;
+
+                if (sub < 0) {
+                    sub = 0;
+                }
+
                 linea.lblSubtotal.setText(String.format("%.2f", sub));
                 totalAdquisicion += sub;
             } catch (Exception e) {
@@ -101,7 +107,9 @@ public class RegistroAdquisicionController {
 
     private void recalcularFechaEstimada() {
         Suplidor suplidor = mapaSuplidores.get(comboSuplidor.getValue());
-        if (suplidor == null) return;
+        if (suplidor == null) {
+            return;
+        }
 
         HashMap<Laptop, DetalleLaptopSuplidor> detallesDAO = SuplidorLaptopDAO.getInstance().encontrarPorSuplidor(suplidor.getIdSuplidor());
         int maxDias = 0;
@@ -164,15 +172,21 @@ public class RegistroAdquisicionController {
             Laptop laptop = Servicio.getInstance().getMisLaptops().get(idLaptop);
             int cant = Integer.parseInt(linea.campoCantidad.getText().trim());
             float prec = Float.parseFloat(linea.campoPrecio.getText().trim());
+            float subtotal = prec * cant;
+
+            if (subtotal < 0) {
+                subtotal = 0;
+            }
 
             String idDetalle = Servicio.getInstance().generarIdDependiente(idAdq, contador);
 
             DetalleAdquisicion detalle = new DetalleAdquisicion(
                     idDetalle,
+                    idAdq,
                     laptop,
                     cant,
                     prec,
-                    prec*cant
+                    subtotal
             );
 
             detalles.add(detalle);
@@ -211,14 +225,17 @@ public class RegistroAdquisicionController {
             }
             try {
                 int c = Integer.parseInt(linea.campoCantidad.getText().trim());
-                if (c <= 0) errorLineas = true;
+                float p = Float.parseFloat(linea.campoPrecio.getText().trim());
+                if (c <= 0 || p < 0) {
+                    errorLineas = true;
+                }
             } catch (Exception e) {
                 errorLineas = true;
             }
         }
 
         if (errorLineas) {
-            errores.append("- Verifique que todas las líneas tengan modelo seleccionado y cantidades válidas (mayores a 0).\n");
+            errores.append("- Verifique que todas las líneas tengan modelo seleccionado y cantidades válidas (mayores a 0 y no negativas).\n");
         }
 
         if (errores.length() > 0) {
